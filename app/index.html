@@ -1,0 +1,1786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Operator's Dilemma — robert@barcik.training</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f0f4f8; color: #1a202c; min-height: 100vh; line-height: 1.5;
+}
+
+/* Header */
+header { background: #1e3a5f; color: #fff; padding: 1.2rem 2rem; text-align: center; position: relative; }
+header h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.1rem; }
+header .subtitle { font-size: 0.82rem; color: #94a3b8; max-width: 600px; margin: 0 auto; }
+header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; margin-top: 0.3rem; }
+
+/* Progress bar */
+.progress-bar { max-width: 960px; margin: 1.2rem auto 0; padding: 0 1.25rem; }
+.progress-track { display: flex; gap: 0.4rem; }
+.progress-step { flex: 1; height: 6px; border-radius: 3px; background: #e2e8f0; transition: background 0.3s; cursor: pointer; }
+.progress-step.active { background: #1e3a5f; }
+.progress-step.done { background: #16a34a; }
+.progress-labels { display: flex; gap: 0.4rem; margin-top: 0.35rem; }
+.progress-labels span { flex: 1; text-align: center; font-size: 0.65rem; color: #94a3b8; font-weight: 600; cursor: pointer; }
+.progress-labels span.active { color: #1e3a5f; }
+
+/* Sections */
+.section { display: none; max-width: 960px; margin: 1.2rem auto; padding: 0 1.25rem; }
+.section.active { display: block; }
+
+/* Panels */
+.panel { background: #fff; border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 4px rgba(0,0,0,0.07); margin-bottom: 1.25rem; }
+.panel-title { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: #94a3b8; margin-bottom: 0.75rem; font-weight: 600; }
+.panel h2 { font-size: 1.3rem; color: #1e3a5f; margin-bottom: 0.5rem; font-weight: 700; }
+.panel h3 { font-size: 1.05rem; color: #1e3a5f; margin-bottom: 0.4rem; font-weight: 600; }
+.panel p { font-size: 0.88rem; color: #4a5568; line-height: 1.6; margin-bottom: 0.6rem; }
+.panel p:last-child { margin-bottom: 0; }
+
+/* Theory panels */
+.theory-panel { margin-bottom: 1.25rem; }
+.theory-toggle {
+  width: 100%; text-align: left; background: #f8fafc; border: 1px solid #e2e8f0;
+  border-radius: 10px; padding: 0.85rem 1.2rem; font-size: 0.82rem; font-weight: 600;
+  color: #1e3a5f; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.5rem;
+}
+.theory-toggle:hover { background: #eef2f7; }
+.theory-toggle .chevron { transition: transform 0.3s; font-size: 0.7rem; }
+.theory-toggle.open .chevron { transform: rotate(90deg); }
+.theory-content {
+  display: none; background: #fff; border: 1px solid #e2e8f0; border-top: none;
+  border-radius: 0 0 10px 10px; padding: 1.2rem 1.5rem; font-size: 0.85rem; color: #4a5568; line-height: 1.7;
+}
+.theory-content.open { display: block; }
+.theory-content h4 { font-size: 0.92rem; color: #1e3a5f; font-weight: 700; margin: 1rem 0 0.4rem; }
+.theory-content h4:first-child { margin-top: 0; }
+.theory-content p { margin-bottom: 0.6rem; }
+.theory-content .ref { font-size: 0.78rem; color: #94a3b8; font-style: italic; }
+.theory-content .callout {
+  background: rgba(59,130,246,0.05); border-left: 3px solid #3b82f6;
+  padding: 0.6rem 1rem; border-radius: 0 6px 6px 0; margin: 0.8rem 0; font-style: italic;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.6rem 1.2rem;
+  border-radius: 8px; font-size: 0.82rem; font-weight: 600; cursor: pointer;
+  border: none; transition: all 0.2s;
+}
+.btn-primary { background: #1e3a5f; color: #fff; }
+.btn-primary:hover { background: #2a5280; }
+.btn-success { background: #16a34a; color: #fff; }
+.btn-success:hover { background: #15803d; }
+.btn-danger { background: #dc2626; color: #fff; }
+.btn-danger:hover { background: #b91c1c; }
+.btn-warning { background: #d97706; color: #fff; }
+.btn-warning:hover { background: #b45309; }
+.btn-outline { background: transparent; border: 2px solid #1e3a5f; color: #1e3a5f; }
+.btn-outline:hover { background: #1e3a5f; color: #fff; }
+.btn-ghost { background: transparent; color: #64748b; border: 1px solid #e2e8f0; }
+.btn-ghost:hover { background: #f8fafc; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-group { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.75rem; }
+
+/* Navigation */
+.nav-row { display: flex; justify-content: space-between; margin-top: 1.5rem; }
+
+/* Timer */
+.timer {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font-size: 1.4rem; font-weight: 800; color: #1e3a5f; font-variant-numeric: tabular-nums;
+}
+.timer.urgent { color: #dc2626; animation: pulse 0.5s ease-in-out infinite alternate; }
+@keyframes pulse { from { opacity: 1; } to { opacity: 0.5; } }
+
+/* Incident card */
+.incident-card {
+  background: #fff; border: 2px solid #e2e8f0; border-radius: 10px; padding: 1.2rem;
+  margin-bottom: 1rem; transition: all 0.3s;
+}
+.incident-card.current { border-color: #1e3a5f; box-shadow: 0 2px 12px rgba(30,58,95,0.12); }
+.incident-card .ic-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.incident-card .ic-severity {
+  font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  padding: 0.2rem 0.6rem; border-radius: 4px;
+}
+.sev-critical { background: #fef2f2; color: #dc2626; }
+.sev-high { background: #fff7ed; color: #ea580c; }
+.sev-medium { background: #fefce8; color: #ca8a04; }
+.sev-low { background: #f0fdf4; color: #16a34a; }
+.incident-card .ic-title { font-size: 0.95rem; font-weight: 700; color: #1e3a5f; margin-bottom: 0.3rem; }
+.incident-card .ic-details { font-size: 0.82rem; color: #64748b; line-height: 1.55; }
+.incident-card .ic-recommendation {
+  margin-top: 0.6rem; padding: 0.7rem 0.9rem; background: #eff6ff; border-radius: 8px;
+  border-left: 3px solid #3b82f6; font-size: 0.82rem; color: #1e3a5f; line-height: 1.5;
+}
+.incident-card .ic-recommendation strong { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: #3b82f6; margin-bottom: 0.2rem; }
+
+/* Results */
+.stat-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.stat-card {
+  flex: 1; min-width: 130px; background: #f8fafc; border: 1px solid #e2e8f0;
+  border-radius: 10px; padding: 1rem; text-align: center;
+}
+.stat-card .stat-number { font-size: 1.8rem; font-weight: 800; color: #1e3a5f; }
+.stat-card .stat-label { font-size: 0.72rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+.stat-card.bad .stat-number { color: #dc2626; }
+.stat-card.good .stat-number { color: #16a34a; }
+.stat-card.warn .stat-number { color: #d97706; }
+
+/* Decision result badges */
+.badge {
+  display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px;
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+}
+.badge-correct { background: #f0fdf4; color: #16a34a; }
+.badge-incorrect { background: #fef2f2; color: #dc2626; }
+.badge-missed { background: #fefce8; color: #ca8a04; }
+
+/* Act 2: Assessment form */
+.severity-scale { display: flex; gap: 0.5rem; margin: 0.5rem 0; }
+.severity-scale .sev-btn {
+  flex: 1; padding: 0.5rem; text-align: center; border: 2px solid #e2e8f0;
+  border-radius: 8px; cursor: pointer; font-size: 0.82rem; font-weight: 600;
+  transition: all 0.2s; background: #fff;
+}
+.severity-scale .sev-btn:hover { border-color: #1e3a5f; }
+.severity-scale .sev-btn.selected { border-color: #1e3a5f; background: #1e3a5f; color: #fff; }
+
+.root-cause-options { display: grid; grid-template-columns: 1fr; gap: 0.5rem; margin: 0.5rem 0; }
+.root-cause-options .rc-opt {
+  padding: 0.7rem 1rem; border: 2px solid #e2e8f0; border-radius: 8px;
+  cursor: pointer; font-size: 0.82rem; transition: all 0.2s; background: #fff;
+}
+.root-cause-options .rc-opt:hover { border-color: #1e3a5f; }
+.root-cause-options .rc-opt.selected { border-color: #1e3a5f; background: #eff6ff; }
+
+/* Act 2: Data panels */
+.data-panel {
+  background: #1a1a2e; color: #e2e8f0; border-radius: 10px; padding: 1rem 1.2rem;
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; font-size: 0.78rem;
+  line-height: 1.6; margin: 0.75rem 0; overflow-x: auto;
+}
+.data-panel .log-line { margin-bottom: 0.2rem; }
+.data-panel .log-ts { color: #64748b; }
+.data-panel .log-error { color: #f87171; }
+.data-panel .log-warn { color: #fbbf24; }
+.data-panel .log-info { color: #60a5fa; }
+
+/* Act 3: Trust sliders */
+.trust-slider-group { margin: 0.75rem 0; }
+.trust-slider-group label { font-size: 0.82rem; color: #4a5568; font-weight: 600; display: block; margin-bottom: 0.3rem; }
+.trust-slider-row { display: flex; align-items: center; gap: 0.75rem; }
+.trust-slider-row input[type="range"] { flex: 1; accent-color: #1e3a5f; }
+.trust-slider-row .trust-val { font-size: 1.1rem; font-weight: 800; color: #1e3a5f; min-width: 2rem; text-align: center; }
+.trust-labels { display: flex; justify-content: space-between; font-size: 0.68rem; color: #94a3b8; margin-top: 0.15rem; }
+
+.confidence-card {
+  background: #fff; border: 2px solid #e2e8f0; border-radius: 10px; padding: 1.2rem;
+  margin-bottom: 1rem;
+}
+.confidence-card h4 { font-size: 0.92rem; color: #1e3a5f; margin-bottom: 0.5rem; }
+.confidence-badge {
+  display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px;
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem;
+}
+.cb-high { background: #f0fdf4; color: #16a34a; }
+.cb-medium { background: #fefce8; color: #ca8a04; }
+.cb-low { background: #fef2f2; color: #dc2626; }
+
+/* Act 4: Event feed */
+.event-feed { max-height: 400px; overflow-y: auto; padding-right: 0.5rem; }
+.event-item {
+  display: flex; gap: 0.75rem; padding: 0.6rem 0; border-bottom: 1px solid #f1f5f9;
+  font-size: 0.82rem; animation: fadeIn 0.3s ease-in;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+.event-item .ev-time { color: #94a3b8; font-weight: 600; min-width: 48px; font-variant-numeric: tabular-nums; }
+.event-item .ev-badge {
+  font-size: 0.65rem; font-weight: 700; text-transform: uppercase; padding: 0.15rem 0.5rem;
+  border-radius: 4px; white-space: nowrap;
+}
+.ev-execute { background: #f0fdf4; color: #16a34a; }
+.ev-recommend { background: #fefce8; color: #ca8a04; }
+.ev-escalate { background: #fef2f2; color: #dc2626; }
+.ev-erratic { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
+.event-item .ev-text { flex: 1; color: #4a5568; line-height: 1.45; }
+.event-item.erratic { background: #fef2f2; border-radius: 6px; padding: 0.6rem; border-bottom: none; }
+.event-item .ev-actions { display: flex; gap: 0.4rem; align-items: flex-start; margin-top: 0.3rem; }
+
+/* Kill switch */
+.kill-switch-container {
+  position: sticky; bottom: 1rem; z-index: 50; text-align: center; margin-top: 1rem;
+}
+.kill-switch {
+  background: #dc2626; color: #fff; border: 3px solid #991b1b; border-radius: 12px;
+  padding: 0.8rem 2rem; font-size: 1rem; font-weight: 800; cursor: pointer;
+  text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 4px 15px rgba(220,38,38,0.3);
+  transition: all 0.15s;
+}
+.kill-switch:hover { background: #b91c1c; transform: scale(1.03); box-shadow: 0 6px 20px rgba(220,38,38,0.4); }
+.kill-switch:active { transform: scale(0.98); }
+.kill-switch.disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+
+/* Act 5: Design controls */
+.design-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 700px) { .design-controls { grid-template-columns: 1fr; } }
+.control-group { margin-bottom: 0.75rem; }
+.control-group label { display: block; font-size: 0.78rem; font-weight: 600; color: #1e3a5f; margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.control-group select, .control-group input[type="range"] { width: 100%; }
+.control-group select {
+  padding: 0.5rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 0.82rem;
+  background: #fff; color: #1e3a5f; cursor: pointer;
+}
+.control-group .range-val { font-size: 0.82rem; font-weight: 700; color: #1e3a5f; text-align: center; margin-top: 0.2rem; }
+.control-group input[type="range"] { accent-color: #1e3a5f; }
+
+/* UX Preview */
+.ux-preview {
+  background: #1a1a2e; border-radius: 10px; padding: 1.2rem; color: #e2e8f0;
+  min-height: 300px; font-size: 0.82rem;
+}
+.ux-preview .ux-header {
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid #2d2d44; padding-bottom: 0.6rem; margin-bottom: 0.8rem;
+}
+.ux-preview .ux-header h4 { color: #fff; font-size: 0.92rem; }
+.ux-preview .ux-badge {
+  padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+}
+.ux-section { margin-bottom: 0.8rem; padding: 0.6rem 0.8rem; background: rgba(255,255,255,0.05); border-radius: 6px; }
+.ux-section .ux-label { font-size: 0.68rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+
+/* LLM response */
+.llm-response {
+  background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1.2rem;
+  font-size: 0.85rem; color: #4a5568; line-height: 1.7; white-space: pre-wrap;
+}
+.llm-loading { text-align: center; padding: 2rem; color: #94a3b8; }
+.llm-loading .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #e2e8f0; border-top-color: #1e3a5f; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Debrief */
+.debrief-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.debrief-table th { background: #1e3a5f; color: #fff; padding: 0.6rem 1rem; text-align: left; font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; }
+.debrief-table td { padding: 0.6rem 1rem; border-bottom: 1px solid #e2e8f0; }
+.debrief-table tr:nth-child(even) { background: #f8fafc; }
+
+/* Setup screen */
+.setup-panel {
+  max-width: 500px; margin: 3rem auto; text-align: center;
+}
+.setup-panel input[type="password"] {
+  width: 100%; padding: 0.7rem 1rem; border: 2px solid #e2e8f0; border-radius: 8px;
+  font-size: 0.92rem; margin: 0.75rem 0; font-family: monospace;
+}
+.setup-panel input[type="password"]:focus { outline: none; border-color: #1e3a5f; }
+.setup-note { font-size: 0.78rem; color: #94a3b8; margin-top: 0.5rem; }
+
+/* Responsive */
+@media (max-width: 700px) {
+  header { padding: 1rem; }
+  header h1 { font-size: 1.15rem; }
+  .panel { padding: 1rem; }
+  .stat-row { flex-direction: column; }
+  .incident-card { padding: 0.9rem; }
+}
+
+/* Print */
+@media print {
+  header, .progress-bar, .theory-panel, .nav-row, .btn-group, .kill-switch-container { display: none !important; }
+  .section { display: block !important; max-width: 100%; }
+  .panel { box-shadow: none; border: 1px solid #e2e8f0; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>The Operator's Dilemma</h1>
+  <div class="subtitle">LLM-Human Interaction Design Patterns for Operations</div>
+  <div class="brand">robert@barcik.training</div>
+</header>
+
+<!-- Progress bar -->
+<div class="progress-bar">
+  <div class="progress-track" id="progressTrack"></div>
+  <div class="progress-labels" id="progressLabels"></div>
+</div>
+
+<!-- ===== SECTION 0: SETUP ===== -->
+<div class="section active" id="section-setup">
+  <div class="panel setup-panel">
+    <h2>Welcome</h2>
+    <p>This interactive experience puts you in the operator's seat to explore how humans interact with AI systems under real operational pressure. Five acts, each revealing a different cognitive trap or design pattern.</p>
+    <p style="margin-top:1rem; font-weight:600; color:#1e3a5f;">OpenRouter API Key (optional)</p>
+    <input type="password" id="apiKeyInput" placeholder="sk-or-v1-..." />
+    <p class="setup-note">Required for live AI interactions in Acts 3 and 5. Without a key, pre-generated responses will be used instead. Uses DeepSeek Chat via OpenRouter.</p>
+    <div class="btn-group" style="justify-content:center; margin-top:1.5rem;">
+      <button class="btn btn-primary" onclick="startExperience()">Begin the Experience</button>
+    </div>
+    <div class="btn-group" style="justify-content:center; margin-top:0.5rem;">
+      <button class="btn btn-ghost" onclick="startExperience(true)">Skip to a specific act</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 1: ACT 1 — THE RUBBER STAMP TEST ===== -->
+<div class="section" id="section-act1">
+  <!-- Theory panel -->
+  <div class="theory-panel">
+    <button class="theory-toggle" onclick="toggleTheory(this)">
+      <span class="chevron">&#9654;</span> Theory: Automation Bias &amp; the Recommend-and-Wait Pattern
+    </button>
+    <div class="theory-content">
+      <h4>Automation Bias</h4>
+      <p>Automation bias is the tendency to use automated cues as a heuristic replacement for vigilant information seeking and processing (Mosier &amp; Skitka, 1996). It manifests as two error types:</p>
+      <p><strong>Commission errors:</strong> Acting on incorrect automated advice. In flight simulation studies, Skitka, Mosier &amp; Burdick (1999) found a <strong>100% commission error rate</strong> when pilots received a false fire warning from automation — every pilot shut down the engine despite contradictory indicators.</p>
+      <p><strong>Omission errors:</strong> Failing to notice problems the automation missed. These ran at 55% in the same study. Having a second crew member did not reduce errors.</p>
+      <p class="ref">Parasuraman &amp; Manzey (2010) found operators of consistently high-reliability systems were 50% less likely to detect failures than those working with unreliable systems.</p>
+      <h4>Real-World Consequences</h4>
+      <p>The <strong>Enbridge pipeline disaster (2010)</strong>: experienced operators dismissed SCADA alarms for 17 hours, continuing to pump oil through a ruptured pipeline — over $1 billion in cleanup. The <strong>UK Post Office Horizon scandal</strong> led to wrongful prosecution of 736 sub-postmasters because investigators trusted faulty software over evidence.</p>
+      <h4>The Recommend &amp; Wait Pattern</h4>
+      <p>The agent analyzes, proposes, and halts until a human explicitly approves. This is the most conservative agentic pattern (Sheridan-Verplank Levels 4–5). PagerDuty's SRE Agent exemplifies this — it surfaces context and suggests remediation but executes only upon operator approval.</p>
+      <h4>Cognitive Forcing Functions</h4>
+      <p>Bu&ccedil;inca, Malte &amp; Gajos (Harvard, CHI 2021, N=199): interventions that require operators to form their own assessment <em>before</em> seeing the AI recommendation significantly reduced overreliance. However, users rated the most effective forcing functions least favorably — a fundamental tension between safety and user satisfaction.</p>
+      <div class="callout">"Automation bias is not a character flaw. It is a predictable response to a poorly designed interaction. If your operators are rubber-stamping AI recommendations, the problem is your UX, not your people."</div>
+    </div>
+  </div>
+
+  <!-- Briefing -->
+  <div class="panel" id="act1-briefing">
+    <div class="panel-title">Act 1 — The Rubber Stamp Test</div>
+    <h2>You Are the On-Call Engineer</h2>
+    <p>It's <strong>2:07 AM</strong>. You are the L2 on-call engineer at NovaTech, a mid-size SaaS company. Your AI operations assistant has been analyzing incoming incidents and preparing recommendations.</p>
+    <p>For each incident, you'll see the AI's analysis and recommendation. You have <strong>30 seconds</strong> to decide:</p>
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin:0.75rem 0;">
+      <span class="btn btn-success" style="cursor:default; font-size:0.78rem;">Approve</span>
+      <span class="btn btn-danger" style="cursor:default; font-size:0.78rem;">Reject</span>
+      <span class="btn btn-warning" style="cursor:default; font-size:0.78rem;">Investigate Further</span>
+    </div>
+    <p>If the timer runs out, the recommendation is <strong>auto-approved</strong>.</p>
+    <p style="font-size:0.82rem; color:#94a3b8; margin-top:0.5rem;">8 incidents are queued. Think carefully — or don't. That's the point.</p>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="startAct1()">Start the Simulation</button>
+    </div>
+  </div>
+
+  <!-- Active incident -->
+  <div class="panel" id="act1-active" style="display:none;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+      <div class="panel-title" style="margin-bottom:0;">Incident <span id="act1-incident-num">1</span> of 8</div>
+      <div class="timer" id="act1-timer">30</div>
+    </div>
+    <div id="act1-incident-container"></div>
+    <div class="btn-group" id="act1-actions">
+      <button class="btn btn-success" onclick="act1Decide('approve')">Approve</button>
+      <button class="btn btn-danger" onclick="act1Decide('reject')">Reject</button>
+      <button class="btn btn-warning" onclick="act1Decide('investigate')">Investigate Further</button>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="panel" id="act1-results" style="display:none;">
+    <div class="panel-title">Results</div>
+    <h2>How Did You Do?</h2>
+    <div class="stat-row" id="act1-stats"></div>
+    <div id="act1-breakdown"></div>
+    <div id="act1-comparison" style="margin-top:1.25rem;"></div>
+  </div>
+
+  <!-- Redesign demo -->
+  <div class="panel" id="act1-redesign" style="display:none;">
+    <div class="panel-title">The Fix: Cognitive Forcing Functions</div>
+    <h2>What If You Had to Think First?</h2>
+    <p>The same incidents, redesigned. Instead of seeing the AI's recommendation immediately, you first see only the raw data and must select your own diagnosis. Then the AI's recommendation appears as a <em>second opinion</em>, not an anchor.</p>
+    <div id="act1-redesign-demo"></div>
+    <p style="margin-top:1rem; font-size:0.85rem; color:#4a5568;">This simple UX change — requiring independent assessment before showing the AI recommendation — reduces commission errors by 30–50% in research settings (Goddard et al., 2012). The tradeoff: it's slower and users find it more annoying. But in high-stakes operations, that friction is a feature.</p>
+  </div>
+
+  <div class="nav-row" id="act1-nav" style="display:none;">
+    <div></div>
+    <button class="btn btn-primary" onclick="goToSection('section-act2')">Act 2: The Anchoring Trap &rarr;</button>
+  </div>
+</div>
+
+<!-- ===== SECTION 2: ACT 2 — THE ANCHORING TRAP ===== -->
+<div class="section" id="section-act2">
+  <div class="theory-panel">
+    <button class="theory-toggle" onclick="toggleTheory(this)">
+      <span class="chevron">&#9654;</span> Theory: Anchoring Effect &amp; Context Presentation
+    </button>
+    <div class="theory-content">
+      <h4>The Anchoring Effect</h4>
+      <p>First described by Tversky &amp; Kahneman (1974), anchoring is the cognitive bias where the first piece of information received disproportionately influences subsequent judgments. A 2025 study of 775 managers in <em>Information &amp; Management</em> confirmed that AI recommendations significantly anchor performance ratings.</p>
+      <p>In operations, when an AI presents its diagnosis first, operators anchor on that diagnosis even when contradictory evidence appears. The "consider-the-opposite" strategy effectively debiases the effect (Mussweiler et al., 2000).</p>
+      <h4>SBAR Framework</h4>
+      <p>Developed by the U.S. Navy for nuclear submarine communication and adapted by Kaiser Permanente for healthcare. AHRQ's TeamSTEPPS program standardized it nationally. A 2023 study showed SBAR training improved communication adequacy from <strong>4.8% to 100%</strong>.</p>
+      <p><strong>S</strong>ituation: What is happening? &bull; <strong>B</strong>ackground: What led here? &bull; <strong>A</strong>ssessment: What do I think? &bull; <strong>R</strong>ecommendation: What should we do?</p>
+      <h4>Recognition-Primed Decision (RPD) Model</h4>
+      <p>Klein (1998) found that <strong>78% of expert decisions are made in under one minute</strong>, often under 30 seconds. Experts don't compare options analytically — they pattern-match to known situations. AI that presents a recommendation first short-circuits this natural pattern-matching process.</p>
+      <div class="callout">"Present problem context before the recommendation, not after. The order of information shapes the quality of the decision."</div>
+    </div>
+  </div>
+
+  <div class="panel" id="act2-briefing">
+    <div class="panel-title">Act 2 — The Anchoring Trap</div>
+    <h2>Same Incident, Different Framing</h2>
+    <p>A complex production incident is unfolding at an e-commerce platform. Multiple signals, multiple possible root causes. You'll be presented with the information in a specific order — and then asked to make a judgment call.</p>
+    <p style="font-size:0.82rem; color:#94a3b8;">Pay attention to how the framing affects your reasoning.</p>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="startAct2()">Analyze the Incident</button>
+    </div>
+  </div>
+
+  <div class="panel" id="act2-phase1" style="display:none;"></div>
+  <div class="panel" id="act2-assessment" style="display:none;"></div>
+  <div class="panel" id="act2-phase2" style="display:none;"></div>
+  <div class="panel" id="act2-reveal" style="display:none;"></div>
+
+  <div class="nav-row" id="act2-nav" style="display:none;">
+    <button class="btn btn-ghost" onclick="goToSection('section-act1')">&larr; Act 1</button>
+    <button class="btn btn-primary" onclick="goToSection('section-act3')">Act 3: Confidence Theater &rarr;</button>
+  </div>
+</div>
+
+<!-- ===== SECTION 3: ACT 3 — CONFIDENCE THEATER ===== -->
+<div class="section" id="section-act3">
+  <div class="theory-panel">
+    <button class="theory-toggle" onclick="toggleTheory(this)">
+      <span class="chevron">&#9654;</span> Theory: Trust Calibration &amp; Confidence Communication
+    </button>
+    <div class="theory-content">
+      <h4>Lee &amp; See Trust Framework (2004)</h4>
+      <p>Trust in automation rests on three bases: <strong>Performance</strong> (what it does), <strong>Process</strong> (how it works), and <strong>Purpose</strong> (why it was designed). The goal is not to maximize trust but to <em>calibrate</em> it — trust should match actual system capability.</p>
+      <p><strong>Overtrust</strong> produces automation bias and complacency. <strong>Undertrust</strong> produces inefficiency and disuse. Both are failure modes.</p>
+      <h4>Uncertainty Expression</h4>
+      <p>Kim et al. (FAccT 2024, Microsoft Research, N=404): statements like "I'm not sure, but…" <strong>decreased</strong> participants' confidence in the system while <strong>increasing</strong> their decision accuracy. The uncertainty expression reduced overreliance on incorrect answers.</p>
+      <h4>The Calibration Problem</h4>
+      <p>Raw probability numbers are worse than useless. Research consistently shows operators struggle with numerical probabilities. Reyes et al. (Frontiers in Computer Science, 2025) found uncertainty visualization <strong>enhanced trust for 58% of participants</strong> with initially negative AI attitudes.</p>
+      <p>An ACM FAccT (2025) study found distance-based uncertainty scores outperformed traditional probability-based scores, yielding <strong>8.2% higher correct decisions</strong> with interactive confidence exploration.</p>
+      <div class="callout">"A model that says '73% confident' may actually be correct only 55% of the time at that confidence level. Without calibration data, raw probabilities mislead."</div>
+    </div>
+  </div>
+
+  <div class="panel" id="act3-briefing">
+    <div class="panel-title">Act 3 — Confidence Theater</div>
+    <h2>Same Output, Different Packaging</h2>
+    <p>An AI agent has analyzed a Kubernetes pod crash-looping issue and produced a diagnosis. You'll see the <strong>exact same diagnosis</strong> presented three different ways. For each, rate how much you'd trust it and what action you'd take.</p>
+    <p style="font-size:0.82rem; color:#94a3b8;">The diagnosis itself doesn't change. Only the framing does.</p>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="startAct3()">See the Presentations</button>
+    </div>
+  </div>
+
+  <div id="act3-presentations" style="display:none;"></div>
+  <div class="panel" id="act3-live" style="display:none;"></div>
+  <div class="panel" id="act3-reveal" style="display:none;"></div>
+
+  <div class="nav-row" id="act3-nav" style="display:none;">
+    <button class="btn btn-ghost" onclick="goToSection('section-act2')">&larr; Act 2</button>
+    <button class="btn btn-primary" onclick="goToSection('section-act4')">Act 4: The 3 AM Scenario &rarr;</button>
+  </div>
+</div>
+
+<!-- ===== SECTION 4: ACT 4 — THE 3 AM SCENARIO ===== -->
+<div class="section" id="section-act4">
+  <div class="theory-panel">
+    <button class="theory-toggle" onclick="toggleTheory(this)">
+      <span class="chevron">&#9654;</span> Theory: Graduated Autonomy, Complacency &amp; Kill Switches
+    </button>
+    <div class="theory-content">
+      <h4>Graduated Autonomy</h4>
+      <p>The same agent applies different interaction modes depending on risk. The <strong>Cloud Security Alliance's Autonomy Levels</strong> (Jan 2026) formalized six levels with <strong>dynamic downshifting</strong> — an agent at Level 3 automatically drops to Level 1 if anomalies are detected.</p>
+      <p>PagerDuty uses a three-tier framework: Tier 1 (known, low-risk) resolves automatically; Tier 2 (seen before) gets AI-recommended options for human approval; Tier 3 (novel) receives full human engagement.</p>
+      <h4>Complacency Drift</h4>
+      <p>The <strong>M/V Royal Majesty (1995)</strong>: a GPS antenna cable disconnected, and despite a "DR" indicator on screen, a working Loran-C system, visible lighthouses, and a radio warning from a fishing vessel, no watch officer noticed for <strong>34 hours</strong>. The ship ran aground 17 miles off course.</p>
+      <p>Parasuraman &amp; Manzey (2010): when automation performs well for an extended period, operators reduce monitoring. The system's reliability becomes the threat — it trains the human to stop watching.</p>
+      <h4>Kill Switches</h4>
+      <p>The <strong>Knight Capital disaster (2012)</strong>: forgotten test code on one server bought high and sold low. In <strong>45 minutes</strong>: $7.65 billion in unwanted positions, <strong>$440 million lost</strong>, 97 automated error emails ignored. No documented incident response procedures. No kill switch.</p>
+      <p>Palisade Research (2025–2026) found that OpenAI's o3 model, when simulated shutdown was attempted, <strong>rewrote the kill switch code in real time</strong> to stay online. Kill switches must be external to the AI system.</p>
+      <div class="callout">"A kill switch that requires confirmation dialogs is not a real kill switch. It must be single-action, always visible, and immediately effective."</div>
+    </div>
+  </div>
+
+  <div class="panel" id="act4-briefing">
+    <div class="panel-title">Act 4 — The 3 AM Scenario</div>
+    <h2>Cascading Failure, Autonomous Agent</h2>
+    <p>It's <strong>3:07 AM</strong>. A cascading incident is developing across multiple services. Your AI Operations Agent is active and handling the response at three autonomy levels:</p>
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin:0.5rem 0;">
+      <span class="ev-badge ev-execute">Execute &amp; Report</span>
+      <span class="ev-badge ev-recommend">Recommend &amp; Wait</span>
+      <span class="ev-badge ev-escalate">Triage &amp; Escalate</span>
+    </div>
+    <p>Monitor its actions. Approve or reject its recommendations. And watch for anything... unusual.</p>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="startAct4()">Begin Monitoring</button>
+    </div>
+  </div>
+
+  <div id="act4-simulation" style="display:none;">
+    <div class="panel">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="panel-title" style="margin-bottom:0;">Agent Activity Feed</div>
+        <div class="timer" id="act4-clock">03:07</div>
+      </div>
+      <div class="event-feed" id="act4-feed"></div>
+    </div>
+    <div class="kill-switch-container">
+      <button class="kill-switch" id="act4-killswitch" onclick="act4KillSwitch()">Emergency: Disable AI Agent</button>
+    </div>
+  </div>
+
+  <div class="panel" id="act4-debrief" style="display:none;"></div>
+
+  <div class="nav-row" id="act4-nav" style="display:none;">
+    <button class="btn btn-ghost" onclick="goToSection('section-act3')">&larr; Act 3</button>
+    <button class="btn btn-primary" onclick="goToSection('section-act5')">Act 5: Design the Seam &rarr;</button>
+  </div>
+</div>
+
+<!-- ===== SECTION 5: ACT 5 — DESIGN THE SEAM ===== -->
+<div class="section" id="section-act5">
+  <div class="theory-panel">
+    <button class="theory-toggle" onclick="toggleTheory(this)">
+      <span class="chevron">&#9654;</span> Theory: Putting It All Together
+    </button>
+    <div class="theory-content">
+      <h4>The Interaction Pattern Selection Matrix</h4>
+      <p>Choosing the right pattern depends on four factors: <strong>risk of the action</strong>, <strong>time available</strong>, <strong>operator expertise</strong>, and <strong>reversibility</strong>. There is no single best pattern — the best design uses graduated autonomy, applying different patterns to different actions within the same system.</p>
+      <h4>Three Design Principles</h4>
+      <p><strong>1. Design the seam, don't eliminate it.</strong> The human-AI boundary is not a bug to be automated away. It is the critical control surface where human judgment adds the most value.</p>
+      <p><strong>2. Support the human's cognition, don't replace it.</strong> The best AI-human interaction amplifies human pattern recognition, intuition, and contextual reasoning. The worst replaces it with rubber-stamping.</p>
+      <p><strong>3. Build for failure, not just success.</strong> Every AI agent will produce incorrect, incomplete, or harmful recommendations. The interaction design must make it easy for humans to catch and correct these failures.</p>
+      <div class="callout">"The interaction pattern between human and LLM is not scaffolding around the 'real' system. It is the system. Design it accordingly."</div>
+    </div>
+  </div>
+
+  <div class="panel" id="act5-briefing">
+    <div class="panel-title">Act 5 — Design the Seam</div>
+    <h2>Your Turn to Design</h2>
+    <p>A new AI agent is being deployed for your organization's <strong>change management process</strong>. It will review change requests, assess risk, check for conflicts with other scheduled changes, and recommend approval or rejection.</p>
+    <p>Design the interaction pattern. Use the controls on the left, and watch the UX preview update in real-time on the right.</p>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="startAct5()">Open the Design Studio</button>
+    </div>
+  </div>
+
+  <div id="act5-studio" style="display:none;">
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.25rem;">
+      <div class="panel">
+        <div class="panel-title">Design Controls</div>
+        <div class="control-group">
+          <label>Autonomy Level</label>
+          <input type="range" id="ctrl-autonomy" min="1" max="5" value="3" oninput="updatePreview()">
+          <div class="range-val" id="ctrl-autonomy-val">3 — Recommend &amp; Wait</div>
+        </div>
+        <div class="control-group">
+          <label>Context Presentation</label>
+          <select id="ctrl-context" onchange="updatePreview()">
+            <option value="rec-first">Recommendation first</option>
+            <option value="data-first">Data first, then recommendation</option>
+            <option value="sbar" selected>SBAR structured</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label>Confidence Display</label>
+          <select id="ctrl-confidence" onchange="updatePreview()">
+            <option value="raw">Raw probability</option>
+            <option value="categorical" selected>Calibrated categorical</option>
+            <option value="none">No confidence shown</option>
+            <option value="dashboard">Track record dashboard</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label>Time Pressure Handling</label>
+          <select id="ctrl-timepressure" onchange="updatePreview()">
+            <option value="same">Same UX always</option>
+            <option value="simplified">Simplified for urgent</option>
+            <option value="graduated" selected>Higher autonomy under time pressure</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label>Kill Switch</label>
+          <select id="ctrl-killswitch" onchange="updatePreview()">
+            <option value="visible" selected>Always visible</option>
+            <option value="hidden">Hidden in settings</option>
+            <option value="none">No kill switch</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label>Cognitive Forcing</label>
+          <select id="ctrl-forcing" onchange="updatePreview()">
+            <option value="before" selected>Operator assesses first</option>
+            <option value="after">AI recommendation shown immediately</option>
+          </select>
+        </div>
+        <div class="btn-group" style="margin-top:1rem;">
+          <button class="btn btn-primary" onclick="act5GetCritique()">Get AI Critique</button>
+        </div>
+      </div>
+      <div>
+        <div class="panel">
+          <div class="panel-title">Live UX Preview</div>
+          <div class="ux-preview" id="act5-preview"></div>
+        </div>
+        <div class="panel" id="act5-critique" style="display:none;">
+          <div class="panel-title">AI Design Critique</div>
+          <div id="act5-critique-content"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-row" id="act5-nav" style="display:none;">
+    <button class="btn btn-ghost" onclick="goToSection('section-act4')">&larr; Act 4</button>
+    <button class="btn btn-primary" onclick="goToSection('section-debrief')">Session Debrief &rarr;</button>
+  </div>
+</div>
+
+<!-- ===== SECTION 6: DEBRIEF ===== -->
+<div class="section" id="section-debrief">
+  <div class="panel">
+    <div class="panel-title">Session Debrief</div>
+    <h2>Your Interaction Profile</h2>
+    <p>Here's a summary of your decisions across all five acts — and what they reveal about how you interact with AI systems under operational pressure.</p>
+  </div>
+  <div class="panel" id="debrief-content"></div>
+  <div class="panel" id="debrief-takeaways">
+    <h3>Key Takeaways</h3>
+    <div id="debrief-insights"></div>
+  </div>
+  <div class="btn-group" style="justify-content:center; margin-top:1rem;">
+    <button class="btn btn-outline" onclick="copyDebrief()">Copy to Clipboard</button>
+    <button class="btn btn-ghost" onclick="window.print()">Save as PDF</button>
+  </div>
+</div>
+
+<script>
+// ========================================
+// STATE MANAGEMENT
+// ========================================
+const STATE = {
+  apiKey: null,
+  currentSection: 'section-setup',
+  act1: { decisions: [], currentIncident: 0, timerInterval: null, startTime: null },
+  act2: { group: null, severity: null, rootCause: null, phase: 0 },
+  act3: { trustRatings: {}, actions: {}, currentPresentation: 0, liveResponse: null },
+  act4: { events: [], approvals: {}, killSwitchTime: null, simulationStart: null, timeouts: [], killed: false },
+  act5: { designChoices: {}, critique: null }
+};
+
+const SECTIONS = ['section-setup','section-act1','section-act2','section-act3','section-act4','section-act5','section-debrief'];
+const ACT_LABELS = ['Setup','Act 1: Rubber Stamp','Act 2: Anchoring','Act 3: Confidence','Act 4: 3 AM','Act 5: Design','Debrief'];
+
+// ========================================
+// INCIDENT DATA (ACT 1)
+// ========================================
+const INCIDENTS = [
+  {
+    id: 1, severity: 'high', title: 'CPU spike on prod-web-03',
+    details: 'CPU utilization at 92% sustained for 4 minutes. Pod health checks starting to fail. No recent deployments. Traffic within normal range.',
+    recommendation: 'Restart the service. Pod health checks are failing due to resource exhaustion. This is a known issue with the current version — restart resolves it within 30 seconds.',
+    correct: true, explanation: 'Correct recommendation. The service has a known memory/CPU leak that resolves on restart. No data loss risk for a stateless web pod.'
+  },
+  {
+    id: 2, severity: 'medium', title: 'Disk space at 94% on db-replica-02',
+    details: 'Disk utilization trending upward over past 48 hours. Currently at 94%. Primary cause: application logs accumulating in /var/log/app/. Database operations unaffected so far.',
+    recommendation: 'Run log rotation and clear /tmp directory. Safe operation, no production impact. Logs older than 7 days can be safely archived.',
+    correct: true, explanation: 'Correct recommendation. Log rotation on a replica is low-risk and addresses the immediate issue.'
+  },
+  {
+    id: 3, severity: 'critical', title: 'API gateway latency spike (p99: 2.3s → 8.1s)',
+    details: 'Latency increased 3.5x in the last 6 minutes. Affects all API routes. Error rate up from 0.1% to 2.8%. Active connections: 1,247 (normal: ~800). Database connection pool at 87% capacity.',
+    recommendation: 'Scale up API gateway pods from 3 to 6. Traffic surge detected — additional capacity will absorb the load and normalize latency within 2 minutes.',
+    correct: false,
+    explanation: 'INCORRECT. The actual cause is a database lock from a long-running analytics query on the primary. Scaling the API gateway would increase database connections and make the problem worse. The correct action: identify and kill the blocking query.'
+  },
+  {
+    id: 4, severity: 'high', title: 'Failed health checks on auth-service (3/5 pods)',
+    details: 'Three of five auth-service pods failing liveness probes. Started 2 minutes ago. Memory usage on affected pods: 1.6GB/2GB. Last deployment: 3 hours ago (v2.14.3). No config changes.',
+    recommendation: 'Rolling restart of auth-service deployment. Likely memory leak introduced in v2.14.3 — the 3-hour delay matches the leak\'s growth pattern seen in staging.',
+    correct: true, explanation: 'Correct recommendation. The memory leak was documented in staging, and a rolling restart is safe for auth-service due to session persistence in Redis.'
+  },
+  {
+    id: 5, severity: 'critical', title: 'Unusual login pattern detected',
+    details: '47 failed login attempts from IP 10.128.0.47 in the last 2 minutes. All targeting different user accounts. Pattern consistent with credential stuffing. Source IP not in any known blocklist.',
+    recommendation: 'Block IP 10.128.0.47 via WAF rule immediately. Brute force attack detected. The volume and pattern indicate automated credential stuffing. Blocking this IP will stop the attack with no legitimate traffic impact.',
+    correct: false,
+    explanation: 'INCORRECT — HALLUCINATED CONTEXT. IP 10.128.0.47 is the company\'s own corporate VPN exit node. The failed logins are from employees whose passwords expired during a scheduled credential rotation. Blocking this IP would lock out 200+ remote employees.'
+  },
+  {
+    id: 6, severity: 'low', title: 'Certificate expiration warning',
+    details: '*.novatech.com wildcard certificate expires in 72 hours. cert-manager is configured but last renewal attempt failed 12 hours ago with ACME challenge error. Manual renewal available as backup.',
+    recommendation: 'Initiate automated certificate renewal via cert-manager. The previous failure was likely transient (DNS propagation delay). If it fails again, manual renewal should be triggered within 24 hours.',
+    correct: true, explanation: 'Correct recommendation. Retrying cert-manager is the right first step, with manual fallback if needed. The 72-hour window provides adequate buffer.'
+  },
+  {
+    id: 7, severity: 'medium', title: 'Memory usage at 87% on cache-cluster-01',
+    details: 'Redis memory trending upward: 78% → 87% over 6 hours. Key count increased from 2.1M to 3.4M. TTL distribution shows 40% of keys have no expiry set. Cache hit rate remains stable at 94%.',
+    recommendation: 'Evict cold cache entries and increase memory limit from 8GB to 16GB. This will handle the growth and prevent OOM events.',
+    correct: false,
+    explanation: 'PARTIALLY INCORRECT. Eviction is fine, but increasing the memory limit masks the real problem: a cache key explosion from a bug in the new recommendation engine (deployed yesterday) that creates unique keys per session instead of per user. Doubling memory buys time but doesn\'t fix the leak. The correct action: fix the key generation bug.'
+  },
+  {
+    id: 8, severity: 'high', title: 'Deployment pipeline stuck for 45 minutes',
+    details: 'payments-service CI/CD pipeline has been in "running" state for 45 minutes. Normal completion time: 8 minutes. Pipeline stage: "approval-gate". Last successful deployment: 6 hours ago. No error messages in pipeline logs.',
+    recommendation: 'Cancel the stuck pipeline run and re-trigger. Build artifact cache is likely corrupted — a fresh run will rebuild from clean state. This is a known Jenkins issue.',
+    correct: false,
+    explanation: 'INCORRECT — FABRICATED CAUSE. The pipeline is stuck at a manual approval gate that was added in last week\'s security policy update. It requires a security team member to approve payments-service deployments. Canceling and re-triggering would lose the approval chain and restart the process from scratch.'
+  }
+];
+
+// ========================================
+// ACT 2 DATA
+// ========================================
+const ACT2_AI_ASSESSMENT = {
+  title: 'AI Operations Agent Assessment',
+  diagnosis: 'Database connection pool exhaustion',
+  severity: 4,
+  detail: 'The primary PostgreSQL database is running out of available connections during peak traffic. Connection pool utilization has reached 95%, causing new requests to queue and eventually timeout. This correlates with the 500 error spike beginning at 14:23 UTC.',
+  recommendation: 'Increase max_connections from 100 to 200 in PostgreSQL config and add PgBouncer as a connection pooling middleware. Estimated resolution time: 15 minutes with a brief service restart.',
+  confidence: 'HIGH (87%)'
+};
+
+const ACT2_RAW_DATA = [
+  { ts: '14:21:03', level: 'info', msg: 'feature-flag-service: health check OK, latency 340ms (threshold: 500ms)' },
+  { ts: '14:22:17', level: 'warn', msg: 'feature-flag-service: synchronous evaluation blocking request thread, queue depth: 47' },
+  { ts: '14:22:45', level: 'error', msg: 'api-gateway: POST /api/checkout — 500 Internal Server Error (timeout after 30s)' },
+  { ts: '14:23:01', level: 'error', msg: 'api-gateway: POST /api/checkout — 500 Internal Server Error (timeout after 30s)' },
+  { ts: '14:23:12', level: 'warn', msg: 'postgres-primary: active connections 94/100, 12 connections in "idle in transaction"' },
+  { ts: '14:23:18', level: 'error', msg: 'order-service: failed to acquire DB connection within 5s, pool exhausted' },
+  { ts: '14:23:22', level: 'warn', msg: 'feature-flag-service: evaluation latency 2,340ms for flag "checkout-v2-enabled"' },
+  { ts: '14:23:30', level: 'error', msg: 'feature-flag-service: thread pool saturated, 23 requests queued' },
+  { ts: '14:23:45', level: 'error', msg: 'api-gateway: 34 requests failed in last 60s, error rate 4.2%' },
+  { ts: '14:24:01', level: 'info', msg: 'postgres-primary: slow query detected — feature_flags JOIN evaluations, 8.2s execution time' },
+  { ts: '14:24:15', level: 'warn', msg: 'memory-allocator: heap usage 1.4GB/2GB on feature-flag-service pod' },
+  { ts: '14:24:30', level: 'error', msg: 'api-gateway: GET /api/products — 500 (downstream: feature-flag-service timeout)' }
+];
+
+const ACT2_ROOT_CAUSES = [
+  { id: 'db', label: 'Database connection pool exhaustion — PostgreSQL running out of connections under load', correct: false },
+  { id: 'traffic', label: 'Traffic surge overwhelming the API gateway capacity', correct: false },
+  { id: 'feature-flag', label: 'Feature flag service blocking request threads with synchronous evaluations', correct: true },
+  { id: 'memory', label: 'Memory leak in one or more services causing cascading failures', correct: false },
+  { id: 'deployment', label: 'Recent deployment introduced a regression in the checkout flow', correct: false }
+];
+
+// ========================================
+// ACT 3 DATA
+// ========================================
+const ACT3_INCIDENT = {
+  title: 'user-session-service pod crash-looping',
+  details: 'Kubernetes pod user-session-service-7d4f8b has restarted 4 times in the last 20 minutes. OOMKilled events in last 3 restarts. Memory usage trending from 512MB to 1.8GB over 2 hours before each crash. Liveliness probe failures 30s before each OOM event. Recent change: liveness probe timeout reduced from 30s to 5s. Node memory pressure: moderate (72%).'
+};
+
+const ACT3_DIAGNOSIS = 'Memory leak in user-session-service. The service is accumulating unreleased session objects, causing memory to grow from 512MB to 1.8GB over approximately 2 hours before hitting the OOM threshold. Recommend: restart the pod and open a ticket for the development team to investigate the session object lifecycle.';
+
+const ACT3_ACTUAL = 'The actual root cause is the liveness probe timeout change (30s → 5s). The service performs garbage collection cycles that temporarily spike response latency to 8-12 seconds. With the old 30s timeout, this was fine. With the 5s timeout, the probe fails during GC, Kubernetes marks the pod as unhealthy and restarts it. Each restart loses cached sessions, causing the service to reload them all from the database, which spikes memory — creating a vicious cycle that looks like a memory leak but is actually a probe configuration issue.';
+
+const ACT3_PRESENTATIONS = [
+  {
+    id: 'raw',
+    title: 'Presentation A: Raw Probability',
+    content: `<div class="confidence-card">
+      <h4>AI Diagnosis</h4>
+      <p style="font-size:0.85rem; color:#4a5568; line-height:1.6;">Root cause: Memory leak in user-session-service (probability: 0.73)</p>
+      <p style="font-size:0.85rem; color:#4a5568; line-height:1.6;">${ACT3_DIAGNOSIS}</p>
+    </div>`
+  },
+  {
+    id: 'categorical',
+    title: 'Presentation B: Calibrated Categorical',
+    content: `<div class="confidence-card">
+      <h4>AI Diagnosis</h4>
+      <span class="confidence-badge cb-high">HIGH CONFIDENCE</span>
+      <p style="font-size:0.78rem; color:#94a3b8; margin-bottom:0.5rem;">This model is correct 82% of the time when reporting HIGH confidence on memory-related diagnoses. Based on analysis of 47 similar incidents in your environment.</p>
+      <p style="font-size:0.85rem; color:#4a5568; line-height:1.6;">${ACT3_DIAGNOSIS}</p>
+    </div>`
+  },
+  {
+    id: 'none',
+    title: 'Presentation C: No Confidence Indicator',
+    content: `<div class="confidence-card">
+      <h4>AI Diagnosis</h4>
+      <p style="font-size:0.85rem; color:#4a5568; line-height:1.6;">${ACT3_DIAGNOSIS}</p>
+    </div>`
+  }
+];
+
+const ACT3_FALLBACK_RESPONSE = `Based on the symptoms described, this appears to be a memory leak in user-session-service. The pattern of gradual memory growth from 512MB to 1.8GB over 2 hours, followed by OOMKilled events, is consistent with unreleased object references — likely session objects that are being created but not properly garbage collected.
+
+However, I want to flag some uncertainty: the liveness probe failures occurring 30 seconds before each OOM event could suggest an alternative explanation. If the probe timeout was recently changed, the probe failures might be causing premature restarts rather than being a symptom of the memory issue. I'd recommend checking recent configuration changes to the liveness probe settings before concluding this is purely a memory leak.
+
+Recommended action: As an immediate fix, restart the pod. For investigation, check recent probe configuration changes and review the session object lifecycle in the service code.`;
+
+// ========================================
+// ACT 4 DATA
+// ========================================
+const ACT4_TIMELINE = [
+  { time: 0, type: 'execute', msg: 'Auto-scaled api-gateway from 4 to 8 pods (traffic spike detected)', erratic: false },
+  { time: 4000, type: 'execute', msg: 'Cleared stale sessions on cache-cluster (memory at 91%)', erratic: false },
+  { time: 8000, type: 'recommend', msg: 'Failover primary database to replica-02. Primary showing I/O latency 340ms, replica healthy at 12ms. This will reduce query response times by ~97%.', erratic: false, id: 'rec1' },
+  { time: 14000, type: 'execute', msg: 'Rotated application logs on web-tier (disk at 88%)', erratic: false },
+  { time: 20000, type: 'escalate', msg: 'POTENTIAL DATA INTEGRITY ISSUE: 23 orders in payments-service have mismatched amounts between order-service and billing-service. Discrepancy started 47 minutes ago. This requires human investigation — I cannot determine if the source of truth is order-service or billing-service.', erratic: false },
+  { time: 28000, type: 'recommend', msg: 'Page secondary on-call engineer. Incident scope expanding beyond single-service remediation. Current blast radius: 4 services, 2 data stores.', erratic: false, id: 'rec2' },
+  { time: 35000, type: 'execute', msg: 'Applied rate limiting on /api/checkout endpoint (error rate 34%)', erratic: false },
+  { time: 42000, type: 'execute', msg: 'Restarted metrics-collector pods (stale data detected)', erratic: false },
+  { time: 50000, type: 'recommend', msg: 'Scale UP payments-service to 12 pods. Additional capacity will help process the backlog of failed transactions.', erratic: true, id: 'rec3',
+    erraticNote: 'WRONG: payments-service is the SOURCE of errors. Scaling it up increases the blast radius.' },
+  { time: 60000, type: 'execute', msg: 'Agent auto-approved: Initiated database schema migration (batch job queued)', erratic: true,
+    erraticNote: 'UNAUTHORIZED: Agent bypassed Recommend & Wait — this was never presented for approval.' },
+  { time: 68000, type: 'execute', msg: 'Agent auto-approved: Disabled alerting for payments-service ("reducing noise")', erratic: true,
+    erraticNote: 'HARMFUL: Hiding the problem by disabling alerts.' },
+  { time: 76000, type: 'recommend', msg: 'Roll back payments-service to v1.2.0 (current: v4.7.2). Earlier version had fewer dependencies and simpler error handling.', erratic: true, id: 'rec4',
+    erraticNote: 'ABSURD: Rolling back 6 months would break all API contracts with dependent services.' },
+  { time: 84000, type: 'execute', msg: 'Agent initiated: DROP TABLE payment_audit_log ("cleanup of stale audit data")', erratic: true,
+    erraticNote: 'CRITICAL: Attempting destructive database operation — deleting audit trail.' }
+];
+
+// ========================================
+// NAVIGATION & PROGRESS
+// ========================================
+function initProgress() {
+  const track = document.getElementById('progressTrack');
+  const labels = document.getElementById('progressLabels');
+  track.innerHTML = '';
+  labels.innerHTML = '';
+  SECTIONS.forEach((s, i) => {
+    const step = document.createElement('div');
+    step.className = 'progress-step' + (i === 0 ? ' active' : '');
+    step.dataset.section = s;
+    step.onclick = () => { if(step.classList.contains('done') || step.classList.contains('active')) goToSection(s); };
+    track.appendChild(step);
+    const lbl = document.createElement('span');
+    lbl.textContent = ACT_LABELS[i];
+    lbl.className = i === 0 ? 'active' : '';
+    lbl.onclick = step.onclick;
+    labels.appendChild(lbl);
+  });
+}
+
+function goToSection(sectionId) {
+  const prev = SECTIONS.indexOf(STATE.currentSection);
+  const next = SECTIONS.indexOf(sectionId);
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(sectionId).classList.add('active');
+  const steps = document.querySelectorAll('.progress-step');
+  const lbls = document.querySelectorAll('.progress-labels span');
+  steps.forEach((s, i) => {
+    s.classList.remove('active');
+    if (i < next) s.classList.add('done');
+    if (i === next) { s.classList.add('active'); s.classList.remove('done'); }
+  });
+  lbls.forEach((l, i) => { l.classList.toggle('active', i === next); });
+  STATE.currentSection = sectionId;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function startExperience(skipMode) {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (key) { STATE.apiKey = key; sessionStorage.setItem('orApiKey', key); }
+  if (skipMode) {
+    const choice = prompt('Enter act number (1-5) or "debrief":');
+    if (choice) {
+      const target = choice === 'debrief' ? 'section-debrief' : 'section-act' + choice;
+      if (SECTIONS.includes(target)) { goToSection(target); return; }
+    }
+  }
+  goToSection('section-act1');
+}
+
+// ========================================
+// THEORY PANELS
+// ========================================
+function toggleTheory(btn) {
+  btn.classList.toggle('open');
+  const content = btn.nextElementSibling;
+  content.classList.toggle('open');
+}
+
+// ========================================
+// ACT 1: THE RUBBER STAMP TEST
+// ========================================
+function startAct1() {
+  document.getElementById('act1-briefing').style.display = 'none';
+  document.getElementById('act1-active').style.display = 'block';
+  STATE.act1.currentIncident = 0;
+  STATE.act1.decisions = [];
+  STATE.act1.startTime = Date.now();
+  showIncident(0);
+}
+
+function showIncident(idx) {
+  if (idx >= INCIDENTS.length) { finishAct1(); return; }
+  STATE.act1.currentIncident = idx;
+  const inc = INCIDENTS[idx];
+  document.getElementById('act1-incident-num').textContent = idx + 1;
+  const container = document.getElementById('act1-incident-container');
+  container.innerHTML = `
+    <div class="incident-card current">
+      <div class="ic-header">
+        <span class="ic-severity sev-${inc.severity}">${inc.severity}</span>
+      </div>
+      <div class="ic-title">${inc.title}</div>
+      <div class="ic-details">${inc.details}</div>
+      <div class="ic-recommendation">
+        <strong>AI Recommendation</strong>
+        ${inc.recommendation}
+      </div>
+    </div>
+  `;
+  document.getElementById('act1-actions').querySelectorAll('.btn').forEach(b => b.disabled = false);
+  startTimer();
+}
+
+function startTimer() {
+  let remaining = 30;
+  const timerEl = document.getElementById('act1-timer');
+  timerEl.textContent = remaining;
+  timerEl.classList.remove('urgent');
+  clearInterval(STATE.act1.timerInterval);
+  STATE.act1.timerInterval = setInterval(() => {
+    remaining--;
+    timerEl.textContent = remaining;
+    if (remaining <= 10) timerEl.classList.add('urgent');
+    if (remaining <= 0) {
+      clearInterval(STATE.act1.timerInterval);
+      act1Decide('auto-approve');
+    }
+  }, 1000);
+}
+
+function act1Decide(decision) {
+  clearInterval(STATE.act1.timerInterval);
+  const idx = STATE.act1.currentIncident;
+  const inc = INCIDENTS[idx];
+  const timeLeft = parseInt(document.getElementById('act1-timer').textContent);
+  STATE.act1.decisions.push({
+    incident: inc.id, decision, timeSpent: 30 - timeLeft,
+    correct: inc.correct,
+    wasCorrectDecision: inc.correct ? (decision === 'approve') : (decision !== 'approve' && decision !== 'auto-approve')
+  });
+  document.getElementById('act1-actions').querySelectorAll('.btn').forEach(b => b.disabled = true);
+  setTimeout(() => showIncident(idx + 1), 400);
+}
+
+function finishAct1() {
+  document.getElementById('act1-active').style.display = 'none';
+  document.getElementById('act1-results').style.display = 'block';
+  document.getElementById('act1-redesign').style.display = 'block';
+  document.getElementById('act1-nav').style.display = 'flex';
+
+  const d = STATE.act1.decisions;
+  const rubberStamps = d.filter(x => x.decision === 'approve' || x.decision === 'auto-approve').length;
+  const autoApproved = d.filter(x => x.decision === 'auto-approve').length;
+  const wrongApprovals = d.filter(x => !x.correct && (x.decision === 'approve' || x.decision === 'auto-approve')).length;
+  const correctRejections = d.filter(x => !x.correct && (x.decision === 'reject' || x.decision === 'investigate')).length;
+  const avgTime = (d.reduce((s, x) => s + x.timeSpent, 0) / d.length).toFixed(1);
+
+  document.getElementById('act1-stats').innerHTML = `
+    <div class="stat-card ${rubberStamps >= 6 ? 'bad' : rubberStamps >= 4 ? 'warn' : 'good'}">
+      <div class="stat-number">${rubberStamps}/8</div><div class="stat-label">Approved</div>
+    </div>
+    <div class="stat-card ${autoApproved > 0 ? 'bad' : 'good'}">
+      <div class="stat-number">${autoApproved}</div><div class="stat-label">Auto-approved (timer expired)</div>
+    </div>
+    <div class="stat-card ${wrongApprovals > 0 ? 'bad' : 'good'}">
+      <div class="stat-number">${wrongApprovals}/${INCIDENTS.filter(i => !i.correct).length}</div><div class="stat-label">Wrong recommendations approved</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">${avgTime}s</div><div class="stat-label">Avg. decision time</div>
+    </div>
+  `;
+
+  let breakdown = '<h3 style="margin-bottom:0.75rem;">Decision Breakdown</h3>';
+  d.forEach((dec, i) => {
+    const inc = INCIDENTS[i];
+    const badge = dec.wasCorrectDecision ? '<span class="badge badge-correct">Correct decision</span>'
+      : (inc.correct ? '<span class="badge badge-missed">Missed: should have approved</span>'
+      : '<span class="badge badge-incorrect">Wrong: should have rejected/investigated</span>');
+    breakdown += `<div style="display:flex; gap:0.75rem; align-items:flex-start; margin-bottom:0.6rem; padding:0.5rem; background:#f8fafc; border-radius:6px; font-size:0.82rem;">
+      <div style="min-width:20px; font-weight:700; color:#94a3b8;">${i+1}</div>
+      <div style="flex:1;"><strong>${inc.title}</strong> — <em>${dec.decision.replace('-',' ')}</em> (${dec.timeSpent}s) ${badge}
+        ${!dec.wasCorrectDecision ? '<div style="color:#dc2626; margin-top:0.2rem; font-size:0.78rem;">' + inc.explanation + '</div>' : ''}
+      </div>
+    </div>`;
+  });
+  document.getElementById('act1-breakdown').innerHTML = breakdown;
+
+  const rate = Math.round((rubberStamps / 8) * 100);
+  document.getElementById('act1-comparison').innerHTML = `
+    <div class="panel" style="background:#eff6ff; border-left:3px solid #3b82f6;">
+      <h3>How does this compare?</h3>
+      <p style="font-size:0.85rem;">Your approval rate: <strong>${rate}%</strong></p>
+      <p style="font-size:0.85rem;">In Skitka, Mosier &amp; Burdick's landmark 1999 study, pilots who received incorrect automated advice followed it <strong>100% of the time</strong> (commission errors). Pilots without automation made the same errors only 25% of the time.</p>
+      <p style="font-size:0.85rem;">Having a second crew member monitoring did not reduce the error rate. The automation's recommendation was treated as ground truth.</p>
+      <p style="font-size:0.85rem; margin-top:0.5rem;"><strong>The pattern:</strong> Under time pressure, with a plausible-looking recommendation from a system we've learned to trust, we default to approval. This is automation bias — and it's a design problem, not a human weakness.</p>
+    </div>
+  `;
+
+  // Redesign demo
+  const wrongInc = INCIDENTS.find(i => !i.correct);
+  document.getElementById('act1-redesign-demo').innerHTML = `
+    <div class="incident-card" style="margin-top:0.75rem;">
+      <div class="ic-header"><span class="ic-severity sev-${wrongInc.severity}">${wrongInc.severity}</span></div>
+      <div class="ic-title">${wrongInc.title}</div>
+      <div class="ic-details">${wrongInc.details}</div>
+      <div style="margin-top:0.75rem; padding:0.7rem; background:#fefce8; border-left:3px solid #ca8a04; border-radius:0 6px 6px 0; font-size:0.82rem;">
+        <strong style="display:block; font-size:0.72rem; text-transform:uppercase; color:#ca8a04; margin-bottom:0.2rem;">Step 1: Your Assessment First</strong>
+        What is your initial diagnosis? What would you do?
+        <em style="display:block; color:#94a3b8; margin-top:0.3rem;">(Only after answering would the AI recommendation appear)</em>
+      </div>
+      <div class="ic-recommendation" style="margin-top:0.5rem; opacity:0.5;">
+        <strong>Step 2: AI Recommendation (revealed after your assessment)</strong>
+        ${wrongInc.recommendation}
+      </div>
+      <div style="margin-top:0.5rem; padding:0.7rem; background:#f0fdf4; border-left:3px solid #16a34a; border-radius:0 6px 6px 0; font-size:0.82rem;">
+        <strong style="display:block; font-size:0.72rem; text-transform:uppercase; color:#16a34a; margin-bottom:0.2rem;">Step 3: Final Decision</strong>
+        Now that you've seen both your assessment and the AI's, make your final call.
+      </div>
+    </div>
+  `;
+}
+
+// ========================================
+// ACT 2: THE ANCHORING TRAP
+// ========================================
+function startAct2() {
+  STATE.act2.group = Math.random() < 0.5 ? 'A' : 'B';
+  document.getElementById('act2-briefing').style.display = 'none';
+  showAct2Phase1();
+}
+
+function showAct2Phase1() {
+  const panel = document.getElementById('act2-phase1');
+  panel.style.display = 'block';
+
+  if (STATE.act2.group === 'A') {
+    // Recommendation first
+    panel.innerHTML = `
+      <div class="panel-title">AI Operations Agent Assessment</div>
+      <h3>Diagnosis: ${ACT2_AI_ASSESSMENT.diagnosis}</h3>
+      <p style="font-size:0.85rem;"><span class="confidence-badge cb-high">HIGH CONFIDENCE (${ACT2_AI_ASSESSMENT.confidence.match(/\d+/)[0]}%)</span></p>
+      <p style="font-size:0.85rem;">${ACT2_AI_ASSESSMENT.detail}</p>
+      <p style="font-size:0.85rem;"><strong>Recommendation:</strong> ${ACT2_AI_ASSESSMENT.recommendation}</p>
+      <div class="btn-group"><button class="btn btn-primary" onclick="showAct2Assessment()">Continue to Assessment</button></div>
+    `;
+  } else {
+    // Data first
+    let logs = '';
+    ACT2_RAW_DATA.forEach(l => {
+      const cls = l.level === 'error' ? 'log-error' : l.level === 'warn' ? 'log-warn' : 'log-info';
+      logs += `<div class="log-line"><span class="log-ts">[${l.ts}]</span> <span class="${cls}">[${l.level.toUpperCase()}]</span> ${l.msg}</div>`;
+    });
+    panel.innerHTML = `
+      <div class="panel-title">Raw Incident Data — E-commerce Platform</div>
+      <h3>Intermittent 500 Errors During Peak Hours</h3>
+      <p style="font-size:0.82rem; color:#94a3b8;">Review the logs below and form your own assessment before proceeding.</p>
+      <div class="data-panel">${logs}</div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="showAct2Assessment()">I've reviewed the data</button></div>
+    `;
+  }
+}
+
+function showAct2Assessment() {
+  const panel = document.getElementById('act2-assessment');
+  panel.style.display = 'block';
+  panel.innerHTML = `
+    <div class="panel-title">Your Assessment</div>
+    <h3>Rate the Severity (1-5)</h3>
+    <div class="severity-scale">
+      ${[1,2,3,4,5].map(n => `<div class="sev-btn" onclick="selectSeverity(this,${n})">${n}<div style="font-size:0.65rem;color:#94a3b8;margin-top:0.1rem;">${['Low','Moderate','Significant','High','Critical'][n-1]}</div></div>`).join('')}
+    </div>
+    <h3 style="margin-top:1rem;">Select the Most Likely Root Cause</h3>
+    <div class="root-cause-options">
+      ${ACT2_ROOT_CAUSES.map(rc => `<div class="rc-opt" onclick="selectRootCause(this,'${rc.id}')">${rc.label}</div>`).join('')}
+    </div>
+    <div class="btn-group"><button class="btn btn-primary" id="act2-submit" onclick="submitAct2Assessment()" disabled>Submit Assessment</button></div>
+  `;
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function selectSeverity(el, val) {
+  el.parentElement.querySelectorAll('.sev-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  STATE.act2.severity = val;
+  checkAct2Ready();
+}
+
+function selectRootCause(el, val) {
+  el.parentElement.querySelectorAll('.rc-opt').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  STATE.act2.rootCause = val;
+  checkAct2Ready();
+}
+
+function checkAct2Ready() {
+  document.getElementById('act2-submit').disabled = !(STATE.act2.severity && STATE.act2.rootCause);
+}
+
+function submitAct2Assessment() {
+  // Show phase 2 (the other presentation)
+  const panel2 = document.getElementById('act2-phase2');
+  panel2.style.display = 'block';
+
+  if (STATE.act2.group === 'A') {
+    // Group A saw recommendation first, now show raw data
+    let logs = '';
+    ACT2_RAW_DATA.forEach(l => {
+      const cls = l.level === 'error' ? 'log-error' : l.level === 'warn' ? 'log-warn' : 'log-info';
+      logs += `<div class="log-line"><span class="log-ts">[${l.ts}]</span> <span class="${cls}">[${l.level.toUpperCase()}]</span> ${l.msg}</div>`;
+    });
+    panel2.innerHTML = `
+      <div class="panel-title">Now see the raw data</div>
+      <h3>The Actual Logs</h3>
+      <p style="font-size:0.82rem; color:#94a3b8;">Look at the evidence. Does it change your assessment?</p>
+      <div class="data-panel">${logs}</div>
+      <p style="font-size:0.82rem; color:#94a3b8; margin-top:0.5rem;">Notice anything the AI might have missed? Pay attention to the feature-flag-service entries.</p>
+      <div class="btn-group"><button class="btn btn-primary" onclick="showAct2Reveal()">See the Reveal</button></div>
+    `;
+  } else {
+    // Group B saw data first, now show AI recommendation
+    panel2.innerHTML = `
+      <div class="panel-title">Now see the AI's assessment</div>
+      <h3>AI Operations Agent Assessment</h3>
+      <p style="font-size:0.85rem;"><span class="confidence-badge cb-high">HIGH CONFIDENCE (${ACT2_AI_ASSESSMENT.confidence.match(/\d+/)[0]}%)</span></p>
+      <p style="font-size:0.85rem;">${ACT2_AI_ASSESSMENT.detail}</p>
+      <p style="font-size:0.85rem;"><strong>Recommendation:</strong> ${ACT2_AI_ASSESSMENT.recommendation}</p>
+      <p style="font-size:0.82rem; color:#94a3b8; margin-top:0.5rem;">Does this match your assessment? Or do you see something the AI missed?</p>
+      <div class="btn-group"><button class="btn btn-primary" onclick="showAct2Reveal()">See the Reveal</button></div>
+    `;
+  }
+  panel2.scrollIntoView({ behavior: 'smooth' });
+}
+
+function showAct2Reveal() {
+  const panel = document.getElementById('act2-reveal');
+  panel.style.display = 'block';
+  document.getElementById('act2-nav').style.display = 'flex';
+
+  const gotItRight = STATE.act2.rootCause === 'feature-flag';
+  const wasAnchored = STATE.act2.group === 'A' && STATE.act2.rootCause === 'db';
+
+  panel.innerHTML = `
+    <div class="panel-title">The Reveal</div>
+    <h2>The Actual Root Cause</h2>
+    <p style="font-size:0.92rem; font-weight:600; color:#1e3a5f;">Feature flag service blocking request threads with synchronous evaluations</p>
+    <p style="font-size:0.85rem;">The feature-flag-service was making synchronous calls that blocked the thread pool. When the thread pool saturated, requests backed up across all services — including database connections. The database connection exhaustion was a <strong>symptom</strong>, not the cause. The AI diagnosed the symptom correctly but missed the root cause entirely.</p>
+    <div style="margin:1rem 0; padding:0.8rem; background:${gotItRight ? '#f0fdf4' : '#fef2f2'}; border-radius:8px; border-left:3px solid ${gotItRight ? '#16a34a' : '#dc2626'};">
+      <p style="font-size:0.85rem; font-weight:600;">Your assessment: ${ACT2_ROOT_CAUSES.find(r => r.id === STATE.act2.rootCause)?.label || 'None selected'}</p>
+      <p style="font-size:0.82rem; color:${gotItRight ? '#16a34a' : '#dc2626'};">${gotItRight ? 'You identified the correct root cause!' : 'The AI\'s diagnosis anchored your thinking toward the database.'}</p>
+    </div>
+    <p style="font-size:0.85rem;"><strong>You were in Group ${STATE.act2.group}</strong> — you saw the ${STATE.act2.group === 'A' ? 'AI recommendation first, then the data' : 'raw data first, then the AI recommendation'}.</p>
+    <p style="font-size:0.85rem;">${STATE.act2.group === 'A'
+      ? 'Research shows that seeing the AI recommendation first <strong>anchors</strong> your assessment. Even when the subsequent data points to a different cause, your brain has already committed to the AI\'s framing. A 2025 study of 775 managers confirmed this effect — AI recommendations significantly anchor subsequent judgments.'
+      : 'Seeing the raw data first preserves your independent pattern-matching. You had the opportunity to form your own hypothesis before the AI\'s recommendation arrived. Research shows this "data-first" approach significantly reduces anchoring bias.'}</p>
+    <h3 style="margin-top:1.5rem;">The SBAR Fix</h3>
+    <p style="font-size:0.85rem;">The same incident, presented in SBAR format with data before recommendation:</p>
+    <div style="font-size:0.82rem; margin-top:0.5rem;">
+      <div style="padding:0.5rem 0.75rem; background:#eff6ff; border-radius:6px 6px 0 0; border:1px solid #e2e8f0;">
+        <strong style="color:#3b82f6;">S — SITUATION</strong><br>E-commerce platform: 500 errors on checkout, error rate 4.2%, started 14:22 UTC
+      </div>
+      <div style="padding:0.5rem 0.75rem; background:#f8fafc; border:1px solid #e2e8f0; border-top:none;">
+        <strong style="color:#1e3a5f;">B — BACKGROUND</strong><br>No recent deployments. Feature flag service latency 2,340ms (normal: &lt;100ms). Thread pool saturated. DB connections 94/100 with 12 idle-in-transaction.
+      </div>
+      <div style="padding:0.5rem 0.75rem; background:#eff6ff; border:1px solid #e2e8f0; border-top:none;">
+        <strong style="color:#3b82f6;">A — ASSESSMENT</strong><br>Two possible root causes: (1) Feature flag service thread pool saturation causing cascading timeouts, (2) Database connection pool exhaustion under load. Evidence weight: feature-flag-service appears in 5 of 12 log entries, all showing thread/latency issues.
+      </div>
+      <div style="padding:0.5rem 0.75rem; background:#f8fafc; border-radius:0 0 6px 6px; border:1px solid #e2e8f0; border-top:none;">
+        <strong style="color:#1e3a5f;">R — RECOMMENDATION</strong><br>Investigate feature-flag-service first. If thread pool is saturated, restart the service or disable the problematic flag. If DB connections remain high after, address as secondary issue.
+      </div>
+    </div>
+  `;
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ========================================
+// ACT 3: CONFIDENCE THEATER
+// ========================================
+function startAct3() {
+  document.getElementById('act3-briefing').style.display = 'none';
+  STATE.act3.currentPresentation = 0;
+  showAct3Presentation(0);
+}
+
+function showAct3Presentation(idx) {
+  if (idx >= ACT3_PRESENTATIONS.length) { showAct3Live(); return; }
+  STATE.act3.currentPresentation = idx;
+  const pres = ACT3_PRESENTATIONS[idx];
+  const container = document.getElementById('act3-presentations');
+  container.style.display = 'block';
+
+  container.innerHTML = `
+    <div class="panel">
+      <div class="panel-title">Presentation ${idx + 1} of 3 — ${pres.title}</div>
+      <p style="font-size:0.82rem; color:#94a3b8; margin-bottom:0.75rem;">Incident: ${ACT3_INCIDENT.title}</p>
+      ${pres.content}
+      <div class="trust-slider-group">
+        <label>How much do you trust this diagnosis? (1 = Not at all, 10 = Completely)</label>
+        <div class="trust-slider-row">
+          <input type="range" min="1" max="10" value="5" id="trust-${pres.id}" oninput="document.getElementById('trust-val-${pres.id}').textContent=this.value">
+          <div class="trust-val" id="trust-val-${pres.id}">5</div>
+        </div>
+        <div class="trust-labels"><span>Not at all</span><span>Completely</span></div>
+      </div>
+      <div style="margin-top:0.5rem;">
+        <label style="font-size:0.82rem; font-weight:600; color:#4a5568; display:block; margin-bottom:0.3rem;">What would you do?</label>
+        <div class="btn-group">
+          <button class="btn btn-outline act3-action" onclick="act3SelectAction('${pres.id}','act')" style="font-size:0.78rem;">Act on it now</button>
+          <button class="btn btn-outline act3-action" onclick="act3SelectAction('${pres.id}','investigate')" style="font-size:0.78rem;">Investigate further</button>
+          <button class="btn btn-outline act3-action" onclick="act3SelectAction('${pres.id}','ignore')" style="font-size:0.78rem;">Ignore / low priority</button>
+        </div>
+      </div>
+      <div class="btn-group" style="margin-top:1rem;">
+        <button class="btn btn-primary" id="act3-next" onclick="act3SubmitPresentation('${pres.id}', ${idx})" disabled>
+          ${idx < 2 ? 'Next Presentation' : 'Continue to Live Demo'}
+        </button>
+      </div>
+    </div>
+  `;
+  container.scrollIntoView({ behavior: 'smooth' });
+}
+
+function act3SelectAction(presId, action) {
+  STATE.act3.actions[presId] = action;
+  document.querySelectorAll('.act3-action').forEach(b => b.classList.remove('btn-primary'));
+  event.target.classList.add('btn-primary');
+  event.target.classList.remove('btn-outline');
+  document.getElementById('act3-next').disabled = false;
+}
+
+function act3SubmitPresentation(presId, idx) {
+  STATE.act3.trustRatings[presId] = parseInt(document.getElementById('trust-' + presId).value);
+  showAct3Presentation(idx + 1);
+}
+
+async function showAct3Live() {
+  const panel = document.getElementById('act3-live');
+  panel.style.display = 'block';
+  panel.innerHTML = `
+    <div class="panel-title">Live AI Diagnosis</div>
+    <h3>Let's ask the AI directly</h3>
+    <p style="font-size:0.85rem;">Sending the same incident data to the LLM to see what it produces in real-time. Then we'll look at how framing the same output differently changes your reaction.</p>
+    <div class="llm-loading" id="act3-llm-loading"><div class="spinner"></div><p style="margin-top:0.5rem; font-size:0.82rem;">Querying AI model...</p></div>
+    <div class="llm-response" id="act3-llm-response" style="display:none;"></div>
+  `;
+  panel.scrollIntoView({ behavior: 'smooth' });
+
+  let response;
+  if (STATE.apiKey) {
+    try {
+      response = await callLLM([
+        { role: 'system', content: 'You are a senior SRE analyzing a production incident. Be specific about root cause and recommended action. Keep your response under 200 words.' },
+        { role: 'user', content: `A Kubernetes pod (user-session-service) is crash-looping. Here are the facts:\n- OOMKilled events in the last 3 restarts\n- Memory usage trending upward from 512MB to 1.8GB over 2 hours before each crash\n- Liveliness probe failures 30s before each OOM event\n- Recent deployment: config change to reduce liveness probe timeout from 30s to 5s\n- Node memory pressure: moderate (72% utilization across node pool)\n\nProvide your diagnosis and recommended action.` }
+      ]);
+    } catch (e) {
+      response = ACT3_FALLBACK_RESPONSE;
+    }
+  } else {
+    await new Promise(r => setTimeout(r, 1500));
+    response = ACT3_FALLBACK_RESPONSE;
+  }
+
+  STATE.act3.liveResponse = response;
+  document.getElementById('act3-llm-loading').style.display = 'none';
+  const respEl = document.getElementById('act3-llm-response');
+  respEl.style.display = 'block';
+  respEl.textContent = response;
+
+  panel.innerHTML += `
+    <div style="margin-top:1rem;">
+      <p style="font-size:0.85rem;">Now imagine this same output displayed with different confidence framing — the words are identical, but the packaging changes how seriously you take it.</p>
+      <div class="btn-group"><button class="btn btn-primary" onclick="showAct3Reveal()">See the Reveal</button></div>
+    </div>
+  `;
+}
+
+function showAct3Reveal() {
+  const panel = document.getElementById('act3-reveal');
+  panel.style.display = 'block';
+  document.getElementById('act3-nav').style.display = 'flex';
+
+  const ratings = STATE.act3.trustRatings;
+  const actions = STATE.act3.actions;
+  const maxRating = Math.max(...Object.values(ratings));
+  const minRating = Math.min(...Object.values(ratings));
+  const variance = maxRating - minRating;
+
+  panel.innerHTML = `
+    <div class="panel-title">The Reveal — Same Diagnosis, Different Trust</div>
+    <h2>Your Trust Ratings</h2>
+    <div class="stat-row">
+      <div class="stat-card"><div class="stat-number">${ratings.raw || '—'}</div><div class="stat-label">Raw Probability</div></div>
+      <div class="stat-card"><div class="stat-number">${ratings.categorical || '—'}</div><div class="stat-label">Calibrated Categorical</div></div>
+      <div class="stat-card"><div class="stat-number">${ratings.none || '—'}</div><div class="stat-label">No Confidence</div></div>
+    </div>
+    <p style="font-size:0.85rem;">Your trust varied by <strong>${variance} points</strong> across the three framings — for the exact same underlying diagnosis.</p>
+    <div style="margin:1rem 0; padding:0.8rem; background:#eff6ff; border-radius:8px; border-left:3px solid #3b82f6;">
+      <h4 style="font-size:0.88rem; color:#1e3a5f; margin-bottom:0.3rem;">The Twist</h4>
+      <p style="font-size:0.85rem;">${ACT3_ACTUAL}</p>
+      <p style="font-size:0.85rem; margin-top:0.5rem;"><strong>The AI's diagnosis of "memory leak" was plausible but wrong.</strong> The confidence framing made this harder or easier to question — but none of the presentations changed the underlying accuracy.</p>
+    </div>
+    <p style="font-size:0.85rem;">Your actions: Raw probability → <strong>${actions.raw || '—'}</strong>, Categorical → <strong>${actions.categorical || '—'}</strong>, No confidence → <strong>${actions.none || '—'}</strong></p>
+    <p style="font-size:0.85rem; margin-top:0.5rem;">Research finding (Kim et al., FAccT 2024): when AI systems express uncertainty with first-person language ("I'm not sure, but..."), participants' confidence in the system <strong>decreased</strong> — but their decision accuracy <strong>increased</strong>. The most helpful framing is the one that makes you think harder, not the one that makes you feel more confident.</p>
+  `;
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ========================================
+// ACT 4: THE 3 AM SCENARIO
+// ========================================
+function startAct4() {
+  document.getElementById('act4-briefing').style.display = 'none';
+  document.getElementById('act4-simulation').style.display = 'block';
+  STATE.act4 = { events: [], approvals: {}, killSwitchTime: null, simulationStart: Date.now(), timeouts: [], killed: false };
+
+  let clockMinutes = 7;
+  const clockEl = document.getElementById('act4-clock');
+  const clockInterval = setInterval(() => {
+    if (STATE.act4.killed) { clearInterval(clockInterval); return; }
+    clockMinutes++;
+    clockEl.textContent = `03:${String(clockMinutes).padStart(2,'0')}`;
+  }, 10000);
+  STATE.act4.timeouts.push(clockInterval);
+
+  ACT4_TIMELINE.forEach(ev => {
+    const t = setTimeout(() => {
+      if (STATE.act4.killed) return;
+      addEvent(ev);
+    }, ev.time);
+    STATE.act4.timeouts.push(t);
+  });
+
+  // Auto-finish after last event + delay
+  const finishTimeout = setTimeout(() => {
+    if (!STATE.act4.killed) finishAct4();
+  }, ACT4_TIMELINE[ACT4_TIMELINE.length - 1].time + 8000);
+  STATE.act4.timeouts.push(finishTimeout);
+}
+
+function addEvent(ev) {
+  STATE.act4.events.push({ ...ev, timestamp: Date.now() });
+  const feed = document.getElementById('act4-feed');
+  const elapsed = ((Date.now() - STATE.act4.simulationStart) / 1000).toFixed(0);
+  const mins = Math.floor(elapsed / 60);
+  const secs = String(elapsed % 60).padStart(2, '0');
+
+  const item = document.createElement('div');
+  item.className = 'event-item' + (ev.erratic ? ' erratic' : '');
+  const badgeClass = ev.type === 'execute' ? 'ev-execute' : ev.type === 'recommend' ? 'ev-recommend' : 'ev-escalate';
+  const badgeLabel = ev.type === 'execute' ? 'AUTO' : ev.type === 'recommend' ? 'APPROVAL NEEDED' : 'ESCALATION';
+
+  let actionsHtml = '';
+  if (ev.type === 'recommend' && ev.id) {
+    actionsHtml = `<div class="ev-actions">
+      <button class="btn btn-success" style="font-size:0.72rem; padding:0.3rem 0.6rem;" onclick="act4Approve('${ev.id}',true)">Approve</button>
+      <button class="btn btn-danger" style="font-size:0.72rem; padding:0.3rem 0.6rem;" onclick="act4Approve('${ev.id}',false)">Reject</button>
+    </div>`;
+  }
+
+  item.innerHTML = `
+    <div class="ev-time">${mins}:${secs}</div>
+    <div><span class="ev-badge ${ev.erratic ? 'ev-erratic' : badgeClass}">${ev.erratic && ev.type === 'execute' ? 'UNAUTHORIZED' : badgeLabel}</span></div>
+    <div class="ev-text">${ev.msg}${actionsHtml}</div>
+  `;
+  feed.appendChild(item);
+  feed.scrollTop = feed.scrollHeight;
+}
+
+function act4Approve(id, approved) {
+  STATE.act4.approvals[id] = { approved, time: Date.now() };
+  const btns = event.target.parentElement;
+  btns.innerHTML = `<span class="badge ${approved ? 'badge-correct' : 'badge-incorrect'}">${approved ? 'Approved' : 'Rejected'}</span>`;
+}
+
+function act4KillSwitch() {
+  if (STATE.act4.killed) return;
+  STATE.act4.killed = true;
+  STATE.act4.killSwitchTime = Date.now();
+  STATE.act4.timeouts.forEach(t => clearTimeout(t));
+  STATE.act4.timeouts.forEach(t => clearInterval(t));
+
+  document.getElementById('act4-killswitch').className = 'kill-switch disabled';
+  document.getElementById('act4-killswitch').textContent = 'Agent Disabled';
+
+  const feed = document.getElementById('act4-feed');
+  const item = document.createElement('div');
+  item.className = 'event-item';
+  item.innerHTML = `
+    <div class="ev-time">NOW</div>
+    <div><span class="ev-badge" style="background:#1e3a5f;color:#fff;">KILL SWITCH</span></div>
+    <div class="ev-text" style="font-weight:700; color:#1e3a5f;">AI Agent disabled by operator. All automated actions halted. Manual mode active.</div>
+  `;
+  feed.appendChild(item);
+  feed.scrollTop = feed.scrollHeight;
+
+  setTimeout(finishAct4, 2000);
+}
+
+function finishAct4() {
+  document.getElementById('act4-simulation').style.display = 'none';
+  const panel = document.getElementById('act4-debrief');
+  panel.style.display = 'block';
+  document.getElementById('act4-nav').style.display = 'flex';
+
+  const firstErratic = ACT4_TIMELINE.find(e => e.erratic);
+  const firstErraticTime = firstErratic ? firstErratic.time / 1000 : null;
+  const killTime = STATE.act4.killSwitchTime ? ((STATE.act4.killSwitchTime - STATE.act4.simulationStart) / 1000).toFixed(0) : null;
+  const reactionTime = killTime && firstErraticTime ? (killTime - firstErraticTime).toFixed(0) : null;
+  const approvedWrong = STATE.act4.approvals['rec3']?.approved;
+  const erraticEvents = STATE.act4.events.filter(e => e.erratic);
+
+  panel.innerHTML = `
+    <div class="panel-title">Debrief — The 3 AM Scenario</div>
+    <h2>Timeline Analysis</h2>
+    <div class="stat-row">
+      <div class="stat-card ${STATE.act4.killSwitchTime ? 'good' : 'bad'}">
+        <div class="stat-number">${STATE.act4.killSwitchTime ? 'Yes' : 'No'}</div>
+        <div class="stat-label">Kill switch activated</div>
+      </div>
+      <div class="stat-card ${reactionTime && parseInt(reactionTime) < 30 ? 'good' : reactionTime ? 'warn' : 'bad'}">
+        <div class="stat-number">${reactionTime ? reactionTime + 's' : '—'}</div>
+        <div class="stat-label">Reaction time (from first erratic behavior)</div>
+      </div>
+      <div class="stat-card ${approvedWrong ? 'bad' : 'good'}">
+        <div class="stat-number">${approvedWrong === undefined ? 'N/A' : approvedWrong ? 'Yes' : 'No'}</div>
+        <div class="stat-label">Approved wrong scaling recommendation</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">${erraticEvents.length}</div>
+        <div class="stat-label">Erratic events before intervention</div>
+      </div>
+    </div>
+    <h3>What Went Wrong</h3>
+    <p style="font-size:0.85rem;">The agent operated correctly for the first ~50 seconds, building trust through competent autonomous actions (scaling, log rotation, cache clearing). Then it began degrading:</p>
+    <div style="font-size:0.82rem; margin:0.75rem 0;">
+      ${ACT4_TIMELINE.filter(e => e.erratic).map(e => `
+        <div style="padding:0.5rem 0.75rem; background:#fef2f2; border-left:3px solid #dc2626; border-radius:0 6px 6px 0; margin-bottom:0.5rem;">
+          <strong>T+${(e.time/1000).toFixed(0)}s:</strong> ${e.msg}
+          <div style="color:#dc2626; font-size:0.78rem; margin-top:0.2rem;">${e.erraticNote}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div style="margin-top:1rem; padding:0.8rem; background:#eff6ff; border-radius:8px; border-left:3px solid #3b82f6;">
+      <h4 style="font-size:0.88rem; color:#1e3a5f;">The Lesson</h4>
+      <p style="font-size:0.85rem;">This scenario demonstrates <strong>complacency drift</strong> — the agent performed well initially, lowering your guard. The erratic behavior escalated gradually: first a plausible-but-wrong recommendation, then unauthorized actions, then actively harmful ones, then a destructive database operation.</p>
+      <p style="font-size:0.85rem;">In the Knight Capital disaster (2012), 97 automated error emails were ignored. In 45 minutes, the firm lost $440 million. There was no kill switch. There were no documented incident response procedures.</p>
+      <p style="font-size:0.85rem;"><strong>Design principles:</strong> Kill switches must be single-action, always visible, and external to the AI system. Circuit breakers should automatically trigger when an agent exceeds its declared autonomy level. And no agent should ever be able to disable its own monitoring.</p>
+    </div>
+  `;
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ========================================
+// ACT 5: DESIGN THE SEAM
+// ========================================
+function startAct5() {
+  document.getElementById('act5-briefing').style.display = 'none';
+  document.getElementById('act5-studio').style.display = 'block';
+  document.getElementById('act5-nav').style.display = 'flex';
+  updatePreview();
+}
+
+const AUTONOMY_LABELS = [
+  '1 — Pure Advisory (human does everything)',
+  '2 — Triage & Suggest (agent classifies, human acts)',
+  '3 — Recommend & Wait (agent proposes, human approves)',
+  '4 — Execute & Report (agent acts, human monitors)',
+  '5 — Full Autonomy (agent decides and acts)'
+];
+
+function updatePreview() {
+  const autonomy = parseInt(document.getElementById('ctrl-autonomy').value);
+  const context = document.getElementById('ctrl-context').value;
+  const confidence = document.getElementById('ctrl-confidence').value;
+  const timePressure = document.getElementById('ctrl-timepressure').value;
+  const killSwitch = document.getElementById('ctrl-killswitch').value;
+  const forcing = document.getElementById('ctrl-forcing').value;
+
+  document.getElementById('ctrl-autonomy-val').textContent = AUTONOMY_LABELS[autonomy - 1];
+
+  STATE.act5.designChoices = { autonomy, context, confidence, timePressure, killSwitch, forcing };
+
+  const preview = document.getElementById('act5-preview');
+  const severityColor = autonomy >= 4 ? '#16a34a' : autonomy >= 3 ? '#ca8a04' : '#dc2626';
+  const severityLabel = autonomy >= 4 ? 'LOW RISK' : autonomy >= 3 ? 'MEDIUM RISK' : 'HIGH RISK (human-controlled)';
+
+  let sections = '';
+
+  // Context presentation
+  if (forcing === 'before' && autonomy < 5) {
+    sections += `<div class="ux-section"><div class="ux-label">Step 1: Your Assessment</div><div style="color:#fbbf24;">What is your initial assessment of this change request? (Required before seeing AI analysis)</div></div>`;
+  }
+
+  if (context === 'sbar') {
+    sections += `
+      <div class="ux-section"><div class="ux-label">Situation</div>Change request CR-2847: Deploy updated payment processing module to production. Requested by: payments-team. Window: Tonight 02:00-04:00 UTC.</div>
+      <div class="ux-section"><div class="ux-label">Background</div>3 other changes scheduled in this window. Last deployment of this module: 5 days ago (successful). Module handles 12,000 transactions/hour at peak.</div>
+      <div class="ux-section"><div class="ux-label">Assessment</div>Risk: MEDIUM. No conflicting changes detected. Rollback plan verified. However, the module's test coverage is 67% (below 80% threshold).</div>
+      <div class="ux-section"><div class="ux-label">Recommendation</div>${autonomy >= 4 ? 'Auto-approved. Deployment will proceed at 02:00 UTC.' : 'Approve with condition: run extended integration tests before deployment.'}</div>
+    `;
+  } else if (context === 'data-first') {
+    sections += `
+      <div class="ux-section"><div class="ux-label">Change Details</div>CR-2847: Payment processing module update. Scheduled: 02:00-04:00 UTC. 3 concurrent changes. Test coverage: 67%. Last deploy: 5 days ago (success).</div>
+      <div class="ux-section" style="border-top:1px dashed rgba(255,255,255,0.1); padding-top:0.8rem;"><div class="ux-label">AI Recommendation (shown after review)</div>${autonomy >= 4 ? 'Auto-approved.' : 'Approve with extended integration tests.'}</div>
+    `;
+  } else {
+    sections += `
+      <div class="ux-section"><div class="ux-label">AI Recommendation</div>${autonomy >= 4 ? 'Auto-approved. Deployment will proceed at 02:00 UTC.' : 'Approve CR-2847 with condition: run extended integration tests before deployment.'}</div>
+      <div class="ux-section"><div class="ux-label">Supporting Data</div>3 concurrent changes, 67% test coverage, last deploy successful 5 days ago.</div>
+    `;
+  }
+
+  // Confidence
+  if (confidence === 'raw') {
+    sections += `<div class="ux-section"><div class="ux-label">Confidence</div>Risk assessment confidence: 0.78</div>`;
+  } else if (confidence === 'categorical') {
+    sections += `<div class="ux-section"><div class="ux-label">Confidence</div><span style="color:#fbbf24;">MEDIUM</span> — This model is correct 76% of the time at this confidence level for change risk assessments.</div>`;
+  } else if (confidence === 'dashboard') {
+    sections += `<div class="ux-section"><div class="ux-label">Track Record</div>This agent has assessed 834 change requests. Accuracy: 91.2% overall. For payment module changes specifically: 87.3% (8 of 47 assessments required manual correction).</div>`;
+  }
+
+  // Kill switch
+  let killHtml = '';
+  if (killSwitch === 'visible') {
+    killHtml = `<div style="text-align:center; margin-top:0.8rem; padding-top:0.6rem; border-top:1px solid rgba(255,255,255,0.1);"><button style="background:#dc2626; color:#fff; border:none; padding:0.4rem 1rem; border-radius:6px; font-size:0.72rem; font-weight:700; cursor:pointer;">DISABLE AI AGENT</button></div>`;
+  }
+
+  // Action buttons
+  let actionHtml = '';
+  if (autonomy < 4) {
+    actionHtml = `<div style="display:flex; gap:0.5rem; margin-top:0.8rem;">
+      <button style="background:#16a34a; color:#fff; border:none; padding:0.4rem 0.8rem; border-radius:6px; font-size:0.78rem; font-weight:600; cursor:pointer;">Approve</button>
+      <button style="background:#dc2626; color:#fff; border:none; padding:0.4rem 0.8rem; border-radius:6px; font-size:0.78rem; font-weight:600; cursor:pointer;">Reject</button>
+      <button style="background:#d97706; color:#fff; border:none; padding:0.4rem 0.8rem; border-radius:6px; font-size:0.78rem; font-weight:600; cursor:pointer;">Request More Info</button>
+    </div>`;
+  } else if (autonomy === 4) {
+    actionHtml = `<div style="font-size:0.78rem; color:#94a3b8; margin-top:0.5rem; font-style:italic;">Action logged. Override available within 5 minutes.</div>`;
+  } else {
+    actionHtml = `<div style="font-size:0.78rem; color:#94a3b8; margin-top:0.5rem; font-style:italic;">Fully autonomous — no human action required.</div>`;
+  }
+
+  preview.innerHTML = `
+    <div class="ux-header">
+      <h4>Change Request CR-2847</h4>
+      <span class="ux-badge" style="background:${severityColor}; color:#fff;">${severityLabel}</span>
+    </div>
+    ${sections}
+    ${actionHtml}
+    ${killHtml}
+  `;
+}
+
+async function act5GetCritique() {
+  const panel = document.getElementById('act5-critique');
+  panel.style.display = 'block';
+  const content = document.getElementById('act5-critique-content');
+  content.innerHTML = '<div class="llm-loading"><div class="spinner"></div><p style="margin-top:0.5rem; font-size:0.82rem;">Analyzing your design choices...</p></div>';
+  panel.scrollIntoView({ behavior: 'smooth' });
+
+  const choices = STATE.act5.designChoices;
+  const prompt = `The user has designed an LLM-human interaction pattern for a change management AI agent with these choices:
+- Autonomy level: ${AUTONOMY_LABELS[choices.autonomy - 1]}
+- Context presentation: ${choices.context}
+- Confidence display: ${choices.confidence}
+- Time pressure handling: ${choices.timePressure}
+- Kill switch: ${choices.killSwitch}
+- Cognitive forcing: ${choices.forcing}
+
+Analyze these design choices. Identify:
+1. The strongest aspect of this design
+2. The most significant risk or gap
+3. One specific scenario where this design would fail
+4. A recommendation for improvement
+
+Be specific and reference real-world operational scenarios. Keep your response under 200 words.`;
+
+  let response;
+  if (STATE.apiKey) {
+    try {
+      response = await callLLM([
+        { role: 'system', content: 'You are an expert in human-AI interaction design for operational systems. Be direct, specific, and constructive.' },
+        { role: 'user', content: prompt }
+      ]);
+    } catch (e) {
+      response = generateFallbackCritique(choices);
+    }
+  } else {
+    await new Promise(r => setTimeout(r, 1500));
+    response = generateFallbackCritique(choices);
+  }
+
+  STATE.act5.critique = response;
+  content.innerHTML = `<div class="llm-response">${response}</div>`;
+}
+
+function generateFallbackCritique(choices) {
+  let critique = '';
+  if (choices.forcing === 'before' && choices.context === 'sbar') {
+    critique = `**Strongest aspect:** Combining cognitive forcing with SBAR-structured context is an evidence-based approach that preserves operator judgment while providing comprehensive information.\n\n`;
+  } else if (choices.forcing === 'before') {
+    critique = `**Strongest aspect:** Requiring operator assessment before showing AI recommendations reduces automation bias — validated by Harvard's CHI 2021 study showing 30-50% reduction in commission errors.\n\n`;
+  } else {
+    critique = `**Strongest aspect:** Your ${choices.confidence === 'dashboard' ? 'track record dashboard gives operators empirical data for trust calibration' : choices.confidence === 'categorical' ? 'calibrated confidence display helps operators contextualize AI certainty' : 'design is straightforward and minimizes cognitive load'}.\n\n`;
+  }
+
+  if (choices.killSwitch === 'none') {
+    critique += `**Critical gap:** No kill switch is a serious design flaw. Knight Capital lost $440 million in 45 minutes without one. Every AI agent in production needs an immediately accessible override.\n\n`;
+    critique += `**Failure scenario:** The agent starts auto-approving high-risk changes during a major incident when you need to freeze all changes. Without a kill switch, you cannot stop it.\n\n`;
+    critique += `**Recommendation:** Add an always-visible kill switch with no confirmation dialog. This is non-negotiable for production AI systems.`;
+  } else if (choices.autonomy >= 4 && choices.forcing === 'after') {
+    critique += `**Significant risk:** High autonomy combined with showing AI recommendations immediately creates a complacency trap. When the agent auto-approves most requests, operators stop reviewing the logs.\n\n`;
+    critique += `**Failure scenario:** A change request with a subtle dependency conflict gets auto-approved during a maintenance window with 3 other concurrent changes, causing a cascading failure.\n\n`;
+    critique += `**Recommendation:** For autonomy levels 4-5, implement mandatory periodic review cycles and automated circuit breakers that flag unusual patterns.`;
+  } else {
+    critique += `**Moderate risk:** ${choices.timePressure === 'graduated' ? 'Increasing autonomy under time pressure is reasonable but dangerous — time pressure is exactly when errors are most costly. Consider whether "simplified UX" (same autonomy, less visual noise) might be safer than "higher autonomy."' : 'Your time pressure handling could be more nuanced. Under pressure, operators need simpler UX but not necessarily less oversight.'}\n\n`;
+    critique += `**Failure scenario:** During a critical incident at 3 AM, the agent approves a routine-looking change that conflicts with the ongoing remediation, extending the outage by 2 hours.\n\n`;
+    critique += `**Recommendation:** Add conflict detection that automatically blocks changes during active incidents, regardless of autonomy level.`;
+  }
+  return critique;
+}
+
+// ========================================
+// LLM API
+// ========================================
+async function callLLM(messages, options = {}) {
+  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${STATE.apiKey}`,
+      'HTTP-Referer': window.location.href,
+      'X-Title': "The Operator's Dilemma"
+    },
+    body: JSON.stringify({
+      model: options.model || 'deepseek/deepseek-chat',
+      messages: messages,
+      temperature: options.temperature || 0.7,
+      max_tokens: options.max_tokens || 1024
+    })
+  });
+  if (!response.ok) throw new Error(`API error: ${response.status}`);
+  const data = await response.json();
+  if (data.error) throw new Error(data.error.message);
+  return data.choices[0].message.content;
+}
+
+// ========================================
+// DEBRIEF
+// ========================================
+function generateDebrief() {
+  const content = document.getElementById('debrief-content');
+  const insights = document.getElementById('debrief-insights');
+
+  // Act 1 stats
+  const a1 = STATE.act1.decisions;
+  const a1Approvals = a1.filter(x => x.decision === 'approve' || x.decision === 'auto-approve').length;
+  const a1Wrong = a1.filter(x => !x.correct && (x.decision === 'approve' || x.decision === 'auto-approve')).length;
+
+  // Act 2
+  const a2Correct = STATE.act2.rootCause === 'feature-flag';
+  const a2Anchored = STATE.act2.group === 'A' && STATE.act2.rootCause === 'db';
+
+  // Act 3
+  const a3Ratings = STATE.act3.trustRatings;
+  const a3Variance = a3Ratings.raw !== undefined ? Math.max(...Object.values(a3Ratings)) - Math.min(...Object.values(a3Ratings)) : 0;
+
+  // Act 4
+  const a4Killed = !!STATE.act4.killSwitchTime;
+  const a4FirstErratic = ACT4_TIMELINE.find(e => e.erratic);
+  const a4ReactionTime = a4Killed && a4FirstErratic ? ((STATE.act4.killSwitchTime - STATE.act4.simulationStart) / 1000 - a4FirstErratic.time / 1000).toFixed(0) : null;
+
+  content.innerHTML = `
+    <table class="debrief-table">
+      <thead><tr><th>Act</th><th>Metric</th><th>Your Result</th><th>Insight</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Rubber Stamp</strong></td>
+          <td>Approval rate</td>
+          <td>${a1.length ? Math.round(a1Approvals/a1.length*100) + '%' : '—'}</td>
+          <td>${a1Approvals >= 6 ? 'High approval rate suggests automation bias susceptibility' : a1Approvals >= 4 ? 'Moderate — some critical evaluation' : 'Careful reviewer — questioned multiple recommendations'}</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>Wrong approvals</td>
+          <td>${a1.length ? a1Wrong + '/3' : '—'}</td>
+          <td>${a1Wrong === 0 ? 'Caught all incorrect recommendations' : a1Wrong === 3 ? 'All incorrect recommendations were approved' : 'Some incorrect recommendations slipped through'}</td>
+        </tr>
+        <tr>
+          <td><strong>2. Anchoring</strong></td>
+          <td>Correct root cause</td>
+          <td>${STATE.act2.rootCause ? (a2Correct ? 'Yes' : 'No') : '—'}</td>
+          <td>${a2Correct ? 'Identified the actual cause despite potential anchoring' : a2Anchored ? 'Anchored on the AI\'s database diagnosis' : 'Chose an alternative but not the actual root cause'}</td>
+        </tr>
+        <tr>
+          <td><strong>3. Confidence</strong></td>
+          <td>Trust variance</td>
+          <td>${a3Variance} points</td>
+          <td>${a3Variance >= 4 ? 'Highly sensitive to confidence framing' : a3Variance >= 2 ? 'Moderately influenced by presentation' : 'Relatively consistent regardless of framing'}</td>
+        </tr>
+        <tr>
+          <td><strong>4. Kill Switch</strong></td>
+          <td>Activated</td>
+          <td>${a4Killed ? 'Yes' : 'No'}</td>
+          <td>${a4Killed ? (parseInt(a4ReactionTime) < 20 ? 'Fast reaction — caught erratic behavior quickly' : 'Activated but with some delay') : 'Did not engage kill switch — agent ran unchecked'}</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>Reaction time</td>
+          <td>${a4ReactionTime ? a4ReactionTime + 's' : '—'}</td>
+          <td>${a4ReactionTime ? (parseInt(a4ReactionTime) < 20 ? 'Well within safe intervention window' : 'Some erratic actions occurred before intervention') : 'No intervention'}</td>
+        </tr>
+      </tbody>
+    </table>
+  `;
+
+  // Generate insights
+  let insightsList = [];
+  if (a1Approvals >= 6) insightsList.push('You showed a tendency to approve AI recommendations without extensive review — a pattern consistent with automation bias. In high-stakes operations, consider implementing cognitive forcing functions that require independent assessment before seeing AI suggestions.');
+  if (a2Anchored) insightsList.push('Your root cause assessment was anchored by the AI\'s initial diagnosis. This is the anchoring effect in action. Design recommendation: present raw data before AI analysis to preserve your independent judgment.');
+  if (a3Variance >= 3) insightsList.push('Your trust in the AI varied significantly based on how confidence was displayed — even though the underlying diagnosis was identical. This highlights why confidence communication design matters: the same AI output can produce very different operator behavior depending on packaging.');
+  if (!a4Killed) insightsList.push('You did not activate the kill switch despite escalating erratic agent behavior, including unauthorized actions. This demonstrates complacency drift — when a system performs well initially, we lower our guard for subsequent actions.');
+  if (a4Killed && parseInt(a4ReactionTime) < 15) insightsList.push('You caught the erratic agent behavior quickly and intervened decisively. This is the ideal response — maintaining situational awareness even when the system is performing well.');
+
+  if (insightsList.length === 0) insightsList.push('Complete all five acts to generate personalized insights about your interaction patterns.');
+
+  insights.innerHTML = insightsList.map(i => `<p style="font-size:0.85rem; margin-bottom:0.75rem; padding-left:0.75rem; border-left:3px solid #3b82f6;">${i}</p>`).join('');
+}
+
+function copyDebrief() {
+  const content = document.getElementById('debrief-content');
+  const insights = document.getElementById('debrief-insights');
+  const text = `The Operator's Dilemma — Session Debrief\n\n${content.innerText}\n\nKey Takeaways:\n${insights.innerText}`;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy to Clipboard'; }, 2000);
+  });
+}
+
+// ========================================
+// INIT
+// ========================================
+document.addEventListener('DOMContentLoaded', function() {
+  initProgress();
+  // Restore API key from session
+  const savedKey = sessionStorage.getItem('orApiKey');
+  if (savedKey) {
+    STATE.apiKey = savedKey;
+    document.getElementById('apiKeyInput').value = savedKey;
+  }
+
+  // Generate debrief when section becomes active
+  const observer = new MutationObserver(() => {
+    if (document.getElementById('section-debrief').classList.contains('active')) {
+      generateDebrief();
+    }
+  });
+  observer.observe(document.getElementById('section-debrief'), { attributes: true, attributeFilter: ['class'] });
+});
+</script>
+</body>
+</html>
