@@ -8,7 +8,9 @@ Lecture materials for teaching GenAI engineers how to design the seam between AI
 
 A multi-act browser-based experience that doubles as a screenshare lecture tool and a participant simulation. Five acts cover automation bias, anchoring effects, confidence calibration, graduated autonomy, and interaction pattern design.
 
-**Run it:** Open `app/index.html` in a browser. Optionally provide an [OpenRouter](https://openrouter.ai/) API key for live LLM interactions in Acts 3 and 5.
+**Run it:** Open `app/index.html` directly in any browser — no server, no build step, no dependencies. Everything runs client-side.
+
+Optionally provide an [OpenRouter](https://openrouter.ai/) API key for live LLM interactions in Acts 3 and 5 (uses DeepSeek Chat). Without a key, pre-generated responses are used instead.
 
 ### HTML Booklet — Reference Takeaway
 
