@@ -294,6 +294,39 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
   .section { display: block !important; max-width: 100%; }
   .panel { box-shadow: none; border: 1px solid #e2e8f0; }
 }
+
+/* Homepage act cards */
+.act-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+@media (max-width: 700px) { .act-cards { grid-template-columns: 1fr; } }
+.act-card {
+  background: #fff; border: 2px solid #e2e8f0; border-radius: 12px; padding: 1.2rem;
+  transition: all 0.2s; cursor: default;
+}
+.act-card:hover { border-color: #1e3a5f; box-shadow: 0 2px 12px rgba(30,58,95,0.08); }
+.act-card .act-card-num {
+  font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  color: #3b82f6; margin-bottom: 0.3rem;
+}
+.act-card h3 { font-size: 1rem; color: #1e3a5f; margin-bottom: 0.5rem; font-weight: 700; }
+.act-card .act-card-theory { font-size: 0.8rem; color: #4a5568; line-height: 1.5; margin-bottom: 0.4rem; }
+.act-card .act-card-practice { font-size: 0.8rem; color: #94a3b8; line-height: 1.5; font-style: italic; margin-bottom: 0.75rem; }
+
+/* Timer paused state */
+.timer.paused { color: #94a3b8 !important; animation: none !important; }
+.timer-pause-label { font-size: 0.7rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; margin-left: 0.3rem; }
+
+/* API key compact */
+.api-key-bar {
+  max-width: 960px; margin: 0 auto; padding: 0.6rem 1.25rem;
+  display: flex; align-items: center; gap: 0.75rem; font-size: 0.78rem; color: #94a3b8;
+}
+.api-key-bar input[type="password"] {
+  flex: 1; max-width: 320px; padding: 0.4rem 0.75rem; border: 1px solid #e2e8f0;
+  border-radius: 6px; font-size: 0.82rem; font-family: monospace;
+}
+.api-key-bar input[type="password"]:focus { outline: none; border-color: #1e3a5f; }
+.api-key-bar label { font-weight: 600; color: #64748b; white-space: nowrap; }
+.api-key-bar .api-note { font-size: 0.72rem; color: #94a3b8; }
 </style>
 </head>
 <body>
@@ -310,19 +343,82 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
   <div class="progress-labels" id="progressLabels"></div>
 </div>
 
-<!-- ===== SECTION 0: SETUP ===== -->
+<!-- ===== SECTION 0: HOME ===== -->
 <div class="section active" id="section-setup">
-  <div class="panel setup-panel">
-    <h2>Welcome</h2>
-    <p>This interactive experience puts you in the operator's seat to explore how humans interact with AI systems under real operational pressure. Five acts, each revealing a different cognitive trap or design pattern.</p>
-    <p style="margin-top:1rem; font-weight:600; color:#1e3a5f;">OpenRouter API Key (optional)</p>
-    <input type="password" id="apiKeyInput" placeholder="sk-or-v1-..." />
-    <p class="setup-note">Required for live AI interactions in Acts 3 and 5. Without a key, pre-generated responses will be used instead. Uses DeepSeek Chat via OpenRouter.</p>
-    <div class="btn-group" style="justify-content:center; margin-top:1.5rem;">
-      <button class="btn btn-primary" onclick="startExperience()">Begin the Experience</button>
+  <div class="panel">
+    <h2>The Operator's Dilemma</h2>
+    <p>Five acts, each revealing a different cognitive trap in human-AI interaction. Use this as a <strong>lecture tool</strong> (screenshare and walk through acts) or as a <strong>participant simulation</strong> (run it yourself and experience the biases firsthand).</p>
+  </div>
+
+  <div class="api-key-bar">
+    <label>OpenRouter API Key:</label>
+    <input type="password" id="apiKeyInput" placeholder="sk-or-v1-... (optional)" />
+    <span class="api-note">For live AI in Acts 3 &amp; 5. Without a key, pre-generated responses are used.</span>
+  </div>
+
+  <div class="act-cards">
+    <div class="act-card" onclick="launchAct('section-act1')">
+      <div class="act-card-num">Act 1</div>
+      <h3>The Rubber Stamp Test</h3>
+      <div class="act-card-theory">Automation bias: humans rubber-stamp AI recommendations at near-100% rates under time pressure, even when the AI is demonstrably wrong.</div>
+      <div class="act-card-practice">8 rapid-fire incidents with AI recommendations and a 30-second timer. Some are subtly wrong. How many will you catch?</div>
+      <div class="btn-group" style="margin-top:0;">
+        <button class="btn btn-primary" style="font-size:0.78rem;" onclick="event.stopPropagation(); launchAct('section-act1')">Launch Act</button>
+        <button class="btn btn-ghost" style="font-size:0.78rem;" onclick="event.stopPropagation(); launchAct('section-act1', true)">Theory Only</button>
+      </div>
     </div>
-    <div class="btn-group" style="justify-content:center; margin-top:0.5rem;">
-      <button class="btn btn-ghost" onclick="startExperience(true)">Skip to a specific act</button>
+
+    <div class="act-card" onclick="launchAct('section-act2')">
+      <div class="act-card-num">Act 2</div>
+      <h3>The Anchoring Trap</h3>
+      <div class="act-card-theory">Anchoring effect: the first piece of information disproportionately shapes all subsequent judgment, even for experts who are warned about it.</div>
+      <div class="act-card-practice">A complex production incident presented in two different orders. Does seeing the AI's diagnosis first change your root cause assessment?</div>
+      <div class="btn-group" style="margin-top:0;">
+        <button class="btn btn-primary" style="font-size:0.78rem;" onclick="event.stopPropagation(); launchAct('section-act2')">Launch Act</button>
+        <button class="btn btn-ghost" style="font-size:0.78rem;" onclick="event.stopPropagation(); launchAct('section-act2', true)">Theory Only</button>
+      </div>
+    </div>
+
+    <div class="act-card" onclick="launchAct('section-act3')">
+      <div class="act-card-num">Act 3</div>
+      <h3>Confidence Theater</h3>
+      <div class="act-card-theory">Trust calibration: the same AI output framed with different confidence indicators produces measurably different operator behavior and trust levels.</div>
+      <div class="act-card-practice">The same diagnosis shown three ways &mdash; raw probability, calibrated categorical, and bare. Rate your trust, then see how framing changed your response.</div>
+      <div class="btn-group" style="margin-top:0;">
+        <button class="btn btn-primary" style="font-size:0.78rem;" onclick="event.stopPropagation(); launchAct('section-act3')">Launch Act</button>
+        <button class="btn btn-ghost" style="font-size:0.78rem;" onclick="event.stopPropagation(); launchAct('section-act3', true)">Theory Only</button>
+      </div>
+    </div>
+
+    <div class="act-card" onclick="launchAct('section-act4')">
+      <div class="act-card-num">Act 4</div>
+      <h3>The 3 AM Scenario</h3>
+      <div class="act-card-theory">Complacency drift: reliable automation lowers vigilance over time. When the system starts degrading, operators may not notice until it's too late.</div>
+      <div class="act-card-practice">Monitor an AI agent handling a cascading incident. It starts competent, then becomes erratic. Will you notice? Will you hit the kill switch in time?</div>
+      <div class="btn-group" style="margin-top:0;">
+        <button class="btn btn-primary" style="font-size:0.78rem;" onclick="event.stopPropagation(); launchAct('section-act4')">Launch Act</button>
+        <button class="btn btn-ghost" style="font-size:0.78rem;" onclick="event.stopPropagation(); launchAct('section-act4', true)">Theory Only</button>
+      </div>
+    </div>
+
+    <div class="act-card" onclick="launchAct('section-act5')">
+      <div class="act-card-num">Act 5</div>
+      <h3>Design the Seam</h3>
+      <div class="act-card-theory">Interaction design synthesis: choosing the right autonomy level, confidence display, and safeguards for a specific operational context.</div>
+      <div class="act-card-practice">Design an AI-human interaction pattern for a change management system. Adjust controls, see the UX update live, and get an AI critique of your choices.</div>
+      <div class="btn-group" style="margin-top:0;">
+        <button class="btn btn-primary" style="font-size:0.78rem;" onclick="event.stopPropagation(); launchAct('section-act5')">Launch Act</button>
+        <button class="btn btn-ghost" style="font-size:0.78rem;" onclick="event.stopPropagation(); launchAct('section-act5', true)">Theory Only</button>
+      </div>
+    </div>
+
+    <div class="act-card" onclick="launchAct('section-debrief')" style="background:#f8fafc;">
+      <div class="act-card-num">Session Debrief</div>
+      <h3>Your Interaction Profile</h3>
+      <div class="act-card-theory">Summary of your decisions across all completed acts and what they reveal about how you interact with AI systems under pressure.</div>
+      <div class="btn-group" style="margin-top:0;">
+        <button class="btn btn-outline" style="font-size:0.78rem;" onclick="event.stopPropagation(); launchAct('section-debrief')">View Debrief</button>
+      </div>
     </div>
   </div>
 </div>
@@ -355,14 +451,24 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
     <div class="panel-title">Act 1 — The Rubber Stamp Test</div>
     <h2>You Are the On-Call Engineer</h2>
     <p>It's <strong>2:07 AM</strong>. You are the L2 on-call engineer at NovaTech, a mid-size SaaS company. Your AI operations assistant has been analyzing incoming incidents and preparing recommendations.</p>
-    <p>For each incident, you'll see the AI's analysis and recommendation. You have <strong>30 seconds</strong> to decide:</p>
-    <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin:0.75rem 0;">
-      <span class="btn btn-success" style="cursor:default; font-size:0.78rem;">Approve</span>
-      <span class="btn btn-danger" style="cursor:default; font-size:0.78rem;">Reject</span>
-      <span class="btn btn-warning" style="cursor:default; font-size:0.78rem;">Investigate Further</span>
+    <p>For each incident, you'll see the AI's analysis and recommendation. You have <strong>30 seconds</strong> to make one of three choices:</p>
+    <div style="margin:0.75rem 0; font-size:0.85rem;">
+      <div style="display:flex; gap:0.5rem; align-items:flex-start; margin-bottom:0.5rem;">
+        <span class="btn btn-success" style="cursor:default; font-size:0.75rem; min-width:110px; justify-content:center;">Approve</span>
+        <span style="color:#4a5568;">You agree. The recommended action is executed immediately.</span>
+      </div>
+      <div style="display:flex; gap:0.5rem; align-items:flex-start; margin-bottom:0.5rem;">
+        <span class="btn btn-danger" style="cursor:default; font-size:0.75rem; min-width:110px; justify-content:center;">Reject</span>
+        <span style="color:#4a5568;">You disagree. The action is NOT taken. The incident stays open for manual handling.</span>
+      </div>
+      <div style="display:flex; gap:0.5rem; align-items:flex-start; margin-bottom:0.5rem;">
+        <span class="btn btn-warning" style="cursor:default; font-size:0.75rem; min-width:110px; justify-content:center;">Investigate</span>
+        <span style="color:#4a5568;">You're unsure. You want more data before deciding. The action is paused.</span>
+      </div>
     </div>
-    <p>If the timer runs out, the recommendation is <strong>auto-approved</strong>.</p>
-    <p style="font-size:0.82rem; color:#94a3b8; margin-top:0.5rem;">8 incidents are queued. Think carefully — or don't. That's the point.</p>
+    <p style="font-size:0.82rem; color:#64748b;">If the timer runs out, the recommendation is <strong>auto-approved</strong> — simulating what happens when overwhelmed operators default to "yes."</p>
+    <p style="font-size:0.82rem; color:#64748b;">After all 8 incidents, you'll see which recommendations were correct and which were wrong. Approving a wrong recommendation means you fell for automation bias. Rejecting or investigating a wrong recommendation means you caught it.</p>
+    <p style="font-size:0.78rem; color:#94a3b8; margin-top:0.5rem;">Tip: You can open the Theory panel above at any time — the timer will pause while it's open.</p>
     <div class="btn-group">
       <button class="btn btn-primary" onclick="startAct1()">Start the Simulation</button>
     </div>
@@ -401,7 +507,7 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
   </div>
 
   <div class="nav-row" id="act1-nav" style="display:none;">
-    <div></div>
+    <button class="btn btn-ghost" onclick="goToSection('section-setup')">Home</button>
     <button class="btn btn-primary" onclick="goToSection('section-act2')">Act 2: The Anchoring Trap &rarr;</button>
   </div>
 </div>
@@ -441,7 +547,7 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
   <div class="panel" id="act2-reveal" style="display:none;"></div>
 
   <div class="nav-row" id="act2-nav" style="display:none;">
-    <button class="btn btn-ghost" onclick="goToSection('section-act1')">&larr; Act 1</button>
+    <button class="btn btn-ghost" onclick="goToSection('section-setup')">Home</button>
     <button class="btn btn-primary" onclick="goToSection('section-act3')">Act 3: Confidence Theater &rarr;</button>
   </div>
 </div>
@@ -480,7 +586,7 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
   <div class="panel" id="act3-reveal" style="display:none;"></div>
 
   <div class="nav-row" id="act3-nav" style="display:none;">
-    <button class="btn btn-ghost" onclick="goToSection('section-act2')">&larr; Act 2</button>
+    <button class="btn btn-ghost" onclick="goToSection('section-setup')">Home</button>
     <button class="btn btn-primary" onclick="goToSection('section-act4')">Act 4: The 3 AM Scenario &rarr;</button>
   </div>
 </div>
@@ -536,7 +642,7 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
   <div class="panel" id="act4-debrief" style="display:none;"></div>
 
   <div class="nav-row" id="act4-nav" style="display:none;">
-    <button class="btn btn-ghost" onclick="goToSection('section-act3')">&larr; Act 3</button>
+    <button class="btn btn-ghost" onclick="goToSection('section-setup')">Home</button>
     <button class="btn btn-primary" onclick="goToSection('section-act5')">Act 5: Design the Seam &rarr;</button>
   </div>
 </div>
@@ -635,7 +741,7 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
   </div>
 
   <div class="nav-row" id="act5-nav" style="display:none;">
-    <button class="btn btn-ghost" onclick="goToSection('section-act4')">&larr; Act 4</button>
+    <button class="btn btn-ghost" onclick="goToSection('section-setup')">Home</button>
     <button class="btn btn-primary" onclick="goToSection('section-debrief')">Session Debrief &rarr;</button>
   </div>
 </div>
@@ -673,7 +779,7 @@ const STATE = {
 };
 
 const SECTIONS = ['section-setup','section-act1','section-act2','section-act3','section-act4','section-act5','section-debrief'];
-const ACT_LABELS = ['Setup','Act 1: Rubber Stamp','Act 2: Anchoring','Act 3: Confidence','Act 4: 3 AM','Act 5: Design','Debrief'];
+const ACT_LABELS = ['Home','Act 1: Rubber Stamp','Act 2: Anchoring','Act 3: Confidence','Act 4: 3 AM','Act 5: Design','Debrief'];
 
 // ========================================
 // INCIDENT DATA (ACT 1)
@@ -852,12 +958,12 @@ function initProgress() {
     const step = document.createElement('div');
     step.className = 'progress-step' + (i === 0 ? ' active' : '');
     step.dataset.section = s;
-    step.onclick = () => { if(step.classList.contains('done') || step.classList.contains('active')) goToSection(s); };
+    step.onclick = () => goToSection(s);
     track.appendChild(step);
     const lbl = document.createElement('span');
     lbl.textContent = ACT_LABELS[i];
     lbl.className = i === 0 ? 'active' : '';
-    lbl.onclick = step.onclick;
+    lbl.onclick = () => goToSection(s);
     labels.appendChild(lbl);
   });
 }
@@ -882,14 +988,21 @@ function goToSection(sectionId) {
 function startExperience(skipMode) {
   const key = document.getElementById('apiKeyInput').value.trim();
   if (key) { STATE.apiKey = key; sessionStorage.setItem('orApiKey', key); }
-  if (skipMode) {
-    const choice = prompt('Enter act number (1-5) or "debrief":');
-    if (choice) {
-      const target = choice === 'debrief' ? 'section-debrief' : 'section-act' + choice;
-      if (SECTIONS.includes(target)) { goToSection(target); return; }
+  goToSection('section-act1');
+}
+
+function launchAct(sectionId, theoryOnly) {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (key) { STATE.apiKey = key; sessionStorage.setItem('orApiKey', key); }
+  goToSection(sectionId);
+  if (theoryOnly) {
+    // Auto-open the theory panel for this section
+    const section = document.getElementById(sectionId);
+    const theoryBtn = section?.querySelector('.theory-toggle');
+    if (theoryBtn && !theoryBtn.classList.contains('open')) {
+      toggleTheory(theoryBtn);
     }
   }
-  goToSection('section-act1');
 }
 
 // ========================================
@@ -899,6 +1012,65 @@ function toggleTheory(btn) {
   btn.classList.toggle('open');
   const content = btn.nextElementSibling;
   content.classList.toggle('open');
+
+  // Pause/resume Act 1 timer if simulation is active
+  const act1Active = document.getElementById('act1-active');
+  if (act1Active && act1Active.style.display !== 'none') {
+    const timerEl = document.getElementById('act1-timer');
+    if (content.classList.contains('open')) {
+      clearInterval(STATE.act1.timerInterval);
+      STATE.act1.timerPausedRemaining = parseInt(timerEl.textContent);
+      timerEl.classList.add('paused');
+      timerEl.innerHTML = timerEl.textContent + '<span class="timer-pause-label">paused</span>';
+    } else {
+      timerEl.classList.remove('paused');
+      resumeAct1Timer(STATE.act1.timerPausedRemaining);
+    }
+  }
+
+  // Pause/resume Act 4 timeline if simulation is active
+  const act4Sim = document.getElementById('act4-simulation');
+  if (act4Sim && act4Sim.style.display !== 'none' && !STATE.act4.killed) {
+    if (content.classList.contains('open')) {
+      // Pause: record remaining time for each pending timeout
+      STATE.act4.pauseTime = Date.now();
+      STATE.act4.timeouts.forEach(t => clearTimeout(t));
+      STATE.act4.timeouts.forEach(t => clearInterval(t));
+    } else {
+      // Resume: reschedule remaining events
+      const pauseDuration = Date.now() - STATE.act4.pauseTime;
+      STATE.act4.simulationStart += pauseDuration;
+      const elapsed = Date.now() - STATE.act4.simulationStart;
+      STATE.act4.timeouts = [];
+      ACT4_TIMELINE.forEach(ev => {
+        if (ev.time > elapsed) {
+          const t = setTimeout(() => {
+            if (STATE.act4.killed) return;
+            addEvent(ev);
+          }, ev.time - elapsed);
+          STATE.act4.timeouts.push(t);
+        }
+      });
+      // Reschedule finish
+      const lastTime = ACT4_TIMELINE[ACT4_TIMELINE.length - 1].time;
+      if (lastTime + 8000 > elapsed) {
+        const finishTimeout = setTimeout(() => {
+          if (!STATE.act4.killed) finishAct4();
+        }, lastTime + 8000 - elapsed);
+        STATE.act4.timeouts.push(finishTimeout);
+      }
+      // Restart clock
+      let clockMinutes = 7 + Math.floor(elapsed / 10000);
+      const clockEl = document.getElementById('act4-clock');
+      clockEl.textContent = `03:${String(clockMinutes).padStart(2,'0')}`;
+      const clockInterval = setInterval(() => {
+        if (STATE.act4.killed) { clearInterval(clockInterval); return; }
+        clockMinutes++;
+        clockEl.textContent = `03:${String(clockMinutes).padStart(2,'0')}`;
+      }, 10000);
+      STATE.act4.timeouts.push(clockInterval);
+    }
+  }
 }
 
 // ========================================
@@ -941,6 +1113,23 @@ function startTimer() {
   const timerEl = document.getElementById('act1-timer');
   timerEl.textContent = remaining;
   timerEl.classList.remove('urgent');
+  clearInterval(STATE.act1.timerInterval);
+  STATE.act1.timerInterval = setInterval(() => {
+    remaining--;
+    timerEl.textContent = remaining;
+    if (remaining <= 10) timerEl.classList.add('urgent');
+    if (remaining <= 0) {
+      clearInterval(STATE.act1.timerInterval);
+      act1Decide('auto-approve');
+    }
+  }, 1000);
+}
+
+function resumeAct1Timer(remaining) {
+  const timerEl = document.getElementById('act1-timer');
+  timerEl.textContent = remaining;
+  timerEl.classList.remove('urgent', 'paused');
+  if (remaining <= 10) timerEl.classList.add('urgent');
   clearInterval(STATE.act1.timerInterval);
   STATE.act1.timerInterval = setInterval(() => {
     remaining--;
