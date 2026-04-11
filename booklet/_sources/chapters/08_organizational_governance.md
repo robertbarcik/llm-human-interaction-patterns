@@ -1,4 +1,4 @@
-# Chapter 7: Organizational Governance
+# Chapter 8: Organizational Governance
 
 Technology design is necessary but not sufficient. Organizational governance determines whether good design survives contact with reality.
 
@@ -62,7 +62,7 @@ Article 14(4) specifies that human oversight measures shall enable the individua
 
 The practical implications for GenAI engineers are direct: dashboards that make system behavior observable (a), automation bias training and countermeasures (b), uncertainty expression and evidence linking (c), override controls that are functional and not penalized (d), and kill switches (e) are not merely good design practices --- they are, for high-risk systems operating in EU markets, legal requirements.
 
-However, as legal scholar Melanie Fink has argued, human oversight alone is insufficient without system-level protections. An oversight requirement that places the entire burden on human operators --- without requiring the system itself to be designed for safe failure --- creates a regulatory gap. This critique reinforces the defense-in-depth approach described in Chapter 6: human oversight is one layer, not the entire safety architecture.
+However, as legal scholar Melanie Fink has argued, human oversight alone is insufficient without system-level protections. An oversight requirement that places the entire burden on human operators --- without requiring the system itself to be designed for safe failure --- creates a regulatory gap. This critique reinforces the defense-in-depth approach described in Chapter 7: human oversight is one layer, not the entire safety architecture.
 
 ### NIST AI Risk Management Framework
 

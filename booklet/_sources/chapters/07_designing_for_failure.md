@@ -1,4 +1,4 @@
-# Chapter 6: Designing for Failure
+# Chapter 7: Designing for Failure
 
 Every AI agent will fail. The question is not whether, but how --- and whether you designed for it.
 

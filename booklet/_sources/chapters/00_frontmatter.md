@@ -30,7 +30,7 @@ This guide synthesizes that evidence into actionable design patterns for enginee
 
 ### How to Read This Guide
 
-Chapters 1 and 2 establish the structural foundation: what the design seam is, why it matters, and the five core interaction patterns that govern how AI agents hand off to human operators. Chapters 3 through 5 address the human side of the equation -- the cognitive biases, communication frameworks, and trust dynamics that determine whether a well-designed system actually works in practice. Chapters 6 and 7 cover failure modes and organizational governance: what happens when the seam breaks, and how institutions can sustain effective human-AI collaboration over time. Chapter 8 synthesizes the preceding material into a decision framework and looks ahead.
+Chapters 1 and 2 establish the structural foundation: what the design seam is, why it matters, and the five core interaction patterns that govern how AI agents hand off to human operators. Chapters 3 through 5 address the human side of the equation -- the cognitive biases, communication frameworks, and trust dynamics that determine whether a well-designed system actually works in practice. Chapter 6 bridges theory to practice with prompt templates, architecture patterns, and a self-assessment worksheet. Chapters 7 and 8 cover failure modes and organizational governance. Chapter 9 synthesizes the preceding material into a decision framework.
 
 You can read the guide sequentially or jump to the chapter most relevant to your current design challenge. Each chapter is self-contained, with cross-references where concepts build on earlier material.
 
@@ -43,6 +43,7 @@ You can read the guide sequentially or jump to the chapter most relevant to your
 3. The Psychology of Handoff
 4. Context Presentation
 5. Trust Calibration
-6. Designing for Failure
-7. Organizational Governance
-8. Conclusion
+6. Implementing the Patterns
+7. Designing for Failure
+8. Organizational Governance
+9. Conclusion

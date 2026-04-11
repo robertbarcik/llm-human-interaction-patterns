@@ -1,4 +1,4 @@
-# Chapter 8: Conclusion
+# Chapter 9: Conclusion
 
 The hardest part of deploying AI in operations is not the AI. It is the seam.
 
@@ -50,7 +50,7 @@ And the governance architecture --- named owners, three-lines accountability, re
 
 ## What to Do Monday Morning
 
-For the GenAI engineer reading this on a Sunday evening, wondering how to translate eight chapters of research and frameworks into action, here are five concrete steps:
+For the GenAI engineer reading this on a Sunday evening, wondering where to start, here are five concrete steps (Chapter 6 provides the templates and worksheets to execute them):
 
 1. **Audit one existing AI-human interaction.** Pick a single point in your current system where an AI output reaches a human operator. Map it: What information does the operator receive? What can they do with it? How would they know if it was wrong? How would they stop it?
 

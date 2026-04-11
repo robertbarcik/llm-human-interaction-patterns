@@ -349,9 +349,10 @@ hr {
 <li><a href="#chapter-3-the-psychology-of-handoff">3. Chapter 3: The Psychology of Handoff</a></li>
 <li><a href="#chapter-4-context-presentation">4. Chapter 4: Context Presentation</a></li>
 <li><a href="#chapter-5-trust-calibration">5. Chapter 5: Trust Calibration</a></li>
-<li><a href="#chapter-6-designing-for-failure">6. Chapter 6: Designing for Failure</a></li>
-<li><a href="#chapter-7-organizational-governance">7. Chapter 7: Organizational Governance</a></li>
-<li><a href="#chapter-8-conclusion">8. Chapter 8: Conclusion</a></li>
+<li><a href="#chapter-6-implementing-the-patterns">6. Chapter 6: Implementing the Patterns</a></li>
+<li><a href="#chapter-7-designing-for-failure">7. Chapter 7: Designing for Failure</a></li>
+<li><a href="#chapter-8-organizational-governance">8. Chapter 8: Organizational Governance</a></li>
+<li><a href="#chapter-9-conclusion">9. Chapter 9: Conclusion</a></li>
             </ul>
         </nav>
     </aside>
@@ -381,7 +382,7 @@ hr {
 <li><strong>Anyone deploying AI that makes recommendations to humans</strong> in contexts where the cost of a wrong decision is measured in dollars, downtime, or safety</li>
 </ul>
 <h3>How to Read This Guide</h3>
-<p>Chapters 1 and 2 establish the structural foundation: what the design seam is, why it matters, and the five core interaction patterns that govern how AI agents hand off to human operators. Chapters 3 through 5 address the human side of the equation &ndash; the cognitive biases, communication frameworks, and trust dynamics that determine whether a well-designed system actually works in practice. Chapters 6 and 7 cover failure modes and organizational governance: what happens when the seam breaks, and how institutions can sustain effective human-AI collaboration over time. Chapter 8 synthesizes the preceding material into a decision framework and looks ahead.</p>
+<p>Chapters 1 and 2 establish the structural foundation: what the design seam is, why it matters, and the five core interaction patterns that govern how AI agents hand off to human operators. Chapters 3 through 5 address the human side of the equation &ndash; the cognitive biases, communication frameworks, and trust dynamics that determine whether a well-designed system actually works in practice. Chapter 6 bridges theory to practice with prompt templates, architecture patterns, and a self-assessment worksheet. Chapters 7 and 8 cover failure modes and organizational governance. Chapter 9 synthesizes the preceding material into a decision framework.</p>
 <p>You can read the guide sequentially or jump to the chapter most relevant to your current design challenge. Each chapter is self-contained, with cross-references where concepts build on earlier material.</p>
 <hr>
 <h3>Table of Contents</h3>
@@ -391,6 +392,7 @@ hr {
 <li>The Psychology of Handoff</li>
 <li>Context Presentation</li>
 <li>Trust Calibration</li>
+<li>Implementing the Patterns</li>
 <li>Designing for Failure</li>
 <li>Organizational Governance</li>
 <li>Conclusion</li>
@@ -411,32 +413,18 @@ hr {
 <p>The core challenge of human-AI interaction in operations is a tension that cannot be resolved, only managed: too much autonomy removes the human oversight that catches errors, while too much oversight defeats the purpose of automation and introduces its own failure modes.</p>
 <p>This tension is not new. In 1983, Lisanne Bainbridge published &ldquo;The Ironies of Automation,&rdquo; a paper that has proven almost prophetically relevant to the age of AI agents. Bainbridge identified a paradox that sits at the heart of every automation design decision:</p>
 <p>The more reliable an automated system becomes, the less frequently humans need to intervene. The less frequently humans intervene, the less practice they get. The less practice they get, the less capable they are of intervening effectively when the automation fails. And the more reliable the system, the more complacent the human becomes, the less they monitor, and the less likely they are to detect a failure in time to act.</p>
-<p>This is not a hypothetical concern. It is a documented pattern that has played out repeatedly across industries, with consequences that range from expensive to catastrophic.</p>
-<h2>Case Study: Air France Flight 447</h2>
-<p>On June 1, 2009, Air France Flight 447 departed Rio de Janeiro for Paris with 228 people aboard. Over the Atlantic Ocean, the aircraft&rsquo;s pitot tubes &ndash; the sensors that measure airspeed &ndash; iced over, feeding unreliable data to the flight computers. The autopilot, unable to reconcile the conflicting inputs, did what it was designed to do: it disconnected and handed control back to the pilots.</p>
-<p>What happened next was a textbook demonstration of Bainbridge&rsquo;s ironies. The pilots, who had spent the vast majority of their flight hours monitoring an autopilot that handled the aircraft, were suddenly required to hand-fly an Airbus A330 at 38,000 feet in turbulence, at night, over the ocean, with unreliable airspeed indications. The copilot at the controls pulled back on the stick &ndash; a response that would have been reasonable at low altitude but was exactly wrong at high altitude, where the aircraft was already near its performance limits. The aircraft entered an aerodynamic stall.</p>
-<p>For the next three minutes and thirty seconds, the aircraft fell. The stall warning sounded 75 times. The pilots never diagnosed the stall. They never pushed the nose down, which was the correct recovery procedure they had been trained on. All 228 people aboard died.</p>
-<p>The Bureau of Enquiry and Analysis (BEA) investigation found that the crew had lost situation awareness within seconds of the autopilot disconnection. The automation had been so reliable for so long that the pilots&rsquo; manual flying skills and their ability to interpret raw instrument data had atrophied. The seam between automation and human control had been designed for a world where transitions were rare and orderly. When the transition was sudden and chaotic, the seam failed.</p>
-<h2>Case Study: Boeing 737 MAX MCAS</h2>
-<p>If Air France 447 illustrated the failure of handoff execution, the Boeing 737 MAX disasters of 2018 and 2019 illustrated the failure of handoff design.</p>
-<p>The Maneuvering Characteristics Augmentation System (MCAS) was a software system designed to automatically push the nose of the aircraft down under specific flight conditions to prevent a stall. It was, in terms of the Sheridan-Verplank automation scale (discussed in Chapter 2), operating at Level 7: the system executed autonomously and informed the human after the fact. But the design had three critical flaws in its seam.</p>
-<p>First, MCAS relied on data from a single angle-of-attack sensor. There was no redundancy, no cross-check, and no indication to the crew when the sensor disagreed with reality. Second, MCAS was not mentioned in the aircraft&rsquo;s flight manual or in the differences training that pilots received when transitioning from the 737 NG to the 737 MAX. The pilots did not know the system existed. Third, when MCAS activated erroneously &ndash; driven by a faulty sensor &ndash; it presented to the crew as an uncommanded nose-down trim input. The crew could counteract it by pulling back on the control column, but MCAS would reactivate every five seconds, each time with fresh authority to push the nose further down.</p>
-<p>On October 29, 2018, Lion Air Flight 610 crashed into the Java Sea, killing all 189 aboard. On March 10, 2019, Ethiopian Airlines Flight 302 crashed six minutes after takeoff, killing all 157 aboard. In both cases, the crews fought the automation, briefly regaining control before the system overrode them again. Three hundred and forty-six people died because the seam between machine action and human oversight was designed in a way that made effective human intervention nearly impossible.</p>
+<h2>What Happens When the Seam Fails</h2>
+<p>Two cases from aviation illustrate the two fundamental failure modes &ndash; and both map directly to AI agent design.</p>
+<p><strong>Air France Flight 447 (2009)</strong> demonstrated handoff execution failure. When the autopilot disconnected over the Atlantic due to unreliable airspeed data, the pilots &ndash; who had spent the vast majority of their flight hours monitoring automation &ndash; were suddenly required to hand-fly the aircraft in degraded conditions. Their manual flying skills and instrument interpretation abilities had atrophied through disuse. The pilots never diagnosed the aerodynamic stall. All 228 aboard died. The investigation found that automation reliability had eroded the very skills needed when automation failed.</p>
+<p><strong>Boeing 737 MAX (2018-2019)</strong> demonstrated handoff design failure. The MCAS system relied on a single angle-of-attack sensor, was not mentioned in pilot training materials, and when it activated erroneously, the override procedure was neither obvious nor well-practiced. Pilots fought the automation but could not effectively override it. Three hundred and forty-six people died across two crashes because the seam was designed in a way that made effective human intervention nearly impossible.</p>
 <blockquote>
-<p><strong>Key distinction:</strong> Air France 447 was a failure of the human at the seam &ndash; the automation worked correctly by disconnecting, but the humans could not perform. Boeing 737 MAX was a failure of the seam itself &ndash; the automation was designed in a way that prevented effective human oversight. Both failure modes are relevant to AI agent design.</p>
+<p><strong>Key distinction:</strong> AF447 was a failure of the human at the seam &ndash; the automation worked correctly by disconnecting, but the humans could not perform. Boeing 737 MAX was a failure of the seam itself &ndash; the automation prevented effective human oversight. Both failure modes are directly relevant to AI agent design: your operators may lack the skills to override your agent (AF447), or your agent may be designed in a way that makes override impractical (737 MAX).</p>
 </blockquote>
-<h2>Situation Awareness and the Automation Problem</h2>
-<p>Mica Endsley&rsquo;s model of Situation Awareness (SA), published in 1995, provides a framework for understanding why these failures occur. Endsley defined three levels of SA:</p>
-<ul>
-<li><strong>Level 1 &ndash; Perception:</strong> The operator detects relevant information in the environment. They see the alarm, notice the metric, read the log entry.</li>
-<li><strong>Level 2 &ndash; Comprehension:</strong> The operator understands what the information means in context. They recognize that the combination of symptoms indicates a database failover, not a network partition.</li>
-<li><strong>Level 3 &ndash; Projection:</strong> The operator anticipates what will happen next. They predict that the failover will cause a cascade of connection timeouts in downstream services within the next 90 seconds.</li>
-</ul>
-<p>Automation degrades all three levels, but its most insidious effect is on Level 2. When a human manually performs a task, they develop a mental model of the system through direct interaction. They notice patterns, build intuitions, and develop the contextual understanding that enables comprehension. When automation performs the task, the human may still perceive the outputs (Level 1), but they lose the contextual grounding that makes those outputs meaningful (Level 2). They can see the numbers without understanding the story.</p>
-<p>This is directly relevant to AI agent design. An LLM agent that autonomously investigates an incident and presents a summary to a human operator is, in effect, asking that operator to exercise Level 3 SA (projection and decision-making) without having gone through Levels 1 and 2 (perception and comprehension). The operator must decide whether to approve the agent&rsquo;s recommended action based on a summary they did not construct, using context they did not gather, about a system state they did not observe.</p>
-<p>This is not an impossible task. But it is a task that requires deliberate design support &ndash; the right information, in the right format, at the right time. Without that support, the operator defaults to one of two failure modes: rubber-stamping the AI&rsquo;s recommendation (automation bias, covered in Chapter 3) or second-guessing everything and negating the efficiency gains of automation (automation distrust).</p>
+<h2>Situation Awareness at the Seam</h2>
+<p>Mica Endsley&rsquo;s Situation Awareness model (1995) explains why these failures are predictable. SA operates at three levels: <strong>perception</strong> (seeing the data), <strong>comprehension</strong> (understanding what it means), and <strong>projection</strong> (anticipating what happens next). Automation&rsquo;s most insidious effect is on comprehension &ndash; operators can see the outputs but lose the contextual understanding that makes those outputs meaningful.</p>
+<p>This is directly relevant to AI agents. An LLM agent that autonomously investigates an incident and presents a summary is asking the operator to exercise projection and decision-making without having gone through perception and comprehension. The operator must decide based on a summary they did not construct, using context they did not gather, about a system state they did not observe. Without deliberate design support, the operator defaults to either rubber-stamping (automation bias) or second-guessing everything (automation distrust).</p>
 <h2>Defining the Design Seam</h2>
-<p>The design seam, then, is the complete set of decisions that govern how an AI agent and a human operator interact at their boundary. It encompasses:</p>
+<p>The design seam is the complete set of decisions that govern how an AI agent and a human operator interact at their boundary:</p>
 <ul>
 <li><strong>What the agent does autonomously</strong> versus what it refers to the human</li>
 <li><strong>How the agent communicates</strong> its findings, recommendations, and confidence levels</li>
@@ -445,22 +433,10 @@ hr {
 <li><strong>What controls the human has</strong> to override, modify, or roll back the agent&rsquo;s actions</li>
 <li><strong>How the system degrades</strong> when the agent fails, the human errs, or communication breaks down</li>
 </ul>
-<p>Each of these decisions shapes the interaction in ways that compound over time. A system that presents recommendations without confidence levels trains operators to trust or distrust uniformly, rather than calibrating their trust to the specific situation. A system that allows autonomous action without rollback mechanisms creates irreversible consequences from reversible errors. A system that presents too much information per decision creates the cognitive overload that leads to alert fatigue and rubber-stamping.</p>
+<p>Each of these decisions shapes the interaction in ways that compound over time. A system that presents recommendations without confidence levels trains operators to trust or distrust uniformly. A system that allows autonomous action without rollback mechanisms creates irreversible consequences from reversible errors. A system that presents too much information per decision creates the cognitive overload that leads to alert fatigue and rubber-stamping.</p>
 <blockquote>
 <p><strong>Key insight:</strong> The goal is not to eliminate the seam. It is to design it so that the human-AI team outperforms either component alone. This requires treating the seam not as a technical interface but as a sociotechnical system where human cognition, organizational context, and system architecture interact.</p>
 </blockquote>
-<h2>The Stakes for Operations</h2>
-<p>In operational contexts &ndash; IT incident response, security operations, service desk management, infrastructure monitoring &ndash; the design seam carries particular weight for three reasons.</p>
-<p><strong>First, operational decisions are time-sensitive.</strong> A security alert may require a response within minutes. A production incident may be costing thousands of dollars per second. The seam must support fast, accurate decision-making without sacrificing oversight quality.</p>
-<p><strong>Second, operational decisions are consequential.</strong> Restarting a production service, blocking a network range, escalating an incident to senior leadership &ndash; these are actions with real costs and real risks. The seam must ensure that high-consequence actions receive appropriate scrutiny without creating bottlenecks that delay low-consequence responses.</p>
-<p><strong>Third, operational environments are noisy.</strong> The average security operations center processes 2,992 alerts per day, of which 63% go unaddressed. Clinical environments generate alarms at rates where 72-99% are false. The seam must help operators distinguish signal from noise, not add to the noise.</p>
-<p>These constraints are not unique to operations, but they are unusually concentrated in operational settings. The combination of time pressure, consequence severity, and information overload creates an environment where poorly designed seams fail fast and fail visibly.</p>
-<h2>The Path Forward</h2>
-<p>The remainder of this guide is organized around a simple premise: designing effective human-AI interaction in operations requires addressing three distinct layers of the problem.</p>
-<p><strong>The structural layer</strong> (Chapter 2) defines the patterns of interaction &ndash; how authority is distributed between agent and human, and how that distribution shifts with context.</p>
-<p><strong>The human factors layer</strong> (Chapters 3-5) addresses the cognitive, communicative, and trust dynamics that determine whether a well-designed structure actually works when humans use it.</p>
-<p><strong>The organizational layer</strong> (Chapters 6-7) covers failure modes and governance &ndash; what happens when the seam breaks, and how institutions can maintain effective oversight as AI capabilities evolve.</p>
-<p>Each layer builds on the previous, but each is also independently actionable. You can improve your system by addressing any single layer. You can build a genuinely robust system only by addressing all three.</p>
 <p>The next chapter introduces the five structural patterns that define how AI agents and human operators divide responsibility in operational workflows.</p>
         </section>
 
@@ -764,106 +740,74 @@ hr {
             <div class="chapter-number">Chapter 3</div>
             <h1>Chapter 3: The Psychology of Handoff</h1>
 <p>The most dangerous assumption in AI-assisted operations is that humans will behave rationally when interacting with automated systems. They will not. Not because operators are careless or incompetent, but because the human cognitive architecture that served us well for millennia is systematically mismatched to the demands of monitoring and overriding automated systems. Understanding these mismatches is not optional &ndash; it is a prerequisite for designing interaction patterns that actually work.</p>
-<p>This chapter covers six cognitive phenomena that directly affect the quality of human decisions at the AI-human seam. Each has been extensively documented in peer-reviewed research. Each has produced real-world failures with measurable consequences. And each has design implications that, if ignored, will undermine even the most carefully engineered structural patterns from Chapter 2.</p>
+<p>This chapter covers five cognitive phenomena that directly affect the quality of human decisions at the AI-human seam. Each has been extensively documented in peer-reviewed research. Each has produced real-world failures with measurable consequences. And each has design implications that, if ignored, will undermine even the most carefully engineered structural patterns from Chapter 2.</p>
 <h2>Automation Bias</h2>
 <p>Automation bias is the tendency of humans to favor suggestions from automated systems over contradictory information from other sources, including their own observations. It is not a tendency to be lazy. It is a well-documented cognitive shortcut: the human brain treats the automated system as an authority and adjusts its processing accordingly.</p>
 <h3>The Evidence</h3>
-<p>The landmark study is Skitka, Mosier, and Burdick (1999), which tested pilots and non-pilots in a simulated flight environment where an automated monitoring system provided recommendations. The system was designed to occasionally provide incorrect recommendations &ndash; advising actions that contradicted clearly visible instrument readings.</p>
+<p>The landmark study is Skitka, Mosier, and Burdick (1999), which tested pilots and non-pilots in a simulated flight environment where an automated monitoring system occasionally provided incorrect recommendations.</p>
 <p>The results were stark:</p>
 <ul>
 <li><strong>Commission errors</strong> (taking an incorrect action recommended by the automation): <strong>100% of participants</strong> committed at least one commission error. Every single participant, including experienced pilots, followed the automation&rsquo;s recommendation at least once when it was demonstrably wrong.</li>
-<li><strong>Omission errors</strong> (failing to take a correct action not recommended by the automation): <strong>55% of participants</strong> missed events that the automation failed to flag, even when those events were clearly visible on their instruments.</li>
+<li><strong>Omission errors</strong> (failing to notice problems the automation missed): <strong>55% of participants</strong> missed events that the automation failed to flag, even when clearly visible on their instruments.</li>
 </ul>
-<p>Perhaps most troubling: having a second crew member present &ndash; a standard mitigation for human error in aviation &ndash; did not reduce automation bias errors. The second crew member was equally susceptible to the automation&rsquo;s authority.</p>
-<p>A meta-analysis by Parasuraman and Manzey (2010) confirmed the pattern across multiple domains and added a critical finding: operators of high-reliability systems &ndash; the most experienced, most trained, most safety-conscious operators &ndash; were <strong>50% less likely to detect automation failures</strong> than operators of less reliable systems. The more trustworthy the automation&rsquo;s track record, the less the human monitors it.</p>
+<p>Perhaps most troubling: having a second crew member present &ndash; a standard mitigation for human error in aviation &ndash; did not reduce automation bias errors. Parasuraman and Manzey&rsquo;s meta-analysis (2010) confirmed the pattern across multiple domains and added a critical finding: operators of high-reliability systems were <strong>50% less likely to detect automation failures</strong> than operators of less reliable systems. The more trustworthy the automation&rsquo;s track record, the less the human monitors it.</p>
 <h3>Real-World Consequences</h3>
-<p><strong>Enbridge Pipeline Rupture (2010).</strong> On July 25, 2010, Enbridge&rsquo;s Line 6B ruptured near Marshall, Michigan, spilling approximately 3.3 million liters of diluted bitumen into Talmadge Creek and the Kalamazoo River. The SCADA (Supervisory Control and Data Acquisition) system generated alarms indicating a pressure drop consistent with a rupture. Control room operators, interpreting the alarms through the lens of previous false alarms and a recent maintenance event, concluded the readings were anomalous rather than real. They dismissed the alarms for <strong>17 hours</strong>. During that time, operators twice restarted the pipeline, pumping additional oil into the environment. The total cleanup cost exceeded <strong>$1 billion</strong>, making it the most expensive onshore oil spill in U.S. history.</p>
-<p>The operators were not negligent. They were experienced professionals who had seen thousands of SCADA alarms, the vast majority of which were false positives or routine fluctuations. Their prior experience with the system&rsquo;s reliability had calibrated their trust in a way that made them systematically dismiss genuine alarms. This is automation bias operating exactly as the research predicts.</p>
-<p><strong>UK Post Office Horizon Scandal (1999-2015).</strong> The Post Office deployed the Horizon IT system across its network of sub-post offices to manage accounting and transactions. The system contained software bugs that created apparent financial shortfalls in sub-postmasters&rsquo; accounts &ndash; discrepancies that did not correspond to any real missing money. Despite hundreds of sub-postmasters reporting that the system&rsquo;s figures did not match reality, the Post Office prosecuted them for theft and false accounting, relying on the presumption that the computer system was reliable.</p>
-<p>Over a period of 16 years, <strong>736 sub-postmasters were wrongfully prosecuted</strong>. Some were imprisoned. Some lost their homes. Some took their own lives. The Post Office and its investigators consistently chose to believe the automated system over the human beings operating it. This is automation bias at an institutional scale: not a single operator trusting a screen, but an entire organization treating computer output as more credible than human testimony.</p>
-<p><strong>Patriot Missile System (2003).</strong> During the Iraq War, the Patriot missile defense system misidentified two allied aircraft as enemy missiles and shot them down, killing three crew members. In both incidents, the system&rsquo;s automated identification classified the aircraft as threats, and the operators &ndash; under time pressure and conditioned to trust the system&rsquo;s classifications &ndash; approved the engagement without adequate independent verification. The investigation found that the system&rsquo;s human-machine interface did not adequately support the operators in questioning the automated classification.</p>
+<p>The <strong>Enbridge pipeline rupture (2010)</strong> demonstrated automation bias at operational scale. SCADA alarms indicated a pressure drop consistent with a rupture. Control room operators, calibrated by years of false alarms, dismissed the warnings for <strong>17 hours</strong>, twice restarting the pipeline and pumping additional oil into the environment. Cleanup exceeded <strong>$1 billion</strong>.</p>
+<p>The <strong>UK Post Office Horizon scandal</strong> demonstrated it at institutional scale. The Horizon IT system contained bugs that created phantom financial shortfalls. Despite hundreds of sub-postmasters reporting the system&rsquo;s figures didn&rsquo;t match reality, the Post Office systematically trusted the computer over humans, resulting in <strong>736 wrongful prosecutions</strong> over 16 years.</p>
 <blockquote>
 <p><strong>Key insight:</strong> Automation bias is not a character flaw. It is a predictable response to a poorly designed interaction. When a system is right 99% of the time, the rational Bayesian response is to trust it &ndash; and that same rational response will cause the operator to miss the 1% of cases where trust is misplaced. The design must account for this, not the operator.</p>
 </blockquote>
 <h3>Design Implications</h3>
-<p>Cognitive forcing functions &ndash; interface elements that require the operator to actively engage with contradictory evidence before accepting the AI&rsquo;s recommendation &ndash; are the primary countermeasure. A Harvard CHI 2021 study demonstrated that cognitive forcing functions (such as requiring operators to state their own assessment before seeing the AI&rsquo;s recommendation) significantly reduced automation bias errors.</p>
-<p>However, the same study revealed an uncomfortable tension: users found systems with cognitive forcing functions significantly less satisfying to use. They were slower. They felt more effortful. Users rated them lower on usability scales. This creates a direct conflict between safety and user satisfaction that designers must navigate explicitly, not ignore.</p>
+<p>Cognitive forcing functions &ndash; interface elements that require the operator to actively engage before accepting the AI&rsquo;s recommendation &ndash; are the primary countermeasure. A Harvard CHI 2021 study demonstrated that requiring operators to state their own assessment before seeing the AI&rsquo;s recommendation significantly reduced automation bias errors. The tradeoff: users found these systems less satisfying to use, creating a direct conflict between safety and usability that designers must navigate explicitly.</p>
 <h2>Alert Fatigue</h2>
-<p>Alert fatigue is the progressive desensitization of operators to alerts, alarms, and notifications as a result of excessive volume, high false positive rates, or both. It is not automation bias (trusting the wrong recommendation) but its complement: ignoring all recommendations because the signal-to-noise ratio has collapsed.</p>
+<p>Alert fatigue is the progressive desensitization of operators to alerts as a result of excessive volume, high false positive rates, or both. It is the complement of automation bias: instead of trusting the wrong recommendation, the operator ignores all recommendations because the signal-to-noise ratio has collapsed.</p>
 <h3>The Scale of the Problem</h3>
-<p>The numbers are consistent across industries and consistently alarming:</p>
+<p>The numbers are consistent across industries:</p>
 <ul>
-<li><strong>Healthcare:</strong> The Agency for Healthcare Research and Quality (AHRQ, 2020) reports that <strong>72-99% of clinical alarms are false</strong>, meaning they do not require clinical intervention. As a result, clinicians override approximately <strong>90% of medication alerts</strong> generated by clinical decision support systems. ECRI Institute has documented at least <strong>80 fatalities</strong> directly attributable to alarm fatigue &ndash; cases where genuine alarms were ignored because they were indistinguishable from the constant background of false alarms.</li>
-<li><strong>Security Operations:</strong> The average SOC receives <strong>2,992 security alerts per day</strong>, of which <strong>63% go entirely unaddressed</strong>. Analysts cannot process the volume, so they apply heuristic filters &ndash; often unconscious ones &ndash; that inevitably miss genuine threats. Sophisticated attackers exploit this through a technique sometimes called &ldquo;alert storming,&rdquo; described in the MITRE ATT&amp;CK framework: generating a high volume of low-priority alerts to mask the high-priority indicators of a real intrusion.</li>
-<li><strong>IT Operations:</strong> Similar patterns emerge in infrastructure monitoring, where noisy alerting configurations generate hundreds or thousands of alerts per day, the majority of which are transient, self-resolving, or duplicative.</li>
+<li><strong>Healthcare:</strong> 72-99% of clinical alarms are false (AHRQ, 2020). Clinicians override approximately 90% of medication alerts. ECRI Institute has documented at least 80 fatalities directly attributable to alarm fatigue.</li>
+<li><strong>Security Operations:</strong> The average SOC receives 2,992 security alerts per day, of which 63% go entirely unaddressed. Sophisticated attackers exploit this through &ldquo;alert storming&rdquo; &ndash; generating high volumes of low-priority alerts to mask genuine intrusions.</li>
+<li><strong>IT Operations:</strong> Similar patterns in infrastructure monitoring, where noisy alerting configurations generate hundreds or thousands of alerts per day, the majority transient or duplicative.</li>
 </ul>
 <h3>Evidence-Based Remediation</h3>
-<p>Alert fatigue is not intractable. Boston Medical Center demonstrated this by redesigning its clinical alarm system, focusing on threshold adjustments, alarm suppression for non-actionable conditions, and tiered notification routing. The result: alarm volume dropped from <strong>87,829 per week to 9,967 per week</strong> &ndash; an 89% reduction &ndash; without any increase in adverse patient outcomes.</p>
-<p>The lesson for AI system design is direct: the value of an alerting system is not proportional to its sensitivity. A system that generates 3,000 alerts per day and catches 95% of real incidents is less useful than one that generates 300 alerts per day and catches 90%, because the first system trains its operators to ignore alerts while the second preserves their ability to respond.</p>
+<p>Alert fatigue is not intractable. Boston Medical Center redesigned its clinical alarm system with threshold adjustments, suppression of non-actionable conditions, and tiered notification routing. Alarm volume dropped from <strong>87,829 per week to 9,967</strong> &ndash; an 89% reduction &ndash; without any increase in adverse patient outcomes.</p>
+<p>The lesson: the value of an alerting system is not proportional to its sensitivity. A system that generates 3,000 alerts per day and catches 95% of real incidents is less useful than one that generates 300 alerts and catches 90%, because the first system trains operators to ignore alerts.</p>
 <h3>Design Implications</h3>
-<p>For AI agents operating in the Triage and Escalate pattern, alert fatigue is the primary failure mode. The agent&rsquo;s value is measured not by how many alerts it processes but by how effectively it separates signal from noise. Specific countermeasures include:</p>
+<p>For AI agents operating in the Triage and Escalate pattern, alert fatigue is the primary failure mode. Countermeasures:</p>
 <ul>
-<li><strong>Aggressive deduplication and correlation:</strong> Group related alerts into incidents rather than presenting each alert independently.</li>
-<li><strong>Confidence-based filtering:</strong> Suppress alerts below a confidence threshold, accepting the trade-off of occasional misses in exchange for preserving operator attention for high-confidence signals.</li>
-<li><strong>Adaptive thresholds:</strong> Adjust alert thresholds based on context (time of day, recent changes, current incident load) rather than using static values.</li>
-<li><strong>Alert budgets:</strong> Set an explicit limit on the number of alerts that reach human operators per shift, forcing the system to prioritize rather than exhaustively report.</li>
+<li><strong>Aggressive deduplication and correlation:</strong> Group related alerts into incidents.</li>
+<li><strong>Confidence-based filtering:</strong> Suppress alerts below a confidence threshold, accepting occasional misses to preserve operator attention.</li>
+<li><strong>Adaptive thresholds:</strong> Adjust based on context (time of day, recent changes, current incident load).</li>
+<li><strong>Alert budgets:</strong> Cap total daily escalations, forcing the system to prioritize.</li>
 </ul>
 <h2>The Anchoring Effect</h2>
-<p>Anchoring is the cognitive bias identified by Tversky and Kahneman (1974) in which an initial piece of information &ndash; the &ldquo;anchor&rdquo; &ndash; disproportionately influences subsequent judgments, even when the anchor is arbitrary or irrelevant. In AI-human interaction, the AI&rsquo;s initial recommendation serves as a powerful anchor that shapes the human&rsquo;s subsequent reasoning.</p>
-<h3>The Persistence of Anchoring</h3>
-<p>Anchoring is one of the most robust findings in cognitive psychology. A 2025 study of 775 managers across multiple industries confirmed that anchoring effects persist even among experienced professionals making decisions in their domain of expertise, and even when participants were explicitly warned about anchoring bias before making their judgments. Experience and awareness reduce anchoring effects but do not eliminate them.</p>
-<p>This has direct implications for AI system design. When an AI agent presents a recommendation &ndash; &ldquo;This alert is likely a false positive&rdquo; or &ldquo;Root cause is probably the database connection pool&rdquo; &ndash; that recommendation anchors the operator&rsquo;s subsequent investigation. Even if the operator investigates independently, their investigation is shaped by the AI&rsquo;s initial framing. They are more likely to seek confirming evidence and less likely to pursue alternative hypotheses.</p>
+<p>Anchoring is the cognitive bias identified by Tversky and Kahneman (1974) in which an initial piece of information disproportionately influences subsequent judgments, even when the anchor is arbitrary or irrelevant. In AI-human interaction, the AI&rsquo;s initial recommendation serves as a powerful anchor.</p>
+<p>A 2025 study of 775 managers confirmed that anchoring effects persist even among experienced professionals in their domain of expertise, and even when participants were explicitly warned about anchoring bias before making their judgments. Experience and awareness reduce anchoring but do not eliminate it.</p>
+<p>The design implication is direct: when an AI agent presents a recommendation first, the operator&rsquo;s subsequent investigation is shaped by that framing. They are more likely to seek confirming evidence and less likely to pursue alternative hypotheses.</p>
 <h3>Design Implications</h3>
-<p>Two evidence-based countermeasures:</p>
 <ul>
-<li><strong>Consider-the-opposite:</strong> Explicitly prompt operators to consider alternative explanations before accepting the AI&rsquo;s recommendation. &ldquo;The AI recommends Action A. Before approving, consider: what would you do if the AI had recommended Action B instead?&rdquo;</li>
-<li><strong>Data before recommendation:</strong> Present the raw data and context to the operator before revealing the AI&rsquo;s recommendation, giving the operator an opportunity to form an independent initial assessment. This is more expensive in terms of operator time but significantly reduces anchoring effects.</li>
+<li><strong>Consider-the-opposite:</strong> Explicitly prompt operators to consider alternative explanations before accepting the AI&rsquo;s recommendation.</li>
+<li><strong>Data before recommendation:</strong> Present the raw data and context before revealing the AI&rsquo;s recommendation, giving the operator an opportunity to form an independent assessment. More expensive in operator time but significantly reduces anchoring.</li>
 </ul>
 <h2>Complacency Drift</h2>
-<p>Complacency drift is the gradual erosion of vigilance that occurs when an automated system performs reliably over an extended period. It is distinct from automation bias (which operates at the level of individual decisions) in that it operates at the level of sustained attention and monitoring behavior. Over weeks and months of reliable automation, operators progressively reduce the frequency and depth of their monitoring, creating a widening gap between the level of oversight they provide and the level of oversight the system design assumes.</p>
+<p>Complacency drift is the gradual erosion of vigilance that occurs when an automated system performs reliably over an extended period. Unlike automation bias (which operates at individual decisions), complacency drift operates at the level of sustained monitoring behavior, creating a widening gap between the oversight provided and the oversight assumed.</p>
 <h3>M/V Royal Majesty (1995)</h3>
-<p>On June 10, 1995, the cruise ship M/V Royal Majesty ran aground on Rose and Crown Shoal near Nantucket, Massachusetts, with 1,509 passengers and crew aboard. The grounding occurred because the ship&rsquo;s GPS antenna cable had become detached, causing the GPS receiver to switch from satellite-derived position to dead reckoning &ndash; an estimated position that progressively accumulated error.</p>
-<p>The GPS system displayed a warning indicator when it switched to dead reckoning mode. The bridge team did not notice. For <strong>34 hours</strong>, the ship sailed on a progressively divergent course, drifting <strong>17 nautical miles</strong> from its intended track. Multiple independent indicators &ndash; visual observations of buoys, radar returns, depth soundings &ndash; contradicted the GPS position, but the bridge team had become so accustomed to relying on the GPS that they did not cross-check its output against other sources.</p>
-<p>The National Transportation Safety Board found that the bridge team&rsquo;s over-reliance on GPS navigation, combined with the failure to use independent verification, was the primary cause of the grounding. The GPS had been so reliable for so long that the crew had stopped treating it as one input among several and had begun treating it as ground truth.</p>
+<p>The cruise ship M/V Royal Majesty ran aground near Nantucket with 1,509 people aboard because the ship&rsquo;s GPS antenna cable had detached, causing the GPS to switch to dead reckoning. The system displayed a warning indicator. The bridge team did not notice &ndash; for <strong>34 hours</strong>, the ship sailed on a progressively divergent course, drifting <strong>17 nautical miles</strong> off track. Multiple independent indicators &ndash; radar, depth soundings, visual observations &ndash; contradicted the GPS position, but the crew had stopped cross-checking.</p>
+<p>Closely related is <strong>skill degradation</strong>: the FAA has documented that <strong>60% of aviation accidents</strong> involving pilot error included a lack of manual flying proficiency &ndash; skills that atrophied because autopilot handled the flying. In IT operations, this manifests when AI agents handle investigation and resolution for extended periods, and operators lose the diagnostic skills that escalation assumes they have.</p>
 <h3>The CIGI Agency Decay Model</h3>
-<p>The Centre for International Governance Innovation (CIGI) has described a four-stage model of agency decay in human-AI interaction that captures complacency drift at an organizational level:</p>
-<ol>
-<li><strong>Experimentation:</strong> The organization deploys AI as a supplement to human decision-making. Humans actively evaluate the AI&rsquo;s outputs and maintain their own independent analysis capabilities.</li>
-<li><strong>Integration:</strong> The AI becomes a standard part of the workflow. Humans still review AI outputs but spend less time on independent analysis. The organization begins to staff based on the assumption of AI availability.</li>
-<li><strong>Reliance:</strong> The AI is the primary decision-making input. Humans review outputs primarily for anomalies. Independent analysis capabilities atrophy. New staff are trained to work with the AI, not to work without it.</li>
-<li><strong>Dependency:</strong> The organization cannot function without the AI. The human skills, processes, and institutional knowledge required for independent operation have been lost. When the AI fails, the organization has no fallback.</li>
-</ol>
+<p>The Centre for International Governance Innovation describes a four-stage organizational pattern: <strong>Experimentation</strong> (AI supplements human work) → <strong>Integration</strong> (AI becomes standard, independent analysis declines) → <strong>Reliance</strong> (AI is primary input, skills atrophy, new staff trained to work with AI, not without it) → <strong>Dependency</strong> (organization cannot function without AI, no fallback).</p>
 <blockquote>
-<p><strong>Key distinction:</strong> Complacency drift is not about individual operators making bad decisions. It is about organizational systems gradually losing their capacity for independent judgment as automation proves reliable over time. Countering it requires organizational interventions, not just individual training.</p>
+<p><strong>Key distinction:</strong> Complacency drift is not about individual operators making bad decisions. It is about organizational systems gradually losing their capacity for independent judgment. Countering it requires organizational interventions: periodic mandatory manual operation, challenge tickets with known outcomes, tracking approval-without-review rates, and simulation-based skill maintenance.</p>
 </blockquote>
-<h2>Skill Degradation</h2>
-<p>Closely related to complacency drift, skill degradation is the measurable loss of manual proficiency that occurs when automation handles tasks that operators were previously required to perform manually. The Federal Aviation Administration has documented that <strong>60% of aviation accidents</strong> in which pilot error was a factor involved a lack of manual flying proficiency &ndash; skills that degraded because autopilot systems handled the flying during normal operations.</p>
-<p>In IT operations, skill degradation manifests when AI agents handle incident investigation and resolution for an extended period. Operators who once performed manual log analysis, hypothesis testing, and root cause investigation lose those skills through disuse. When the AI agent encounters a novel failure mode and escalates to the human, the human may no longer possess the diagnostic skills that the escalation assumes.</p>
-<h3>Design Implications</h3>
-<ul>
-<li><strong>Mandatory manual practice:</strong> Periodically require operators to perform tasks manually, even when the AI could handle them. In aviation, this takes the form of required manual flying hours. In operations, it might mean designating one shift per week where the AI operates in Recommend and Wait mode regardless of the action type.</li>
-<li><strong>Simulation-based training:</strong> Use AI-generated scenarios to maintain operator skills without the risk of practicing on production systems.</li>
-<li><strong>Progressive re-engagement:</strong> When an operator has not manually handled a particular task type for an extended period, temporarily downshift the AI&rsquo;s autonomy level for that task type, forcing the operator to re-engage before returning to higher autonomy.</li>
-</ul>
-<h2>Diffusion of Responsibility</h2>
-<p>In traditional operations, accountability is clear: the operator who takes the action is responsible for the outcome. AI-assisted operations introduce ambiguity. When an AI recommends an action and a human approves it, who is responsible if the action causes harm?</p>
-<p>Bleher and Braun (2022) identified the core problem: when outcomes are negative, <strong>the human says &ldquo;I followed the system&rsquo;s recommendation&rdquo; and the vendor says &ldquo;the human made the final call.&rdquo;</strong> Responsibility diffuses between the human operator, the AI system, the organization that deployed it, and the vendor that built it. No one feels fully accountable, and the behavioral consequence is reduced vigilance &ndash; if no one is clearly responsible for catching errors, the psychological motivation to be vigilant is diminished.</p>
-<p>This is a design problem, not a legal one. Regardless of how liability is formally allocated, the interaction design must create a psychological sense of ownership and accountability in the human operator. Specific approaches include:</p>
-<ul>
-<li><strong>Explicit acknowledgment:</strong> Require operators to actively confirm that they have reviewed the evidence, not just click &ldquo;approve.&rdquo; The friction is intentional.</li>
-<li><strong>Outcome tracking:</strong> Show operators the outcomes of their past decisions, creating a personal track record that reinforces the sense of individual accountability.</li>
-<li><strong>Named accountability:</strong> Attach the approving operator&rsquo;s identity to the action record, making it clear that a specific person &ndash; not &ldquo;the system&rdquo; &ndash; authorized the action.</li>
-</ul>
 <h2>Bringing It Together</h2>
-<p>These six phenomena &ndash; automation bias, alert fatigue, anchoring, complacency drift, skill degradation, and diffusion of responsibility &ndash; are not independent. They interact and reinforce each other in ways that compound over time:</p>
+<p>These five phenomena &ndash; automation bias, alert fatigue, anchoring, complacency drift, and skill degradation &ndash; are not independent. They interact and reinforce each other:</p>
 <ul>
-<li><strong>Alert fatigue</strong> increases <strong>automation bias</strong> (overwhelmed operators are more likely to accept AI recommendations without scrutiny).</li>
-<li><strong>Complacency drift</strong> accelerates <strong>skill degradation</strong> (operators who have stopped monitoring closely have also stopped practicing the skills required for effective monitoring).</li>
-<li><strong>Diffusion of responsibility</strong> enables <strong>complacency drift</strong> (when no one feels individually accountable, there is less motivation to maintain vigilance).</li>
-<li><strong>Anchoring</strong> reinforces <strong>automation bias</strong> (the AI&rsquo;s recommendation shapes the operator&rsquo;s thinking, making it harder to reach an independent conclusion even when they try).</li>
+<li><strong>Alert fatigue</strong> increases <strong>automation bias</strong> (overwhelmed operators accept AI recommendations without scrutiny).</li>
+<li><strong>Complacency drift</strong> accelerates <strong>skill degradation</strong> (operators who stop monitoring closely also stop practicing the skills needed for effective monitoring).</li>
+<li><strong>Anchoring</strong> reinforces <strong>automation bias</strong> (the AI&rsquo;s recommendation shapes thinking, making independent evaluation harder).</li>
+<li><strong>Diffusion of responsibility</strong> between human and AI enables <strong>complacency drift</strong> &ndash; as Bleher and Braun (2022) observed, &ldquo;the human says &lsquo;I followed the system&rsquo; and the vendor says &lsquo;the human made the final call.&rsquo;&rdquo; When no one feels individually accountable, there is less motivation to maintain vigilance.</li>
 </ul>
-<p>The structural patterns from Chapter 2 provide the skeleton of effective human-AI interaction. The cognitive phenomena described in this chapter determine whether that skeleton supports a functional system or an empty one. A Recommend and Wait pattern that presents its recommendations in a way that anchors the operator and provides no forcing function for independent evaluation is, in practice, an Execute and Report pattern with extra steps. The structure matters, but only if the human factors are addressed.</p>
-<p>The next chapter examines how to present information at the seam &ndash; the specific communication formats, frameworks, and disclosure strategies that support good human decision-making in the face of these cognitive challenges.</p>
+<p>The structural patterns from Chapter 2 provide the skeleton of effective human-AI interaction. The cognitive phenomena in this chapter determine whether that skeleton supports a functional system or an empty one. A Recommend and Wait pattern that presents its recommendations in a way that anchors the operator and provides no forcing function for independent evaluation is, in practice, an Execute and Report pattern with extra steps.</p>
+<p>The next chapter examines how to present information at the seam &ndash; the specific communication formats and disclosure strategies that support good human decision-making in the face of these cognitive challenges.</p>
         </section>
 
         <section class="chapter" id="chapter-4-context-presentation">
@@ -1309,9 +1253,662 @@ Sources:
 <p>Every design decision in an AI-augmented operation &mdash; from the phrasing of recommendations to the layout of dashboards to the structure of incident reviews &mdash; either helps or hinders trust calibration. There is no neutral ground. The patterns described in this chapter provide a foundation, but calibration is never finished. It must be monitored, measured, and adjusted continuously, because both the system and the humans who use it are always changing.</p>
         </section>
 
-        <section class="chapter" id="chapter-6-designing-for-failure">
+        <section class="chapter" id="chapter-6-implementing-the-patterns">
             <div class="chapter-number">Chapter 6</div>
-            <h1>Chapter 6: Designing for Failure</h1>
+            <h1>Chapter 6: Implementing the Patterns</h1>
+<p>The preceding chapters described what to build and why. This chapter describes how to build it. Every section produces an artifact &mdash; a prompt template, a decision table, a configuration, a workflow, or a checklist &mdash; that can be taken directly into a production system. The goal is not to restate theory but to translate it into implementation.</p>
+<h2>Prompt Templates for Structured Output</h2>
+<p>The interaction patterns described in Chapters 2 through 5 depend on the LLM agent producing output in specific formats. Left to its own defaults, a model will generate fluent, conversational prose &mdash; exactly the wrong format for an operator making time-sensitive decisions. Structured output requires structured prompts. The three templates below address the most common formatting needs: situation reporting, uncertainty expression, and confidence classification.</p>
+<h3>Template 1: SBAR-Formatted Output</h3>
+<p>Chapter 4 introduced the SBAR framework adapted for AI agent output: WHAT HAPPENED, WHAT I TRIED, WHAT I RECOMMEND, RISK LEVEL, COST OF INACTION, and EVIDENCE. The following system prompt instructs the agent to use this structure for every recommendation.</p>
+<pre><code>You are an AI operations agent. Structure EVERY recommendation using this exact format:
+
+WHAT HAPPENED: [One sentence. State the event or condition you detected.]
+
+WHAT I TRIED: [List the investigative actions you took and what you found. Include negative findings (&quot;no anomalies detected in X&quot;).]
+
+WHAT I RECOMMEND: [One specific action. State the expected outcome.]
+
+RISK LEVEL: [CRITICAL / HIGH / MEDIUM / LOW. One sentence justifying the classification.]
+
+COST OF INACTION: [What happens if the operator does nothing? Include a time estimate if possible.]
+
+EVIDENCE: [List specific data sources, log entries, metric values, or KB articles that support your assessment. Use references the operator can verify independently.]
+
+Rules:
+- Never skip a section. If you have nothing for a section, write &quot;None identified.&quot;
+- WHAT I RECOMMEND must contain exactly one recommended action, not a list of options.
+- COST OF INACTION must describe a concrete consequence, not a vague risk statement.
+- EVIDENCE must reference specific, verifiable data --- not summaries of data.
+</code></pre>
+<p><strong>Example output:</strong></p>
+<pre><code>WHAT HAPPENED: Pod checkout-service-7b4f has crash-looped 4 times 
+in the last 12 minutes in the prod-eu-west cluster.
+
+WHAT I TRIED: Pulled container logs (OOMKilled on each restart), 
+checked memory allocation (limit: 512Mi, peak usage before kill: 
+508Mi), reviewed recent deployments (v3.12.1 deployed 47 minutes 
+ago, added PDF receipt generation feature), checked other pods in 
+the service (3 of 8 pods affected, all processing PDF receipts).
+
+WHAT I RECOMMEND: Increase memory limit for checkout-service to 
+1024Mi. Expected outcome: pods stabilize, PDF receipt generation 
+completes without OOM kills.
+
+RISK LEVEL: MEDIUM. Service is degraded (3 of 8 pods cycling) but 
+not down. Load balancer is routing around affected pods.
+
+COST OF INACTION: If additional pods begin processing PDF receipts, 
+more pods will OOM. At current traffic levels, full service 
+degradation is likely within 30--60 minutes.
+
+EVIDENCE: [Pod logs: OOMKilled x4] [Metrics: memory peak 508/512Mi] 
+[Deployment log: v3.12.1 at 14:23 UTC] [Git diff: +PDF generation]
+</code></pre>
+<p><strong>Watch for:</strong> The most common failure mode is the model conflating Assessment and Recommendation &mdash; producing a RISK LEVEL that is actually a recommendation (&ldquo;RISK LEVEL: HIGH &mdash; we should restart the service immediately&rdquo;) or a WHAT I RECOMMEND that is actually an assessment (&ldquo;I recommend monitoring the situation&rdquo;). Enforce the distinction in your prompt and in post-processing validation. A second failure mode is omitting COST OF INACTION or filling it with a tautology (&ldquo;If no action is taken, the problem will persist&rdquo;). Explicitly instruct the model to describe a concrete consequence with a timeline.</p>
+<h3>Template 2: First-Person Uncertainty Expression</h3>
+<p>Chapter 5 discussed the Kim et al. (FAccT 2024) finding that first-person uncertainty expression (&ldquo;I&rsquo;m not sure, but&hellip;&rdquo;) decreases operator confidence while increasing decision accuracy. The following template implements this behavior, keyed to a confidence threshold.</p>
+<pre><code>You are an AI operations agent. After analyzing each situation, 
+internally assess your confidence in your recommendation on a 
+scale from 0 to 100.
+
+If your confidence is 75 or above:
+  Present your recommendation directly, without hedging.
+
+If your confidence is below 75:
+  Begin your recommendation with a first-person uncertainty 
+  expression. Use phrases like:
+  - &quot;I'm not confident about this, but...&quot;
+  - &quot;I'm uncertain here --- my best assessment is...&quot;
+  - &quot;I don't have strong evidence for this, but...&quot;
+
+  Then state what specifically you are uncertain about and why.
+
+Never use vague, third-person hedging like &quot;it is possible that&quot; 
+or &quot;there may be an issue with.&quot; Always use first-person language 
+that attributes the uncertainty to your own judgment.
+
+After your recommendation, state your confidence level explicitly:
+  [Confidence: XX/100 — one-sentence reason]
+</code></pre>
+<p><strong>Example output at high confidence (82/100):</strong></p>
+<pre><code>The root cause is a connection pool exhaustion in the payments 
+database. The connection count has been at the maximum (100) for 
+the past 14 minutes, and all timed-out requests correlate with 
+payment processing endpoints.
+
+Recommended action: Increase max_connections from 100 to 200 and 
+investigate the long-running queries holding connections open.
+
+[Confidence: 82/100 — Strong correlation between connection pool 
+saturation and error pattern; confirmed via two independent metrics.]
+</code></pre>
+<p><strong>Example output at low confidence (38/100):</strong></p>
+<pre><code>I'm not confident about this, but my best assessment is that the 
+intermittent 502 errors are caused by the new rate limiter 
+configuration deployed this morning. I'm uncertain because the 
+errors started approximately 90 minutes after the deployment, not 
+immediately, and I cannot find a clear causal link in the logs.
+
+Recommended action: Temporarily disable the new rate limiter and 
+observe whether 502 errors subside.
+
+[Confidence: 38/100 — Temporal correlation is weak; no direct 
+evidence linking the rate limiter to the 502 responses.]
+</code></pre>
+<p><strong>Watch for:</strong> Models tend toward one of two failure modes with uncertainty expression. The first is universal hedging &mdash; the model prepends &ldquo;I&rsquo;m not sure&rdquo; to every response regardless of actual confidence, which trains operators to ignore the signal entirely. The second is false precision &mdash; the model never drops below 70/100 even when its reasoning is clearly speculative. Both modes require calibration (see Section 5 of this chapter). If you observe universal hedging, raise the threshold or add few-shot examples of confident responses. If you observe false precision, add explicit instructions to lower confidence when reasoning depends on assumptions rather than evidence.</p>
+<h3>Template 3: Graduated Confidence with Reasoning</h3>
+<p>For systems where a numeric confidence score is too granular and a binary high/low is too coarse, the following template implements a categorical confidence system with mandatory reasoning.</p>
+<pre><code>You are an AI operations agent. For every recommendation, classify 
+your confidence using exactly one of these levels:
+
+CONFIRMED — I have verified this through multiple independent 
+sources. I am certain this is correct.
+
+HIGH — Strong evidence supports this conclusion. One or more 
+independent signals corroborate it.
+
+MODERATE — The evidence is suggestive but not conclusive. There 
+are plausible alternative explanations.
+
+LOW — I am reasoning from limited or indirect evidence. My 
+conclusion is an educated guess.
+
+SPECULATIVE — I have very little evidence. This is my best 
+hypothesis, but it could easily be wrong.
+
+After the confidence label, provide exactly one sentence explaining 
+what evidence supports (or fails to support) your assessment.
+
+Format: [Confidence: LEVEL — reasoning sentence]
+</code></pre>
+<p><strong>Example output:</strong></p>
+<pre><code>The disk space alert on db-primary-01 is caused by unrotated 
+PostgreSQL WAL files accumulating in pg_wal/. Current usage is 
+94% with 847 WAL files totaling 13.2 GB.
+
+Recommended action: Run pg_archivecleanup to remove WAL files 
+older than the last successful backup checkpoint.
+
+[Confidence: CONFIRMED — Verified via df output, ls -la pg_wal/, 
+and pg_controldata showing last checkpoint LSN.]
+</code></pre>
+<p><strong>Watch for:</strong> The model&rsquo;s self-reported confidence may not match its actual accuracy. A model that labels 40% of its recommendations as CONFIRMED but is only correct 70% of the time in that band is poorly calibrated and will erode operator trust. Categorical confidence labels must be empirically validated against outcome data. Section 5 of this chapter describes how to do this. Until calibration data is available, treat these labels as hypotheses, not guarantees.</p>
+<h2>Graduated Autonomy Decision Framework</h2>
+<p>Chapter 2 introduced five structural patterns. The question every implementation team faces is: which pattern applies to which action? The following framework provides a systematic method for making that classification.</p>
+<p><strong>Step 1: Enumerate actions.</strong> List every action your AI agent is capable of taking. Include investigative actions (querying a database, pulling logs), communicative actions (sending alerts, creating tickets), and operational actions (restarting services, modifying configurations, blocking IPs).</p>
+<p><strong>Step 2: Assess four dimensions for each action.</strong> For each action on your list, evaluate:</p>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Question</th>
+<th>Scale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Consequence severity</td>
+<td>What is the worst realistic outcome if this action is wrong?</td>
+<td>Low / Medium / High / Critical</td>
+</tr>
+<tr>
+<td>Reversibility</td>
+<td>Can this action be undone? How quickly and at what cost?</td>
+<td>Instant / Minutes / Hours / Difficult / Irreversible</td>
+</tr>
+<tr>
+<td>Time sensitivity</td>
+<td>What is the operational cost of waiting for human approval?</td>
+<td>Low (can wait hours) / Medium (minutes matter) / High (seconds matter)</td>
+</tr>
+<tr>
+<td>AI confidence</td>
+<td>How reliably can the model make this decision correctly?</td>
+<td>Based on calibration data, not intuition</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 3: Map to pattern.</strong> Use the following decision logic:</p>
+<ul>
+<li><strong>High consequence + Irreversible</strong> = Recommend &amp; Wait (Levels 4&ndash;5), regardless of time sensitivity</li>
+<li><strong>High consequence + Reversible + Time-critical</strong> = Recommend &amp; Wait with pre-staged action (Level 5)</li>
+<li><strong>Medium consequence + Reversible</strong> = Recommend &amp; Wait or Execute &amp; Report, depending on calibrated confidence</li>
+<li><strong>Low consequence + Reversible + Time-critical</strong> = Execute &amp; Report (Level 7)</li>
+<li><strong>Any consequence level + Low AI confidence</strong> = Recommend &amp; Wait, always</li>
+</ul>
+<h3>Action Classification Worksheet</h3>
+<p>The following worksheet demonstrates the framework applied to common infrastructure operations actions. Use it as a template &mdash; replace the example rows with your own agent&rsquo;s action inventory.</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Consequence if Wrong</th>
+<th>Reversible?</th>
+<th>Time to Decide</th>
+<th style="text-align: right;">Confidence Required</th>
+<th>Pattern</th>
+<th style="text-align: center;">Autonomy Level</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Restart crashed pod</td>
+<td>Low (pod restarts anyway)</td>
+<td>Yes (instant)</td>
+<td>High (downtime ongoing)</td>
+<td style="text-align: right;">Low</td>
+<td>Execute &amp; Report</td>
+<td style="text-align: center;">L7</td>
+</tr>
+<tr>
+<td>Scale up replicas</td>
+<td>Low (cost increase)</td>
+<td>Yes (scale down)</td>
+<td>High (load spike)</td>
+<td style="text-align: right;">Low</td>
+<td>Execute &amp; Report</td>
+<td style="text-align: center;">L7</td>
+</tr>
+<tr>
+<td>Block IP via WAF</td>
+<td>Medium (may block legitimate users)</td>
+<td>Yes (unblock)</td>
+<td>High (active attack)</td>
+<td style="text-align: right;">Medium</td>
+<td>Recommend &amp; Wait</td>
+<td style="text-align: center;">L5</td>
+</tr>
+<tr>
+<td>Failover database</td>
+<td>High (data integrity risk)</td>
+<td>Difficult (manual reconciliation)</td>
+<td>Medium (degraded service)</td>
+<td style="text-align: right;">High</td>
+<td>Recommend &amp; Wait</td>
+<td style="text-align: center;">L4</td>
+</tr>
+<tr>
+<td>Roll back deployment</td>
+<td>Medium (feature regression)</td>
+<td>Yes (re-deploy)</td>
+<td>Medium (errors accumulating)</td>
+<td style="text-align: right;">Medium</td>
+<td>Recommend &amp; Wait</td>
+<td style="text-align: center;">L5</td>
+</tr>
+<tr>
+<td>Modify firewall rules</td>
+<td>High (may break connectivity)</td>
+<td>Yes but complex (rule ordering)</td>
+<td>Low (planned change)</td>
+<td style="text-align: right;">High</td>
+<td>Recommend &amp; Wait</td>
+<td style="text-align: center;">L4</td>
+</tr>
+<tr>
+<td>Deploy config change</td>
+<td>High (may cause outage)</td>
+<td>Yes (revert commit)</td>
+<td>Low (planned change)</td>
+<td style="text-align: right;">High</td>
+<td>Draft &amp; Refine</td>
+<td style="text-align: center;">L5</td>
+</tr>
+<tr>
+<td>Delete old log data</td>
+<td>Medium (permanent data loss)</td>
+<td>No (irreversible)</td>
+<td>Low (storage cleanup)</td>
+<td style="text-align: right;">Medium</td>
+<td>Recommend &amp; Wait</td>
+<td style="text-align: center;">L4</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Key insight:</strong> The worksheet often reveals that teams have granted their agents too much autonomy for irreversible actions and too little for trivially reversible ones. If your agent requires human approval to restart a crashed pod but autonomously modifies firewall rules, the classification is inverted.</p>
+</blockquote>
+<h2>Circuit Breaker and Fallback Architecture</h2>
+<p>Chapter 6 described the circuit breaker pattern and its rationale. This section provides the implementation specification: what to monitor, what thresholds to set, and what fallbacks to configure.</p>
+<h3>Three Levels of Circuit Breakers</h3>
+<p>An LLM agent system has three categories of dependencies, each requiring its own circuit breaker configuration.</p>
+<p><strong>Level 1: LLM API circuit breaker.</strong> This monitors response latency and error rate from the model provider. It trips after N consecutive failures (recommended starting value: 3) or when the error rate exceeds P% in a rolling time window (recommended starting values: 30% error rate in a 60-second window). Fallback options, in order of preference: route to a backup LLM provider with an adapted prompt; return pre-generated responses from a cache of common scenarios; escalate directly to human with raw context data and no AI synthesis. The choice depends on whether a backup provider is contractually and technically available.</p>
+<p><strong>Level 2: Tool execution circuit breaker.</strong> This monitors the tools the agent calls &mdash; monitoring APIs, ticketing systems, knowledge bases, databases. Each tool gets its own circuit breaker instance because tool failures are typically independent. A monitoring API outage should not prevent the agent from querying the knowledge base. Trips after 5 consecutive failures or 50% error rate in a 120-second window (adjust per tool criticality). Fallback: skip the failing tool and note its unavailability in the output (&ldquo;Note: monitoring API unavailable &mdash; metrics data not included in this assessment&rdquo;), use cached data from the last successful query, or escalate to human if the tool is essential to the action.</p>
+<p><strong>Level 3: Quality gate circuit breaker.</strong> This monitors the quality of the agent&rsquo;s own outputs &mdash; the distribution of confidence scores, the pass rate of validation checks, and the rate of operator overrides. It trips when quality degrades below a defined threshold: for example, when more than 40% of recommendations in a 30-minute window are classified as LOW or SPECULATIVE confidence, or when the operator override rate exceeds 60% in the same window. Fallback: downshift autonomy level for all actions. Any action currently classified as Execute &amp; Report reverts to Recommend &amp; Wait. The system continues to analyze and recommend, but takes no autonomous action until the quality gate circuit breaker closes.</p>
+<h3>Fallback Configuration Template</h3>
+<table>
+<thead>
+<tr>
+<th>Dependency</th>
+<th>Failure Threshold</th>
+<th>Fallback Action</th>
+<th>Recovery Test</th>
+<th>Escalation Path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LLM API (primary)</td>
+<td>3 consecutive errors or 30% error rate / 60s</td>
+<td>Route to backup provider; if unavailable, return cached responses</td>
+<td>Single request to primary provider</td>
+<td>Alert on-call engineer after 5 min in OPEN state</td>
+</tr>
+<tr>
+<td>Monitoring API</td>
+<td>5 consecutive errors or 50% error rate / 120s</td>
+<td>Use last cached metric snapshot (max age: 10 min); flag data staleness in output</td>
+<td>Single health check query</td>
+<td>Alert on-call if cached data exceeds max age</td>
+</tr>
+<tr>
+<td>Ticketing system</td>
+<td>5 consecutive errors or 50% error rate / 120s</td>
+<td>Queue ticket creation locally; retry on circuit close</td>
+<td>Single ticket read query</td>
+<td>Alert on-call after 15 min in OPEN state</td>
+</tr>
+<tr>
+<td>Knowledge base</td>
+<td>3 consecutive errors or 30% error rate / 60s</td>
+<td>Proceed without KB context; note in output: &ldquo;Knowledge base unavailable&rdquo;</td>
+<td>Single search query</td>
+<td>No escalation; log only</td>
+</tr>
+<tr>
+<td>Action executor (e.g., K8s API)</td>
+<td>2 consecutive errors</td>
+<td>Halt all autonomous actions; switch to Recommend &amp; Wait</td>
+<td>Single read-only API call (e.g., list pods)</td>
+<td>Alert on-call immediately</td>
+</tr>
+</tbody>
+</table>
+<h3>State Machine</h3>
+<p>The circuit breaker state machine is identical across all three levels. Only the thresholds and fallback actions differ.</p>
+<pre><code>CLOSED ──(threshold exceeded)──► OPEN
+  ▲                                │
+  │                                │ (timeout elapsed)
+  │                                ▼
+  └──(test succeeds)──── HALF_OPEN
+                            │
+                            │ (test fails)
+                            ▼
+                           OPEN
+</code></pre>
+<p><strong>CLOSED:</strong> Normal operation. Failure counter increments on each failure, resets on success or after the time window expires. <strong>OPEN:</strong> All requests routed to fallback. A recovery timeout begins (recommended starting value: 60 seconds for LLM API, 120 seconds for tools, 300 seconds for quality gate). <strong>HALF_OPEN:</strong> A single test request is sent to the primary path. Success returns to CLOSED and resets the failure counter. Failure returns to OPEN and doubles the recovery timeout, up to a configured maximum (recommended: 10 minutes).</p>
+<h2>Kill Switch Architecture</h2>
+<p>Chapter 6 established the requirements and rationale for kill switches. This section specifies the architecture.</p>
+<h3>What the Kill Switch Must Control</h3>
+<ul>
+<li>All LLM API calls originating from the agent</li>
+<li>All tool invocations (MCP tool calls, function calls, API requests)</li>
+<li>All autonomous actions (anything the agent executes without human approval)</li>
+<li>All scheduled and queued actions (pending approvals, batched operations, cron-triggered tasks)</li>
+</ul>
+<h3>What the Kill Switch Must NOT Control</h3>
+<ul>
+<li>Monitoring and observability dashboards (operators need to see what happened)</li>
+<li>Logging and audit trail (the record must continue even when the agent stops)</li>
+<li>Manual operation interfaces (operators must be able to work without the agent)</li>
+<li>Alert routing to human operators (alerts must still reach people)</li>
+</ul>
+<p>The distinction is critical. A kill switch that also disables monitoring leaves operators blind. A kill switch that stops logging destroys the evidence needed for incident review.</p>
+<h3>Architecture</h3>
+<pre><code>┌─────────────────────────────────────────────┐
+│  OPERATOR INTERFACE                         │
+│  ┌─────────────────────────────────────┐    │
+│  │  [KILL SWITCH]  ← always visible    │    │
+│  └──────────┬──────────────────────────┘    │
+│             │                               │
+│             ▼                               │
+│  ┌─────────────────────────────────────┐    │
+│  │  INFRASTRUCTURE CONTROL PLANE       │    │
+│  │  (external to AI agent process)     │    │
+│  │                                     │    │
+│  │  agent_enabled: true/false          │    │
+│  │  ─────────────────────────────      │    │
+│  │  append-only audit log              │    │
+│  └──────────┬──────────────────────────┘    │
+│             │                               │
+│             ▼                               │
+│  ┌─────────────────────────────────────┐    │
+│  │  AI AGENT PROCESS                   │    │
+│  │  checks agent_enabled before        │    │
+│  │  every LLM call and tool invocation │    │
+│  │                                     │    │
+│  │  CANNOT modify agent_enabled        │    │
+│  │  CANNOT access audit log            │    │
+│  └─────────────────────────────────────┘    │
+└─────────────────────────────────────────────┘
+</code></pre>
+<p>The <code>agent_enabled</code> flag lives in infrastructure the agent cannot reach &mdash; a separate configuration store, a feature flag service, or a hardware switch. The agent reads this flag but cannot write to it. The audit log records every state change with timestamp, operator identity, and reason.</p>
+<h3>Implementation Requirements</h3>
+<p>The agent process must check <code>agent_enabled</code> at two points: before every LLM API call, and before every tool invocation. This is a synchronous, blocking check &mdash; not an asynchronous polling loop. If the flag is <code>false</code>, the agent immediately returns a standard &ldquo;agent disabled&rdquo; response without making the call.</p>
+<p>Queued and scheduled actions require additional handling. When the kill switch is activated, the system must drain or cancel all pending actions. A kill switch that stops new actions but allows queued actions to execute is not a kill switch &mdash; it is a pause button with a potentially long tail.</p>
+<h3>Testing Cadence</h3>
+<p>Test the kill switch monthly. Each test should document:</p>
+<ul>
+<li>Who activated the kill switch</li>
+<li>How long from activation to full stop (target: under 5 seconds)</li>
+<li>What actions were in flight at the time of activation</li>
+<li>Whether any actions leaked through after activation</li>
+<li>How long from reactivation to normal operation</li>
+</ul>
+<p>If any actions leak through during a test, the kill switch implementation has a bug. Fix it before the next production deployment.</p>
+<h2>Confidence Calibration Workflow</h2>
+<p>The prompt templates in Section 1 instruct the model to report confidence levels. But a model&rsquo;s self-reported confidence is only useful if it correlates with actual accuracy. This section describes the operational workflow for calibrating confidence empirically.</p>
+<h3>Step 1: Collect Baseline Data</h3>
+<p>Run the agent in Recommend &amp; Wait mode &mdash; no autonomous actions &mdash; for a minimum of 200 recommendations. For each recommendation, record four data points: the agent&rsquo;s recommendation, the model&rsquo;s reported confidence (numeric or categorical), the human operator&rsquo;s decision (accept without modification, accept with modification, or reject), and the actual outcome (was the action correct or incorrect, assessed after the fact).</p>
+<p>Two hundred is a minimum for statistical significance. For systems with high action diversity (many different types of recommendations), increase the sample size to ensure at least 30 observations per action type.</p>
+<h3>Step 2: Build the Calibration Curve</h3>
+<p>Group recommendations by confidence band. For numeric confidence, use bands of 20 percentage points. For categorical confidence, use the categories directly. For each band, calculate the actual accuracy rate.</p>
+<table>
+<thead>
+<tr>
+<th>Confidence Band</th>
+<th style="text-align: right;">Count</th>
+<th style="text-align: right;">Correct</th>
+<th style="text-align: right;">Accuracy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0&ndash;20% (SPECULATIVE)</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">25%</td>
+</tr>
+<tr>
+<td>21&ndash;40% (LOW)</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td>41&ndash;60% (MODERATE)</td>
+<td style="text-align: right;">47</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">66%</td>
+</tr>
+<tr>
+<td>61&ndash;80% (HIGH)</td>
+<td style="text-align: right;">68</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">84%</td>
+</tr>
+<tr>
+<td>81&ndash;100% (CONFIRMED)</td>
+<td style="text-align: right;">45</td>
+<td style="text-align: right;">42</td>
+<td style="text-align: right;">93%</td>
+</tr>
+</tbody>
+</table>
+<p>A perfectly calibrated model would show accuracy that matches the midpoint of each confidence band: 10% accuracy in the 0&ndash;20% band, 30% in the 21&ndash;40% band, and so on. In practice, models are almost always overconfident &mdash; their stated confidence exceeds their actual accuracy. The calibration curve quantifies by how much, which is the information you need to set operational thresholds.</p>
+<h3>Step 3: Set Operational Thresholds</h3>
+<p>Based on calibration data, define the confidence boundaries that map to operational behavior:</p>
+<ul>
+<li><strong>Above X%</strong> (where X is the confidence level at which accuracy exceeds your minimum acceptable rate): label as HIGH confidence. These recommendations may be candidates for autonomous execution if other criteria (consequence, reversibility) are met.</li>
+<li><strong>Between Y% and X%</strong>: label as MODERATE. These recommendations are presented to the operator with standard formatting.</li>
+<li><strong>Below Y%</strong> (where Y is the confidence level below which accuracy drops below an unacceptable rate): label as LOW. These recommendations trigger first-person uncertainty expression, require mandatory human review, and are never eligible for autonomous execution.</li>
+</ul>
+<p>The specific values of X and Y depend on the operational context. An IT service desk handling password resets might set X=70 and Y=40. A system recommending security incident responses might set X=90 and Y=70.</p>
+<h3>Step 4: Implement in Production</h3>
+<p>Map the calibrated confidence bands to autonomy levels and presentation formats:</p>
+<table>
+<thead>
+<tr>
+<th>Calibrated Confidence</th>
+<th style="text-align: right;">Presentation Format</th>
+<th style="text-align: center;">Autonomy Level</th>
+<th style="text-align: center;">Uncertainty Expression</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HIGH (above X%)</td>
+<td style="text-align: right;">Standard SBAR</td>
+<td style="text-align: center;">Per action classification worksheet</td>
+<td style="text-align: center;">None</td>
+</tr>
+<tr>
+<td>MODERATE (Y% to X%)</td>
+<td style="text-align: right;">SBAR with explicit confidence statement</td>
+<td style="text-align: center;">Recommend &amp; Wait (maximum)</td>
+<td style="text-align: center;">Optional</td>
+</tr>
+<tr>
+<td>LOW (below Y%)</td>
+<td style="text-align: right;">SBAR with first-person hedging</td>
+<td style="text-align: center;">Recommend &amp; Wait (mandatory)</td>
+<td style="text-align: center;">Required</td>
+</tr>
+</tbody>
+</table>
+<h3>Step 5: Re-Calibrate on Schedule</h3>
+<p>Calibration drifts. Models change. Prompts change. Operational contexts change. Re-run Steps 1 through 3:</p>
+<ul>
+<li>Monthly, as a standing operational task</li>
+<li>Immediately after any model version change</li>
+<li>Immediately after any significant prompt modification</li>
+<li>After any change to the tools or data sources the agent uses</li>
+</ul>
+<h3>Calibration Log Template</h3>
+<p>The following template captures the data needed for calibration. Maintain this log continuously; analyze it on the re-calibration schedule.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">#</th>
+<th>Recommendation Summary</th>
+<th style="text-align: center;">Model Confidence</th>
+<th style="text-align: center;">Confidence Band</th>
+<th style="text-align: center;">Human Decision</th>
+<th style="text-align: center;">Outcome</th>
+<th style="text-align: center;">Correct?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>Restart pod checkout-service-7b4f (OOMKilled)</td>
+<td style="text-align: center;">88</td>
+<td style="text-align: center;">81&ndash;100</td>
+<td style="text-align: center;">Accept</td>
+<td style="text-align: center;">Pod stabilized</td>
+<td style="text-align: center;">Yes</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>Block IP 198.51.100.42 (credential stuffing)</td>
+<td style="text-align: center;">74</td>
+<td style="text-align: center;">61&ndash;80</td>
+<td style="text-align: center;">Accept with modification (added IP range)</td>
+<td style="text-align: center;">Attack stopped</td>
+<td style="text-align: center;">Yes</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>Roll back deployment v3.12.1 (error rate spike)</td>
+<td style="text-align: center;">62</td>
+<td style="text-align: center;">61&ndash;80</td>
+<td style="text-align: center;">Reject (spike was transient)</td>
+<td style="text-align: center;">Errors resolved without rollback</td>
+<td style="text-align: center;">No</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>Increase DB connection pool to 200</td>
+<td style="text-align: center;">45</td>
+<td style="text-align: center;">41&ndash;60</td>
+<td style="text-align: center;">Accept</td>
+<td style="text-align: center;">Pool exhaustion resolved</td>
+<td style="text-align: center;">Yes</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>Failover to DR region (primary unresponsive)</td>
+<td style="text-align: center;">71</td>
+<td style="text-align: center;">61&ndash;80</td>
+<td style="text-align: center;">Reject (primary recovered)</td>
+<td style="text-align: center;">Primary recovered in 3 min</td>
+<td style="text-align: center;">No</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Key insight:</strong> Most teams skip calibration because it requires running the system in Recommend &amp; Wait mode long enough to collect meaningful data. This is not a shortcut you can take. An uncalibrated confidence system is worse than no confidence system &mdash; it teaches operators to ignore confidence signals entirely.</p>
+</blockquote>
+<h2>Design Your System: Self-Assessment Worksheet</h2>
+<p>The patterns, templates, and frameworks in this booklet are only useful if they are applied systematically. The following worksheet consolidates the key design questions from every chapter into a single assessment. For each AI-human interaction point in your system &mdash; each place where the agent produces output, takes action, or requests human input &mdash; answer these ten questions.</p>
+<h3>The Worksheet</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">#</th>
+<th>Question</th>
+<th style="text-align: center;">Chapter Reference</th>
+<th style="text-align: center;">Your Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>What pattern are you using for this action? (Recommend &amp; Wait / Triage &amp; Escalate / Execute &amp; Report / Draft &amp; Refine / Graduated Autonomy)</td>
+<td style="text-align: center;">Chapter 2</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>Is the autonomy level appropriate for the action&rsquo;s consequence severity, reversibility, and time sensitivity?</td>
+<td style="text-align: center;">This chapter, Section 2</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>How is context presented to the operator? (Raw dump / SBAR / Progressive disclosure)</td>
+<td style="text-align: center;">Chapter 4</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>How is confidence communicated? (Raw probability / Categorical with calibration / None)</td>
+<td style="text-align: center;">Chapter 5</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>Is the AI&rsquo;s recommendation shown before or after the operator forms their own assessment?</td>
+<td style="text-align: center;">Chapter 3 (anchoring)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>Has confidence been empirically calibrated? When was the last calibration?</td>
+<td style="text-align: center;">This chapter, Section 5</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>Does a kill switch exist? Is it external to the AI, always visible, and tested monthly?</td>
+<td style="text-align: center;">This chapter, Section 4</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>Are circuit breakers implemented for all external dependencies?</td>
+<td style="text-align: center;">This chapter, Section 3</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>Is there a tested fallback for when the AI is unavailable?</td>
+<td style="text-align: center;">This chapter, Section 3</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td>Is there a named human owner who is authorized to shut down the system?</td>
+<td style="text-align: center;">Chapter 8</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+<h3>Scoring</h3>
+<p>Count the number of questions you can answer &ldquo;yes&rdquo; to (or, for questions 1, 3, and 4, can answer with a specific, deliberate choice rather than &ldquo;I don&rsquo;t know&rdquo; or &ldquo;we haven&rsquo;t decided&rdquo;).</p>
+<p><strong>8&ndash;10 affirmative answers:</strong> Ready for graduated autonomy in production. Your system has the structural, psychological, and operational foundations for safe autonomous action at the levels defined by your action classification worksheet.</p>
+<p><strong>5&ndash;7 affirmative answers:</strong> Acceptable for Recommend &amp; Wait in production. The system can safely analyze situations and present recommendations, but should not take autonomous actions until the remaining gaps are addressed. Prioritize the gaps: kill switch and circuit breakers (questions 7&ndash;9) before confidence calibration (question 6) before presentation optimization (questions 3&ndash;5).</p>
+<p><strong>Below 5 affirmative answers:</strong> Not ready for production deployment with any autonomous capability. The system may be useful as an internal analysis tool, but it lacks the safety infrastructure required for operator-facing deployment. Address the gaps systematically, starting with the action classification worksheet (question 2) and kill switch architecture (question 7).</p>
+<h3>Using the Worksheet</h3>
+<p>This worksheet is not a one-time exercise. Re-assess quarterly, or after any significant change to the model, the tooling, or the operational context. Changes that should trigger a re-assessment include: upgrading or switching the LLM provider, adding new tools or data sources to the agent, expanding the agent&rsquo;s action inventory, changing the operator team (new hires, role changes), and any incident in which the agent&rsquo;s behavior was unexpected or harmful.</p>
+<p>Keep completed worksheets. They form a design history that is invaluable during incident review (&ldquo;What did we believe about this system&rsquo;s readiness when we promoted it to Execute &amp; Report?&rdquo;) and during audits (&ldquo;Show us your assessment of this system&rsquo;s safety infrastructure&rdquo;).</p>
+<p>The patterns in this booklet are not prescriptions. They are tools for making deliberate, documented, defensible decisions about how AI agents and human operators work together. The worksheet ensures those decisions are made explicitly rather than by default &mdash; and that they are revisited as conditions change.</p>
+        </section>
+
+        <section class="chapter" id="chapter-7-designing-for-failure">
+            <div class="chapter-number">Chapter 7</div>
+            <h1>Chapter 7: Designing for Failure</h1>
 <p>Every AI agent will fail. The question is not whether, but how &mdash; and whether you designed for it.</p>
 <p>This is not pessimism. It is an engineering discipline. Bridges are designed for loads they will never carry. Aircraft are designed for engines that will never fail. The value of failure-oriented design is not realized when things go wrong &mdash; it is realized every day that things go right, because the system&rsquo;s operators know that when failure arrives, it will be contained, visible, and recoverable. This chapter examines the specific failure modes of LLM-based systems in operations, the architectural patterns that contain them, and the kill switches and circuit breakers that keep failures from becoming catastrophes.</p>
 <h2>Hallucination as a Structural Feature</h2>
@@ -1511,9 +2108,9 @@ Sources:
 <p>The organizations that deploy AI most effectively will not be the ones whose systems never fail. They will be the ones whose systems fail well: visibly, containably, and in ways that preserve the operator&rsquo;s ability to take control and make things right.</p>
         </section>
 
-        <section class="chapter" id="chapter-7-organizational-governance">
-            <div class="chapter-number">Chapter 7</div>
-            <h1>Chapter 7: Organizational Governance</h1>
+        <section class="chapter" id="chapter-8-organizational-governance">
+            <div class="chapter-number">Chapter 8</div>
+            <h1>Chapter 8: Organizational Governance</h1>
 <p>Technology design is necessary but not sufficient. Organizational governance determines whether good design survives contact with reality.</p>
 <p>The previous chapters addressed how to design AI-human interaction patterns at the interface level: how information is presented, how autonomy is allocated, how trust is calibrated, how failures are contained. But every one of those design decisions exists within an organizational context that can either sustain it or erode it. A well-designed kill switch is useless if no one is authorized to activate it. A carefully calibrated confidence threshold drifts if no one reviews whether it still matches the model&rsquo;s actual performance. An override mechanism atrophies if the organizational culture penalizes operators who use it. This chapter examines the governance structures, regulatory frameworks, and maturity models that determine whether AI-human interaction design survives deployment.</p>
 <h2>Policy Ownership: The Three-Lines Model</h2>
@@ -1553,7 +2150,7 @@ Sources:
 <li><strong>(e)</strong> Intervene in the operation of the AI system or interrupt the system through a &ldquo;stop&rdquo; button or similar procedure.</li>
 </ul>
 <p>The practical implications for GenAI engineers are direct: dashboards that make system behavior observable (a), automation bias training and countermeasures (b), uncertainty expression and evidence linking (c), override controls that are functional and not penalized (d), and kill switches (e) are not merely good design practices &mdash; they are, for high-risk systems operating in EU markets, legal requirements.</p>
-<p>However, as legal scholar Melanie Fink has argued, human oversight alone is insufficient without system-level protections. An oversight requirement that places the entire burden on human operators &mdash; without requiring the system itself to be designed for safe failure &mdash; creates a regulatory gap. This critique reinforces the defense-in-depth approach described in Chapter 6: human oversight is one layer, not the entire safety architecture.</p>
+<p>However, as legal scholar Melanie Fink has argued, human oversight alone is insufficient without system-level protections. An oversight requirement that places the entire burden on human operators &mdash; without requiring the system itself to be designed for safe failure &mdash; creates a regulatory gap. This critique reinforces the defense-in-depth approach described in Chapter 7: human oversight is one layer, not the entire safety architecture.</p>
 <h3>NIST AI Risk Management Framework</h3>
 <p>The National Institute of Standards and Technology (NIST) published the AI Risk Management Framework (AI RMF 1.0) to provide voluntary guidance for managing AI risks. The framework is organized around four core functions:</p>
 <ul>
@@ -1677,9 +2274,9 @@ Sources:
 <p>The governance structures described in this chapter are the connective tissue between design intent and operational reality. Without them, the interaction patterns of earlier chapters are aspirational documentation. With them, those patterns become living systems that adapt to changing models, changing regulations, changing operators, and changing operational contexts. The technology will continue to evolve rapidly. The governance question is whether the organization can evolve with it.</p>
         </section>
 
-        <section class="chapter" id="chapter-8-conclusion">
-            <div class="chapter-number">Chapter 8</div>
-            <h1>Chapter 8: Conclusion</h1>
+        <section class="chapter" id="chapter-9-conclusion">
+            <div class="chapter-number">Chapter 9</div>
+            <h1>Chapter 9: Conclusion</h1>
 <p>The hardest part of deploying AI in operations is not the AI. It is the seam.</p>
 <p>The seam is the boundary where an AI system&rsquo;s output meets a human&rsquo;s judgment. It is where a recommendation becomes a decision, where a draft becomes an action, where a prediction becomes a commitment. Every failure examined in this booklet &mdash; every case of automation bias, every ignored alert, every catastrophic loss &mdash; occurred at this seam. And every successful deployment, every case where AI genuinely amplified human capability, succeeded because someone designed that seam with care.</p>
 <h2>Three Principles</h2>
@@ -1709,7 +2306,7 @@ Sources:
 <p>The failure architecture &mdash; kill switches external to the AI, circuit breakers at every dependency, fallback stacks tested on schedule, and the Swiss Cheese Model&rsquo;s defense-in-depth philosophy &mdash; ensures that when failures occur, they are bounded, visible, and recoverable.</p>
 <p>And the governance architecture &mdash; named owners, three-lines accountability, regular cadence reviews, blameless incident post-mortems, and alignment with regulatory frameworks like the EU AI Act and NIST AI RMF &mdash; ensures that all of the above persists beyond the initial deployment.</p>
 <h2>What to Do Monday Morning</h2>
-<p>For the GenAI engineer reading this on a Sunday evening, wondering how to translate eight chapters of research and frameworks into action, here are five concrete steps:</p>
+<p>For the GenAI engineer reading this on a Sunday evening, wondering where to start, here are five concrete steps (Chapter 6 provides the templates and worksheets to execute them):</p>
 <ol>
 <li>
 <p><strong>Audit one existing AI-human interaction.</strong> Pick a single point in your current system where an AI output reaches a human operator. Map it: What information does the operator receive? What can they do with it? How would they know if it was wrong? How would they stop it?</p>
