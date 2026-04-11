@@ -1119,7 +1119,7 @@ Sources:
             <div class="chapter-number">Chapter 5</div>
             <h1>Chapter 5: Trust Calibration</h1>
 <p>Trust is not a binary. It is a calibration problem.</p>
-<p>When a GenAI engineer deploys an AI agent into an operational environment &mdash; an IT service desk, a network operations center, a clinical workflow &mdash; the central design challenge is not accuracy. It is not latency, cost per token, or even safety in the abstract. The central challenge is ensuring that the humans who work alongside the agent trust it <em>exactly as much as it deserves to be trusted</em>. Not more. Not less. This chapter examines what trust in automated systems actually consists of, how it forms and breaks, and how to design interaction patterns that keep it properly calibrated.</p>
+<p>When a GenAI engineer deploys an AI agent into an operational environment &mdash; an IT service desk, a network operations center, a clinical workflow &mdash; the central design challenge is not accuracy. It is not latency, cost per token, or even safety in the abstract. The central challenge is ensuring that the humans who work alongside the agent trust it <em>exactly as much as it deserves to be trusted</em>. Not more. Not less. This chapter examines what trust in automated systems actually consists of, how it forms and breaks, and how to design interaction patterns that keep it properly calibrated. Note that this chapter addresses <em>operator-side</em> calibration &mdash; how humans interpret and act on AI confidence signals. Model-side calibration (whether the model&rsquo;s stated confidence matches actual accuracy) is a separate engineering problem; Chapter 6 provides a practical workflow for empirically calibrating model confidence against operational outcomes.</p>
 <h2>The Lee &amp; See Framework: Performance, Process, Purpose</h2>
 <p>The foundational model for understanding trust in automation comes from Lee and See (2004), who synthesized decades of research into a three-dimensional framework. Trust, they argued, is not a single attitude but a composite of three distinct judgments:</p>
 <ul>
@@ -1396,6 +1396,9 @@ and pg_controldata showing last checkpoint LSN.]
 <p><strong>Watch for:</strong> The model&rsquo;s self-reported confidence may not match its actual accuracy. A model that labels 40% of its recommendations as CONFIRMED but is only correct 70% of the time in that band is poorly calibrated and will erode operator trust. Categorical confidence labels must be empirically validated against outcome data. Section 5 of this chapter describes how to do this. Until calibration data is available, treat these labels as hypotheses, not guarantees.</p>
 <h2>Graduated Autonomy Decision Framework</h2>
 <p>Chapter 2 introduced five structural patterns. The question every implementation team faces is: which pattern applies to which action? The following framework provides a systematic method for making that classification.</p>
+<blockquote>
+<p><strong>Terminology note:</strong> If you have read <em>Building Agentic AI</em>, the risk classification system (LOW/MEDIUM/HIGH) and assertiveness levels (cautious/balanced/autonomous) described there map directly to the Recommend &amp; Wait through Execute &amp; Report spectrum below. The taxonomies are complementary: <em>Building Agentic AI</em> addresses the agent-internal engineering; this guide addresses the operator-facing interaction design.</p>
+</blockquote>
 <p><strong>Step 1: Enumerate actions.</strong> List every action your AI agent is capable of taking. Include investigative actions (querying a database, pulling logs), communicative actions (sending alerts, creating tickets), and operational actions (restarting services, modifying configurations, blocking IPs).</p>
 <p><strong>Step 2: Assess four dimensions for each action.</strong> For each action on your list, evaluate:</p>
 <table>
@@ -2018,7 +2021,7 @@ and pg_controldata showing last checkpoint LSN.]
 <p><strong>Append-only audit logs.</strong> All kill switch events &mdash; activations, deactivations, escalation level changes, and the reasoning behind each &mdash; must be recorded in append-only logs that cannot be modified or deleted by any system component, including the AI system itself and its administrators. These logs serve as the evidentiary foundation for incident review, regulatory compliance, and trust repair.</p>
 <h2>The Swiss Cheese Model Applied to AI Operations</h2>
 <p>James Reason&rsquo;s Swiss Cheese Model, originally developed for accident causation in aviation and healthcare, provides a useful framing for AI failure design. The model posits that safety depends on multiple defensive layers, each of which has holes (like slices of Swiss cheese). An accident occurs when the holes in multiple layers align, allowing a hazard to pass through all defenses.</p>
-<p>Applied to AI operations, the defensive layers include:</p>
+<p>Applied to AI operations, the defensive layers include (these conceptual layers complement implementation-level defenses such as input sanitization, output validation, rate limiting, and audit logging, which operate at a more granular level of abstraction):</p>
 <ol>
 <li><strong>Model-level defenses:</strong> Training alignment, RLHF, system prompts, output filtering.</li>
 <li><strong>Application-level defenses:</strong> RAG validation, confidence thresholds, chain-of-verification, multi-agent review.</li>

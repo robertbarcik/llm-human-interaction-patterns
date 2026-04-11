@@ -117,7 +117,7 @@ Given the stakes involved, kill switch design should not be left to ad hoc imple
 
 James Reason's Swiss Cheese Model, originally developed for accident causation in aviation and healthcare, provides a useful framing for AI failure design. The model posits that safety depends on multiple defensive layers, each of which has holes (like slices of Swiss cheese). An accident occurs when the holes in multiple layers align, allowing a hazard to pass through all defenses.
 
-Applied to AI operations, the defensive layers include:
+Applied to AI operations, the defensive layers include (these conceptual layers complement implementation-level defenses such as input sanitization, output validation, rate limiting, and audit logging, which operate at a more granular level of abstraction):
 
 1. **Model-level defenses:** Training alignment, RLHF, system prompts, output filtering.
 2. **Application-level defenses:** RAG validation, confidence thresholds, chain-of-verification, multi-agent review.

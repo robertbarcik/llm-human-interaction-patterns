@@ -172,6 +172,8 @@ and pg_controldata showing last checkpoint LSN.]
 
 Chapter 2 introduced five structural patterns. The question every implementation team faces is: which pattern applies to which action? The following framework provides a systematic method for making that classification.
 
+> **Terminology note:** If you have read *Building Agentic AI*, the risk classification system (LOW/MEDIUM/HIGH) and assertiveness levels (cautious/balanced/autonomous) described there map directly to the Recommend & Wait through Execute & Report spectrum below. The taxonomies are complementary: *Building Agentic AI* addresses the agent-internal engineering; this guide addresses the operator-facing interaction design.
+
 **Step 1: Enumerate actions.** List every action your AI agent is capable of taking. Include investigative actions (querying a database, pulling logs), communicative actions (sending alerts, creating tickets), and operational actions (restarting services, modifying configurations, blocking IPs).
 
 **Step 2: Assess four dimensions for each action.** For each action on your list, evaluate:

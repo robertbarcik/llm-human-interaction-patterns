@@ -2,7 +2,7 @@
 
 Trust is not a binary. It is a calibration problem.
 
-When a GenAI engineer deploys an AI agent into an operational environment --- an IT service desk, a network operations center, a clinical workflow --- the central design challenge is not accuracy. It is not latency, cost per token, or even safety in the abstract. The central challenge is ensuring that the humans who work alongside the agent trust it *exactly as much as it deserves to be trusted*. Not more. Not less. This chapter examines what trust in automated systems actually consists of, how it forms and breaks, and how to design interaction patterns that keep it properly calibrated.
+When a GenAI engineer deploys an AI agent into an operational environment --- an IT service desk, a network operations center, a clinical workflow --- the central design challenge is not accuracy. It is not latency, cost per token, or even safety in the abstract. The central challenge is ensuring that the humans who work alongside the agent trust it *exactly as much as it deserves to be trusted*. Not more. Not less. This chapter examines what trust in automated systems actually consists of, how it forms and breaks, and how to design interaction patterns that keep it properly calibrated. Note that this chapter addresses *operator-side* calibration --- how humans interpret and act on AI confidence signals. Model-side calibration (whether the model's stated confidence matches actual accuracy) is a separate engineering problem; Chapter 6 provides a practical workflow for empirically calibrating model confidence against operational outcomes.
 
 ## The Lee & See Framework: Performance, Process, Purpose
 
