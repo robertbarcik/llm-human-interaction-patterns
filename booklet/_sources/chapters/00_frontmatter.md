@@ -10,6 +10,8 @@
 
 *LearningDoe s.r.o.*
 
+*Contact: [robert@barcik.training](mailto:robert@barcik.training)*
+
 ---
 
 ### About This Guide
