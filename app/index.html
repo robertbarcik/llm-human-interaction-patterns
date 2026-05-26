@@ -327,6 +327,23 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
 .api-key-bar input[type="password"]:focus { outline: none; border-color: #1e3a5f; }
 .api-key-bar label { font-weight: 600; color: #64748b; white-space: nowrap; }
 .api-key-bar .api-note { font-size: 0.72rem; color: #94a3b8; }
+.api-key-status {
+  font-size: 0.72rem; font-weight: 600; white-space: nowrap;
+  padding: 0.25rem 0.6rem; border-radius: 999px;
+  background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.api-key-status.saved    { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
+.api-key-status.verified { background: #d1fae5; color: #065f46; border-color: #34d399; }
+.api-key-status.testing  { background: #eff6ff; color: #1e40af; border-color: #bfdbfe; }
+.api-key-status.error    { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
+.api-key-bar .btn-test {
+  padding: 0.35rem 0.75rem; font-size: 0.75rem; font-weight: 600;
+  border: 1px solid #cbd5e1; background: #fff; color: #475569;
+  border-radius: 6px; cursor: pointer; white-space: nowrap;
+}
+.api-key-bar .btn-test:hover:not(:disabled) { border-color: #1e3a5f; color: #1e3a5f; }
+.api-key-bar .btn-test:disabled { opacity: 0.5; cursor: not-allowed; }
 </style>
 </head>
 <body>
@@ -352,7 +369,9 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
 
   <div class="api-key-bar">
     <label>OpenRouter API Key:</label>
-    <input type="password" id="apiKeyInput" placeholder="sk-or-v1-... (optional)" />
+    <input type="password" id="apiKeyInput" placeholder="sk-or-v1-... (optional)" oninput="updateApiKeyStatus()" />
+    <button type="button" class="btn-test" id="apiKeyTestBtn" onclick="testApiKey()" disabled>Test</button>
+    <span class="api-key-status" id="apiKeyStatus">No key — fallback responses</span>
     <span class="api-note">For live AI in Acts 3 &amp; 5. Without a key, pre-generated responses are used.</span>
   </div>
 
@@ -983,6 +1002,50 @@ function goToSection(sectionId) {
   lbls.forEach((l, i) => { l.classList.toggle('active', i === next); });
   STATE.currentSection = sectionId;
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateApiKeyStatus() {
+  const input = document.getElementById('apiKeyInput');
+  const status = document.getElementById('apiKeyStatus');
+  const testBtn = document.getElementById('apiKeyTestBtn');
+  const key = input.value.trim();
+  if (!key) {
+    STATE.apiKey = null;
+    sessionStorage.removeItem('orApiKey');
+    status.textContent = 'No key — fallback responses';
+    status.className = 'api-key-status';
+    testBtn.disabled = true;
+    return;
+  }
+  STATE.apiKey = key;
+  sessionStorage.setItem('orApiKey', key);
+  status.textContent = '✓ Saved for this session';
+  status.className = 'api-key-status saved';
+  testBtn.disabled = false;
+}
+
+async function testApiKey() {
+  const status = document.getElementById('apiKeyStatus');
+  const testBtn = document.getElementById('apiKeyTestBtn');
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (!key) return;
+  testBtn.disabled = true;
+  status.textContent = 'Testing…';
+  status.className = 'api-key-status testing';
+  try {
+    const res = await fetch('https://openrouter.ai/api/v1/auth/key', {
+      headers: { 'Authorization': `Bearer ${key}` }
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    await res.json();
+    status.textContent = '✓ Key verified — live AI enabled';
+    status.className = 'api-key-status verified';
+  } catch (e) {
+    status.textContent = '✗ Key rejected by OpenRouter';
+    status.className = 'api-key-status error';
+  } finally {
+    testBtn.disabled = false;
+  }
 }
 
 function startExperience(skipMode) {
@@ -1961,6 +2024,7 @@ document.addEventListener('DOMContentLoaded', function() {
     STATE.apiKey = savedKey;
     document.getElementById('apiKeyInput').value = savedKey;
   }
+  updateApiKeyStatus();
 
   // Generate debrief when section becomes active
   const observer = new MutationObserver(() => {
