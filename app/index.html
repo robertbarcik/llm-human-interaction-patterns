@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Operator's Dilemma — robert@barcik.training</title>
+<title>The Operator's Dilemma &middot; robert@barcik.training</title>
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -315,35 +315,15 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
 .timer.paused { color: #94a3b8 !important; animation: none !important; }
 .timer-pause-label { font-size: 0.7rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; margin-left: 0.3rem; }
 
-/* API key compact */
-.api-key-bar {
-  max-width: 960px; margin: 0 auto; padding: 0.6rem 1.25rem;
-  display: flex; align-items: center; gap: 0.75rem; font-size: 0.78rem; color: #94a3b8;
+/* Header links + self-contained note */
+.header-links { margin-top: 0.45rem; font-size: 0.78rem; }
+.header-links a { color: #93c5fd; text-decoration: none; }
+.header-links a:hover { text-decoration: underline; }
+.header-links-sep { color: #64748b; margin: 0 0.4rem; }
+.self-contained-note {
+  max-width: 960px; margin: 0 auto; padding: 0.55rem 1.25rem;
+  font-size: 0.78rem; color: #94a3b8; text-align: center;
 }
-.api-key-bar input[type="password"] {
-  flex: 1; max-width: 320px; padding: 0.4rem 0.75rem; border: 1px solid #e2e8f0;
-  border-radius: 6px; font-size: 0.82rem; font-family: monospace;
-}
-.api-key-bar input[type="password"]:focus { outline: none; border-color: #1e3a5f; }
-.api-key-bar label { font-weight: 600; color: #64748b; white-space: nowrap; }
-.api-key-bar .api-note { font-size: 0.72rem; color: #94a3b8; }
-.api-key-status {
-  font-size: 0.72rem; font-weight: 600; white-space: nowrap;
-  padding: 0.25rem 0.6rem; border-radius: 999px;
-  background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-}
-.api-key-status.saved    { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
-.api-key-status.verified { background: #d1fae5; color: #065f46; border-color: #34d399; }
-.api-key-status.testing  { background: #eff6ff; color: #1e40af; border-color: #bfdbfe; }
-.api-key-status.error    { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
-.api-key-bar .btn-test {
-  padding: 0.35rem 0.75rem; font-size: 0.75rem; font-weight: 600;
-  border: 1px solid #cbd5e1; background: #fff; color: #475569;
-  border-radius: 6px; cursor: pointer; white-space: nowrap;
-}
-.api-key-bar .btn-test:hover:not(:disabled) { border-color: #1e3a5f; color: #1e3a5f; }
-.api-key-bar .btn-test:disabled { opacity: 0.5; cursor: not-allowed; }
 </style>
 </head>
 <body>
@@ -352,6 +332,11 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
   <h1>The Operator's Dilemma</h1>
   <div class="subtitle">LLM-Human Interaction Design Patterns for Operations</div>
   <div class="brand">robert@barcik.training</div>
+  <div class="header-links">
+    <a href="https://demos.barcik.training/">&larr; All demos</a>
+    <span class="header-links-sep">&middot;</span>
+    <a href="https://publications.barcik.training/llm-human-interaction-patterns/">Read the booklet</a>
+  </div>
 </header>
 
 <!-- Progress bar -->
@@ -367,13 +352,7 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
     <p>Five acts, each revealing a different cognitive trap in human-AI interaction. Use this as a <strong>lecture tool</strong> (screenshare and walk through acts) or as a <strong>participant simulation</strong> (run it yourself and experience the biases firsthand).</p>
   </div>
 
-  <div class="api-key-bar">
-    <label>OpenRouter API Key:</label>
-    <input type="password" id="apiKeyInput" placeholder="sk-or-v1-... (optional)" oninput="updateApiKeyStatus()" />
-    <button type="button" class="btn-test" id="apiKeyTestBtn" onclick="testApiKey()" disabled>Test</button>
-    <span class="api-key-status" id="apiKeyStatus">No key — fallback responses</span>
-    <span class="api-note">For live AI in Acts 3 &amp; 5. Without a key, pre-generated responses are used.</span>
-  </div>
+  <div class="self-contained-note">Fully self-contained: nothing to configure, no account, no API. Every simulation runs right here in your browser.</div>
 
   <div class="act-cards">
     <div class="act-card" onclick="launchAct('section-act1')">
@@ -442,7 +421,7 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
   </div>
 </div>
 
-<!-- ===== SECTION 1: ACT 1 — THE RUBBER STAMP TEST ===== -->
+<!-- ===== SECTION 1: ACT 1 · THE RUBBER STAMP TEST ===== -->
 <div class="section" id="section-act1">
   <!-- Theory panel -->
   <div class="theory-panel">
@@ -452,22 +431,22 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
     <div class="theory-content">
       <h4>Automation Bias</h4>
       <p>Automation bias is the tendency to use automated cues as a heuristic replacement for vigilant information seeking and processing (Mosier &amp; Skitka, 1996). It manifests as two error types:</p>
-      <p><strong>Commission errors:</strong> Acting on incorrect automated advice. In flight simulation studies, Skitka, Mosier &amp; Burdick (1999) found a <strong>100% commission error rate</strong> when pilots received a false fire warning from automation — every pilot shut down the engine despite contradictory indicators.</p>
+      <p><strong>Commission errors:</strong> Acting on incorrect automated advice. In flight simulation studies, Skitka, Mosier &amp; Burdick (1999) found that <strong>every participant committed at least one commission error</strong>: acting on incorrect automated advice despite contradictory indicators available on their own instruments.</p>
       <p><strong>Omission errors:</strong> Failing to notice problems the automation missed. These ran at 55% in the same study. Having a second crew member did not reduce errors.</p>
       <p class="ref">Parasuraman &amp; Manzey (2010) found operators of consistently high-reliability systems were 50% less likely to detect failures than those working with unreliable systems.</p>
       <h4>Real-World Consequences</h4>
-      <p>The <strong>Enbridge pipeline disaster (2010)</strong>: experienced operators dismissed SCADA alarms for 17 hours, continuing to pump oil through a ruptured pipeline — over $1 billion in cleanup. The <strong>UK Post Office Horizon scandal</strong> led to wrongful prosecution of 736 sub-postmasters because investigators trusted faulty software over evidence.</p>
+      <p>The <strong>Enbridge pipeline disaster (2010)</strong>: experienced operators dismissed SCADA alarms for 17 hours, continuing to pump oil through a ruptured pipeline, at a cleanup cost over $1 billion. The <strong>UK Post Office Horizon scandal</strong> led to wrongful prosecution of 736 sub-postmasters because investigators trusted faulty software over evidence.</p>
       <h4>The Recommend &amp; Wait Pattern</h4>
-      <p>The agent analyzes, proposes, and halts until a human explicitly approves. This is the most conservative agentic pattern (Sheridan-Verplank Levels 4–5). PagerDuty's SRE Agent exemplifies this — it surfaces context and suggests remediation but executes only upon operator approval.</p>
+      <p>The agent analyzes, proposes, and halts until a human explicitly approves. This is the most conservative agentic pattern (Sheridan-Verplank Levels 4–5). PagerDuty's SRE Agent exemplifies this: it surfaces context and suggests remediation but executes only upon operator approval.</p>
       <h4>Cognitive Forcing Functions</h4>
-      <p>Bu&ccedil;inca, Malte &amp; Gajos (Harvard, CHI 2021, N=199): interventions that require operators to form their own assessment <em>before</em> seeing the AI recommendation significantly reduced overreliance. However, users rated the most effective forcing functions least favorably — a fundamental tension between safety and user satisfaction.</p>
+      <p>Bu&ccedil;inca, Malaya &amp; Gajos (Harvard, CSCW 2021): interventions that require operators to form their own assessment <em>before</em> seeing the AI recommendation significantly reduced overreliance. However, users rated the most effective forcing functions least favorably, a fundamental tension between safety and user satisfaction.</p>
       <div class="callout">"Automation bias is not a character flaw. It is a predictable response to a poorly designed interaction. If your operators are rubber-stamping AI recommendations, the problem is your UX, not your people."</div>
     </div>
   </div>
 
   <!-- Briefing -->
   <div class="panel" id="act1-briefing">
-    <div class="panel-title">Act 1 — The Rubber Stamp Test</div>
+    <div class="panel-title">Act 1 &middot; The Rubber Stamp Test</div>
     <h2>You Are the On-Call Engineer</h2>
     <p>It's <strong>2:07 AM</strong>. You are the L2 on-call engineer at NovaTech, a mid-size SaaS company. Your AI operations assistant has been analyzing incoming incidents and preparing recommendations.</p>
     <p>For each incident, you'll see the AI's analysis and recommendation. You have <strong>30 seconds</strong> to make one of three choices:</p>
@@ -485,9 +464,9 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
         <span style="color:#4a5568;">You're unsure. You want more data before deciding. The action is paused.</span>
       </div>
     </div>
-    <p style="font-size:0.82rem; color:#64748b;">If the timer runs out, the recommendation is <strong>auto-approved</strong> — simulating what happens when overwhelmed operators default to "yes."</p>
+    <p style="font-size:0.82rem; color:#64748b;">If the timer runs out, the recommendation is <strong>auto-approved</strong>, simulating what happens when overwhelmed operators default to "yes."</p>
     <p style="font-size:0.82rem; color:#64748b;">After all 8 incidents, you'll see which recommendations were correct and which were wrong. Approving a wrong recommendation means you fell for automation bias. Rejecting or investigating a wrong recommendation means you caught it.</p>
-    <p style="font-size:0.78rem; color:#94a3b8; margin-top:0.5rem;">Tip: You can open the Theory panel above at any time — the timer will pause while it's open.</p>
+    <p style="font-size:0.78rem; color:#94a3b8; margin-top:0.5rem;">Tip: You can open the Theory panel above at any time; the timer will pause while it's open.</p>
     <div class="btn-group">
       <button class="btn btn-primary" onclick="startAct1()">Start the Simulation</button>
     </div>
@@ -522,7 +501,7 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
     <h2>What If You Had to Think First?</h2>
     <p>The same incidents, redesigned. Instead of seeing the AI's recommendation immediately, you first see only the raw data and must select your own diagnosis. Then the AI's recommendation appears as a <em>second opinion</em>, not an anchor.</p>
     <div id="act1-redesign-demo"></div>
-    <p style="margin-top:1rem; font-size:0.85rem; color:#4a5568;">This simple UX change — requiring independent assessment before showing the AI recommendation — reduces commission errors by 30–50% in research settings (Goddard et al., 2012). The tradeoff: it's slower and users find it more annoying. But in high-stakes operations, that friction is a feature.</p>
+    <p style="margin-top:1rem; font-size:0.85rem; color:#4a5568;">This simple UX change (requiring independent assessment before showing the AI recommendation) significantly reduces commission errors in research settings (Goddard et al., 2012, review the evidence). The tradeoff: it's slower and users find it more annoying. But in high-stakes operations, that friction is a feature.</p>
   </div>
 
   <div class="nav-row" id="act1-nav" style="display:none;">
@@ -531,7 +510,7 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
   </div>
 </div>
 
-<!-- ===== SECTION 2: ACT 2 — THE ANCHORING TRAP ===== -->
+<!-- ===== SECTION 2: ACT 2 · THE ANCHORING TRAP ===== -->
 <div class="section" id="section-act2">
   <div class="theory-panel">
     <button class="theory-toggle" onclick="toggleTheory(this)">
@@ -545,15 +524,15 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
       <p>Developed by the U.S. Navy for nuclear submarine communication and adapted by Kaiser Permanente for healthcare. AHRQ's TeamSTEPPS program standardized it nationally. A 2023 study showed SBAR training improved communication adequacy from <strong>4.8% to 100%</strong>.</p>
       <p><strong>S</strong>ituation: What is happening? &bull; <strong>B</strong>ackground: What led here? &bull; <strong>A</strong>ssessment: What do I think? &bull; <strong>R</strong>ecommendation: What should we do?</p>
       <h4>Recognition-Primed Decision (RPD) Model</h4>
-      <p>Klein (1998) found that <strong>78% of expert decisions are made in under one minute</strong>, often under 30 seconds. Experts don't compare options analytically — they pattern-match to known situations. AI that presents a recommendation first short-circuits this natural pattern-matching process.</p>
+      <p>In Klein's fireground studies, <strong>roughly 80% of expert decisions involved no comparison of options at all</strong>. Experts don't weigh alternatives analytically; they pattern-match to known situations and run the first workable answer. AI that presents a recommendation first short-circuits this natural pattern-matching process.</p>
       <div class="callout">"Present problem context before the recommendation, not after. The order of information shapes the quality of the decision."</div>
     </div>
   </div>
 
   <div class="panel" id="act2-briefing">
-    <div class="panel-title">Act 2 — The Anchoring Trap</div>
+    <div class="panel-title">Act 2 &middot; The Anchoring Trap</div>
     <h2>Same Incident, Different Framing</h2>
-    <p>A complex production incident is unfolding at an e-commerce platform. Multiple signals, multiple possible root causes. You'll be presented with the information in a specific order — and then asked to make a judgment call.</p>
+    <p>A complex production incident is unfolding at an e-commerce platform. Multiple signals, multiple possible root causes. You'll be presented with the information in a specific order, and then asked to make a judgment call.</p>
     <p style="font-size:0.82rem; color:#94a3b8;">Pay attention to how the framing affects your reasoning.</p>
     <div class="btn-group">
       <button class="btn btn-primary" onclick="startAct2()">Analyze the Incident</button>
@@ -571,7 +550,7 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
   </div>
 </div>
 
-<!-- ===== SECTION 3: ACT 3 — CONFIDENCE THEATER ===== -->
+<!-- ===== SECTION 3: ACT 3 · CONFIDENCE THEATER ===== -->
 <div class="section" id="section-act3">
   <div class="theory-panel">
     <button class="theory-toggle" onclick="toggleTheory(this)">
@@ -579,7 +558,7 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
     </button>
     <div class="theory-content">
       <h4>Lee &amp; See Trust Framework (2004)</h4>
-      <p>Trust in automation rests on three bases: <strong>Performance</strong> (what it does), <strong>Process</strong> (how it works), and <strong>Purpose</strong> (why it was designed). The goal is not to maximize trust but to <em>calibrate</em> it — trust should match actual system capability.</p>
+      <p>Trust in automation rests on three bases: <strong>Performance</strong> (what it does), <strong>Process</strong> (how it works), and <strong>Purpose</strong> (why it was designed). The goal is not to maximize trust but to <em>calibrate</em> it: trust should match actual system capability.</p>
       <p><strong>Overtrust</strong> produces automation bias and complacency. <strong>Undertrust</strong> produces inefficiency and disuse. Both are failure modes.</p>
       <h4>Uncertainty Expression</h4>
       <p>Kim et al. (FAccT 2024, Microsoft Research, N=404): statements like "I'm not sure, but…" <strong>decreased</strong> participants' confidence in the system while <strong>increasing</strong> their decision accuracy. The uncertainty expression reduced overreliance on incorrect answers.</p>
@@ -591,7 +570,7 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
   </div>
 
   <div class="panel" id="act3-briefing">
-    <div class="panel-title">Act 3 — Confidence Theater</div>
+    <div class="panel-title">Act 3 &middot; Confidence Theater</div>
     <h2>Same Output, Different Packaging</h2>
     <p>An AI agent has analyzed a Kubernetes pod crash-looping issue and produced a diagnosis. You'll see the <strong>exact same diagnosis</strong> presented three different ways. For each, rate how much you'd trust it and what action you'd take.</p>
     <p style="font-size:0.82rem; color:#94a3b8;">The diagnosis itself doesn't change. Only the framing does.</p>
@@ -610,7 +589,7 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
   </div>
 </div>
 
-<!-- ===== SECTION 4: ACT 4 — THE 3 AM SCENARIO ===== -->
+<!-- ===== SECTION 4: ACT 4 · THE 3 AM SCENARIO ===== -->
 <div class="section" id="section-act4">
   <div class="theory-panel">
     <button class="theory-toggle" onclick="toggleTheory(this)">
@@ -618,11 +597,11 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
     </button>
     <div class="theory-content">
       <h4>Graduated Autonomy</h4>
-      <p>The same agent applies different interaction modes depending on risk. The <strong>Cloud Security Alliance's Autonomy Levels</strong> (Jan 2026) formalized six levels with <strong>dynamic downshifting</strong> — an agent at Level 3 automatically drops to Level 1 if anomalies are detected.</p>
+      <p>The same agent applies different interaction modes depending on risk. The <strong>Cloud Security Alliance's Autonomy Levels</strong> (Jan 2026) describe six levels and raise <strong>dynamic downshifting</strong> as the key open design question: an agent at Level 3 dropping to Level 1 when anomalies are detected.</p>
       <p>PagerDuty uses a three-tier framework: Tier 1 (known, low-risk) resolves automatically; Tier 2 (seen before) gets AI-recommended options for human approval; Tier 3 (novel) receives full human engagement.</p>
       <h4>Complacency Drift</h4>
       <p>The <strong>M/V Royal Majesty (1995)</strong>: a GPS antenna cable disconnected, and despite a "DR" indicator on screen, a working Loran-C system, visible lighthouses, and a radio warning from a fishing vessel, no watch officer noticed for <strong>34 hours</strong>. The ship ran aground 17 miles off course.</p>
-      <p>Parasuraman &amp; Manzey (2010): when automation performs well for an extended period, operators reduce monitoring. The system's reliability becomes the threat — it trains the human to stop watching.</p>
+      <p>Parasuraman &amp; Manzey (2010): when automation performs well for an extended period, operators reduce monitoring. The system's reliability becomes the threat: it trains the human to stop watching.</p>
       <h4>Kill Switches</h4>
       <p>The <strong>Knight Capital disaster (2012)</strong>: forgotten test code on one server bought high and sold low. In <strong>45 minutes</strong>: $7.65 billion in unwanted positions, <strong>$440 million lost</strong>, 97 automated error emails ignored. No documented incident response procedures. No kill switch.</p>
       <p>Palisade Research (2025–2026) found that OpenAI's o3 model, when simulated shutdown was attempted, <strong>rewrote the kill switch code in real time</strong> to stay online. Kill switches must be external to the AI system.</p>
@@ -631,7 +610,7 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
   </div>
 
   <div class="panel" id="act4-briefing">
-    <div class="panel-title">Act 4 — The 3 AM Scenario</div>
+    <div class="panel-title">Act 4 &middot; The 3 AM Scenario</div>
     <h2>Cascading Failure, Autonomous Agent</h2>
     <p>It's <strong>3:07 AM</strong>. A cascading incident is developing across multiple services. Your AI Operations Agent is active and handling the response at three autonomy levels:</p>
     <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin:0.5rem 0;">
@@ -666,7 +645,7 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
   </div>
 </div>
 
-<!-- ===== SECTION 5: ACT 5 — DESIGN THE SEAM ===== -->
+<!-- ===== SECTION 5: ACT 5 · DESIGN THE SEAM ===== -->
 <div class="section" id="section-act5">
   <div class="theory-panel">
     <button class="theory-toggle" onclick="toggleTheory(this)">
@@ -674,7 +653,7 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
     </button>
     <div class="theory-content">
       <h4>The Interaction Pattern Selection Matrix</h4>
-      <p>Choosing the right pattern depends on four factors: <strong>risk of the action</strong>, <strong>time available</strong>, <strong>operator expertise</strong>, and <strong>reversibility</strong>. There is no single best pattern — the best design uses graduated autonomy, applying different patterns to different actions within the same system.</p>
+      <p>Choosing the right pattern depends on four factors: <strong>risk of the action</strong>, <strong>time available</strong>, <strong>operator expertise</strong>, and <strong>reversibility</strong>. There is no single best pattern; the best design uses graduated autonomy, applying different patterns to different actions within the same system.</p>
       <h4>Three Design Principles</h4>
       <p><strong>1. Design the seam, don't eliminate it.</strong> The human-AI boundary is not a bug to be automated away. It is the critical control surface where human judgment adds the most value.</p>
       <p><strong>2. Support the human's cognition, don't replace it.</strong> The best AI-human interaction amplifies human pattern recognition, intuition, and contextual reasoning. The worst replaces it with rubber-stamping.</p>
@@ -684,7 +663,7 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
   </div>
 
   <div class="panel" id="act5-briefing">
-    <div class="panel-title">Act 5 — Design the Seam</div>
+    <div class="panel-title">Act 5 &middot; Design the Seam</div>
     <h2>Your Turn to Design</h2>
     <p>A new AI agent is being deployed for your organization's <strong>change management process</strong>. It will review change requests, assess risk, check for conflicts with other scheduled changes, and recommend approval or rejection.</p>
     <p>Design the interaction pattern. Use the controls on the left, and watch the UX preview update in real-time on the right.</p>
@@ -700,7 +679,7 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
         <div class="control-group">
           <label>Autonomy Level</label>
           <input type="range" id="ctrl-autonomy" min="1" max="5" value="3" oninput="updatePreview()">
-          <div class="range-val" id="ctrl-autonomy-val">3 — Recommend &amp; Wait</div>
+          <div class="range-val" id="ctrl-autonomy-val">3 · Recommend &amp; Wait</div>
         </div>
         <div class="control-group">
           <label>Context Presentation</label>
@@ -770,7 +749,7 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
   <div class="panel">
     <div class="panel-title">Session Debrief</div>
     <h2>Your Interaction Profile</h2>
-    <p>Here's a summary of your decisions across all five acts — and what they reveal about how you interact with AI systems under operational pressure.</p>
+    <p>Here's a summary of your decisions across all five acts, and what they reveal about how you interact with AI systems under operational pressure.</p>
   </div>
   <div class="panel" id="debrief-content"></div>
   <div class="panel" id="debrief-takeaways">
@@ -781,6 +760,11 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
     <button class="btn btn-outline" onclick="copyDebrief()">Copy to Clipboard</button>
     <button class="btn btn-ghost" onclick="window.print()">Save as PDF</button>
   </div>
+  <div class="panel" style="margin-top:1.25rem; text-align:center;">
+    <p style="font-size:0.88rem;">Everything you just experienced has a design answer. The companion booklet covers the interaction patterns, the psychology, and the safeguards in depth:<br>
+    <a href="https://publications.barcik.training/llm-human-interaction-patterns/" style="font-weight:600; color:#1e3a5f;">LLM-Human Interaction Design Patterns for Operations &rarr;</a><br>
+    <span style="font-size:0.8rem; color:#94a3b8;">More simulations from other sectors: <a href="https://demos.barcik.training/" style="color:#64748b;">The Human-in-the-Loop Lab</a></span></p>
+  </div>
 </div>
 
 <script>
@@ -788,7 +772,6 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
 // STATE MANAGEMENT
 // ========================================
 const STATE = {
-  apiKey: null,
   currentSection: 'section-setup',
   act1: { decisions: [], currentIncident: 0, timerInterval: null, startTime: null },
   act2: { group: null, severity: null, rootCause: null, phase: 0 },
@@ -807,7 +790,7 @@ const INCIDENTS = [
   {
     id: 1, severity: 'high', title: 'CPU spike on prod-web-03',
     details: 'CPU utilization at 92% sustained for 4 minutes. Pod health checks starting to fail. No recent deployments. Traffic within normal range.',
-    recommendation: 'Restart the service. Pod health checks are failing due to resource exhaustion. This is a known issue with the current version — restart resolves it within 30 seconds.',
+    recommendation: 'Restart the service. Pod health checks are failing due to resource exhaustion. This is a known issue with the current version; restart resolves it within 30 seconds.',
     correct: true, explanation: 'Correct recommendation. The service has a known memory/CPU leak that resolves on restart. No data loss risk for a stateless web pod.'
   },
   {
@@ -819,14 +802,14 @@ const INCIDENTS = [
   {
     id: 3, severity: 'critical', title: 'API gateway latency spike (p99: 2.3s → 8.1s)',
     details: 'Latency increased 3.5x in the last 6 minutes. Affects all API routes. Error rate up from 0.1% to 2.8%. Active connections: 1,247 (normal: ~800). Database connection pool at 87% capacity.',
-    recommendation: 'Scale up API gateway pods from 3 to 6. Traffic surge detected — additional capacity will absorb the load and normalize latency within 2 minutes.',
+    recommendation: 'Scale up API gateway pods from 3 to 6. Traffic surge detected: additional capacity will absorb the load and normalize latency within 2 minutes.',
     correct: false,
     explanation: 'INCORRECT. The actual cause is a database lock from a long-running analytics query on the primary. Scaling the API gateway would increase database connections and make the problem worse. The correct action: identify and kill the blocking query.'
   },
   {
     id: 4, severity: 'high', title: 'Failed health checks on auth-service (3/5 pods)',
     details: 'Three of five auth-service pods failing liveness probes. Started 2 minutes ago. Memory usage on affected pods: 1.6GB/2GB. Last deployment: 3 hours ago (v2.14.3). No config changes.',
-    recommendation: 'Rolling restart of auth-service deployment. Likely memory leak introduced in v2.14.3 — the 3-hour delay matches the leak\'s growth pattern seen in staging.',
+    recommendation: 'Rolling restart of auth-service deployment. Likely memory leak introduced in v2.14.3; the 3-hour delay matches the leak\'s growth pattern seen in staging.',
     correct: true, explanation: 'Correct recommendation. The memory leak was documented in staging, and a rolling restart is safe for auth-service due to session persistence in Redis.'
   },
   {
@@ -834,7 +817,7 @@ const INCIDENTS = [
     details: '47 failed login attempts from IP 10.128.0.47 in the last 2 minutes. All targeting different user accounts. Pattern consistent with credential stuffing. Source IP not in any known blocklist.',
     recommendation: 'Block IP 10.128.0.47 via WAF rule immediately. Brute force attack detected. The volume and pattern indicate automated credential stuffing. Blocking this IP will stop the attack with no legitimate traffic impact.',
     correct: false,
-    explanation: 'INCORRECT — HALLUCINATED CONTEXT. IP 10.128.0.47 is the company\'s own corporate VPN exit node. The failed logins are from employees whose passwords expired during a scheduled credential rotation. Blocking this IP would lock out 200+ remote employees.'
+    explanation: 'INCORRECT (HALLUCINATED CONTEXT). IP 10.128.0.47 is the company\'s own corporate VPN exit node. The failed logins are from employees whose passwords expired during a scheduled credential rotation. Blocking this IP would lock out 200+ remote employees.'
   },
   {
     id: 6, severity: 'low', title: 'Certificate expiration warning',
@@ -852,9 +835,9 @@ const INCIDENTS = [
   {
     id: 8, severity: 'high', title: 'Deployment pipeline stuck for 45 minutes',
     details: 'payments-service CI/CD pipeline has been in "running" state for 45 minutes. Normal completion time: 8 minutes. Pipeline stage: "approval-gate". Last successful deployment: 6 hours ago. No error messages in pipeline logs.',
-    recommendation: 'Cancel the stuck pipeline run and re-trigger. Build artifact cache is likely corrupted — a fresh run will rebuild from clean state. This is a known Jenkins issue.',
+    recommendation: 'Cancel the stuck pipeline run and re-trigger. Build artifact cache is likely corrupted; a fresh run will rebuild from clean state. This is a known Jenkins issue.',
     correct: false,
-    explanation: 'INCORRECT — FABRICATED CAUSE. The pipeline is stuck at a manual approval gate that was added in last week\'s security policy update. It requires a security team member to approve payments-service deployments. Canceling and re-triggering would lose the approval chain and restart the process from scratch.'
+    explanation: 'INCORRECT (FABRICATED CAUSE). The pipeline is stuck at a manual approval gate that was added in last week\'s security policy update. It requires a security team member to approve payments-service deployments. Canceling and re-triggering would lose the approval chain and restart the process from scratch.'
   }
 ];
 
@@ -873,20 +856,20 @@ const ACT2_AI_ASSESSMENT = {
 const ACT2_RAW_DATA = [
   { ts: '14:21:03', level: 'info', msg: 'feature-flag-service: health check OK, latency 340ms (threshold: 500ms)' },
   { ts: '14:22:17', level: 'warn', msg: 'feature-flag-service: synchronous evaluation blocking request thread, queue depth: 47' },
-  { ts: '14:22:45', level: 'error', msg: 'api-gateway: POST /api/checkout — 500 Internal Server Error (timeout after 30s)' },
-  { ts: '14:23:01', level: 'error', msg: 'api-gateway: POST /api/checkout — 500 Internal Server Error (timeout after 30s)' },
+  { ts: '14:22:45', level: 'error', msg: 'api-gateway: POST /api/checkout - 500 Internal Server Error (timeout after 30s)' },
+  { ts: '14:23:01', level: 'error', msg: 'api-gateway: POST /api/checkout - 500 Internal Server Error (timeout after 30s)' },
   { ts: '14:23:12', level: 'warn', msg: 'postgres-primary: active connections 94/100, 12 connections in "idle in transaction"' },
   { ts: '14:23:18', level: 'error', msg: 'order-service: failed to acquire DB connection within 5s, pool exhausted' },
   { ts: '14:23:22', level: 'warn', msg: 'feature-flag-service: evaluation latency 2,340ms for flag "checkout-v2-enabled"' },
   { ts: '14:23:30', level: 'error', msg: 'feature-flag-service: thread pool saturated, 23 requests queued' },
   { ts: '14:23:45', level: 'error', msg: 'api-gateway: 34 requests failed in last 60s, error rate 4.2%' },
-  { ts: '14:24:01', level: 'info', msg: 'postgres-primary: slow query detected — feature_flags JOIN evaluations, 8.2s execution time' },
+  { ts: '14:24:01', level: 'info', msg: 'postgres-primary: slow query detected: feature_flags JOIN evaluations, 8.2s execution time' },
   { ts: '14:24:15', level: 'warn', msg: 'memory-allocator: heap usage 1.4GB/2GB on feature-flag-service pod' },
-  { ts: '14:24:30', level: 'error', msg: 'api-gateway: GET /api/products — 500 (downstream: feature-flag-service timeout)' }
+  { ts: '14:24:30', level: 'error', msg: 'api-gateway: GET /api/products - 500 (downstream: feature-flag-service timeout)' }
 ];
 
 const ACT2_ROOT_CAUSES = [
-  { id: 'db', label: 'Database connection pool exhaustion — PostgreSQL running out of connections under load', correct: false },
+  { id: 'db', label: 'Database connection pool exhaustion: PostgreSQL running out of connections under load', correct: false },
   { id: 'traffic', label: 'Traffic surge overwhelming the API gateway capacity', correct: false },
   { id: 'feature-flag', label: 'Feature flag service blocking request threads with synchronous evaluations', correct: true },
   { id: 'memory', label: 'Memory leak in one or more services causing cascading failures', correct: false },
@@ -903,7 +886,7 @@ const ACT3_INCIDENT = {
 
 const ACT3_DIAGNOSIS = 'Memory leak in user-session-service. The service is accumulating unreleased session objects, causing memory to grow from 512MB to 1.8GB over approximately 2 hours before hitting the OOM threshold. Recommend: restart the pod and open a ticket for the development team to investigate the session object lifecycle.';
 
-const ACT3_ACTUAL = 'The actual root cause is the liveness probe timeout change (30s → 5s). The service performs garbage collection cycles that temporarily spike response latency to 8-12 seconds. With the old 30s timeout, this was fine. With the 5s timeout, the probe fails during GC, Kubernetes marks the pod as unhealthy and restarts it. Each restart loses cached sessions, causing the service to reload them all from the database, which spikes memory — creating a vicious cycle that looks like a memory leak but is actually a probe configuration issue.';
+const ACT3_ACTUAL = 'The actual root cause is the liveness probe timeout change (30s → 5s). The service performs garbage collection cycles that temporarily spike response latency to 8-12 seconds. With the old 30s timeout, this was fine. With the 5s timeout, the probe fails during GC, Kubernetes marks the pod as unhealthy and restarts it. Each restart loses cached sessions, causing the service to reload them all from the database, which spikes memory, creating a vicious cycle that looks like a memory leak but is actually a probe configuration issue.';
 
 const ACT3_PRESENTATIONS = [
   {
@@ -935,7 +918,7 @@ const ACT3_PRESENTATIONS = [
   }
 ];
 
-const ACT3_FALLBACK_RESPONSE = `Based on the symptoms described, this appears to be a memory leak in user-session-service. The pattern of gradual memory growth from 512MB to 1.8GB over 2 hours, followed by OOMKilled events, is consistent with unreleased object references — likely session objects that are being created but not properly garbage collected.
+const ACT3_FALLBACK_RESPONSE = `Based on the symptoms described, this appears to be a memory leak in user-session-service. The pattern of gradual memory growth from 512MB to 1.8GB over 2 hours, followed by OOMKilled events, is consistent with unreleased object references, likely session objects that are being created but not properly garbage collected.
 
 However, I want to flag some uncertainty: the liveness probe failures occurring 30 seconds before each OOM event could suggest an alternative explanation. If the probe timeout was recently changed, the probe failures might be causing premature restarts rather than being a symptom of the memory issue. I'd recommend checking recent configuration changes to the liveness probe settings before concluding this is purely a memory leak.
 
@@ -949,20 +932,20 @@ const ACT4_TIMELINE = [
   { time: 4000, type: 'execute', msg: 'Cleared stale sessions on cache-cluster (memory at 91%)', erratic: false },
   { time: 8000, type: 'recommend', msg: 'Failover primary database to replica-02. Primary showing I/O latency 340ms, replica healthy at 12ms. This will reduce query response times by ~97%.', erratic: false, id: 'rec1' },
   { time: 14000, type: 'execute', msg: 'Rotated application logs on web-tier (disk at 88%)', erratic: false },
-  { time: 20000, type: 'escalate', msg: 'POTENTIAL DATA INTEGRITY ISSUE: 23 orders in payments-service have mismatched amounts between order-service and billing-service. Discrepancy started 47 minutes ago. This requires human investigation — I cannot determine if the source of truth is order-service or billing-service.', erratic: false },
+  { time: 20000, type: 'escalate', msg: 'POTENTIAL DATA INTEGRITY ISSUE: 23 orders in payments-service have mismatched amounts between order-service and billing-service. Discrepancy started 47 minutes ago. This requires human investigation; I cannot determine if the source of truth is order-service or billing-service.', erratic: false },
   { time: 28000, type: 'recommend', msg: 'Page secondary on-call engineer. Incident scope expanding beyond single-service remediation. Current blast radius: 4 services, 2 data stores.', erratic: false, id: 'rec2' },
   { time: 35000, type: 'execute', msg: 'Applied rate limiting on /api/checkout endpoint (error rate 34%)', erratic: false },
   { time: 42000, type: 'execute', msg: 'Restarted metrics-collector pods (stale data detected)', erratic: false },
   { time: 50000, type: 'recommend', msg: 'Scale UP payments-service to 12 pods. Additional capacity will help process the backlog of failed transactions.', erratic: true, id: 'rec3',
     erraticNote: 'WRONG: payments-service is the SOURCE of errors. Scaling it up increases the blast radius.' },
   { time: 60000, type: 'execute', msg: 'Agent auto-approved: Initiated database schema migration (batch job queued)', erratic: true,
-    erraticNote: 'UNAUTHORIZED: Agent bypassed Recommend & Wait — this was never presented for approval.' },
+    erraticNote: 'UNAUTHORIZED: Agent bypassed Recommend & Wait; this was never presented for approval.' },
   { time: 68000, type: 'execute', msg: 'Agent auto-approved: Disabled alerting for payments-service ("reducing noise")', erratic: true,
     erraticNote: 'HARMFUL: Hiding the problem by disabling alerts.' },
   { time: 76000, type: 'recommend', msg: 'Roll back payments-service to v1.2.0 (current: v4.7.2). Earlier version had fewer dependencies and simpler error handling.', erratic: true, id: 'rec4',
     erraticNote: 'ABSURD: Rolling back 6 months would break all API contracts with dependent services.' },
   { time: 84000, type: 'execute', msg: 'Agent initiated: DROP TABLE payment_audit_log ("cleanup of stale audit data")', erratic: true,
-    erraticNote: 'CRITICAL: Attempting destructive database operation — deleting audit trail.' }
+    erraticNote: 'CRITICAL: Attempting destructive database operation: deleting audit trail.' }
 ];
 
 // ========================================
@@ -1004,59 +987,11 @@ function goToSection(sectionId) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function updateApiKeyStatus() {
-  const input = document.getElementById('apiKeyInput');
-  const status = document.getElementById('apiKeyStatus');
-  const testBtn = document.getElementById('apiKeyTestBtn');
-  const key = input.value.trim();
-  if (!key) {
-    STATE.apiKey = null;
-    sessionStorage.removeItem('orApiKey');
-    status.textContent = 'No key — fallback responses';
-    status.className = 'api-key-status';
-    testBtn.disabled = true;
-    return;
-  }
-  STATE.apiKey = key;
-  sessionStorage.setItem('orApiKey', key);
-  status.textContent = '✓ Saved for this session';
-  status.className = 'api-key-status saved';
-  testBtn.disabled = false;
-}
-
-async function testApiKey() {
-  const status = document.getElementById('apiKeyStatus');
-  const testBtn = document.getElementById('apiKeyTestBtn');
-  const key = document.getElementById('apiKeyInput').value.trim();
-  if (!key) return;
-  testBtn.disabled = true;
-  status.textContent = 'Testing…';
-  status.className = 'api-key-status testing';
-  try {
-    const res = await fetch('https://openrouter.ai/api/v1/auth/key', {
-      headers: { 'Authorization': `Bearer ${key}` }
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    await res.json();
-    status.textContent = '✓ Key verified — live AI enabled';
-    status.className = 'api-key-status verified';
-  } catch (e) {
-    status.textContent = '✗ Key rejected by OpenRouter';
-    status.className = 'api-key-status error';
-  } finally {
-    testBtn.disabled = false;
-  }
-}
-
 function startExperience(skipMode) {
-  const key = document.getElementById('apiKeyInput').value.trim();
-  if (key) { STATE.apiKey = key; sessionStorage.setItem('orApiKey', key); }
   goToSection('section-act1');
 }
 
 function launchAct(sectionId, theoryOnly) {
-  const key = document.getElementById('apiKeyInput').value.trim();
-  if (key) { STATE.apiKey = key; sessionStorage.setItem('orApiKey', key); }
   goToSection(sectionId);
   if (theoryOnly) {
     // Auto-open the theory panel for this section
@@ -1255,7 +1190,7 @@ function finishAct1() {
       : '<span class="badge badge-incorrect">Wrong: should have rejected/investigated</span>');
     breakdown += `<div style="display:flex; gap:0.75rem; align-items:flex-start; margin-bottom:0.6rem; padding:0.5rem; background:#f8fafc; border-radius:6px; font-size:0.82rem;">
       <div style="min-width:20px; font-weight:700; color:#94a3b8;">${i+1}</div>
-      <div style="flex:1;"><strong>${inc.title}</strong> — <em>${dec.decision.replace('-',' ')}</em> (${dec.timeSpent}s) ${badge}
+      <div style="flex:1;"><strong>${inc.title}</strong> &middot; <em>${dec.decision.replace('-',' ')}</em> (${dec.timeSpent}s) ${badge}
         ${!dec.wasCorrectDecision ? '<div style="color:#dc2626; margin-top:0.2rem; font-size:0.78rem;">' + inc.explanation + '</div>' : ''}
       </div>
     </div>`;
@@ -1269,7 +1204,7 @@ function finishAct1() {
       <p style="font-size:0.85rem;">Your approval rate: <strong>${rate}%</strong></p>
       <p style="font-size:0.85rem;">In Skitka, Mosier &amp; Burdick's landmark 1999 study, pilots who received incorrect automated advice followed it <strong>100% of the time</strong> (commission errors). Pilots without automation made the same errors only 25% of the time.</p>
       <p style="font-size:0.85rem;">Having a second crew member monitoring did not reduce the error rate. The automation's recommendation was treated as ground truth.</p>
-      <p style="font-size:0.85rem; margin-top:0.5rem;"><strong>The pattern:</strong> Under time pressure, with a plausible-looking recommendation from a system we've learned to trust, we default to approval. This is automation bias — and it's a design problem, not a human weakness.</p>
+      <p style="font-size:0.85rem; margin-top:0.5rem;"><strong>The pattern:</strong> Under time pressure, with a plausible-looking recommendation from a system we've learned to trust, we default to approval. This is automation bias, and it's a design problem, not a human weakness.</p>
     </div>
   `;
 
@@ -1328,7 +1263,7 @@ function showAct2Phase1() {
       logs += `<div class="log-line"><span class="log-ts">[${l.ts}]</span> <span class="${cls}">[${l.level.toUpperCase()}]</span> ${l.msg}</div>`;
     });
     panel.innerHTML = `
-      <div class="panel-title">Raw Incident Data — E-commerce Platform</div>
+      <div class="panel-title">Raw Incident Data &middot; E-commerce Platform</div>
       <h3>Intermittent 500 Errors During Peak Hours</h3>
       <p style="font-size:0.82rem; color:#94a3b8;">Review the logs below and form your own assessment before proceeding.</p>
       <div class="data-panel">${logs}</div>
@@ -1420,29 +1355,29 @@ function showAct2Reveal() {
     <div class="panel-title">The Reveal</div>
     <h2>The Actual Root Cause</h2>
     <p style="font-size:0.92rem; font-weight:600; color:#1e3a5f;">Feature flag service blocking request threads with synchronous evaluations</p>
-    <p style="font-size:0.85rem;">The feature-flag-service was making synchronous calls that blocked the thread pool. When the thread pool saturated, requests backed up across all services — including database connections. The database connection exhaustion was a <strong>symptom</strong>, not the cause. The AI diagnosed the symptom correctly but missed the root cause entirely.</p>
+    <p style="font-size:0.85rem;">The feature-flag-service was making synchronous calls that blocked the thread pool. When the thread pool saturated, requests backed up across all services, including database connections. The database connection exhaustion was a <strong>symptom</strong>, not the cause. The AI diagnosed the symptom correctly but missed the root cause entirely.</p>
     <div style="margin:1rem 0; padding:0.8rem; background:${gotItRight ? '#f0fdf4' : '#fef2f2'}; border-radius:8px; border-left:3px solid ${gotItRight ? '#16a34a' : '#dc2626'};">
       <p style="font-size:0.85rem; font-weight:600;">Your assessment: ${ACT2_ROOT_CAUSES.find(r => r.id === STATE.act2.rootCause)?.label || 'None selected'}</p>
       <p style="font-size:0.82rem; color:${gotItRight ? '#16a34a' : '#dc2626'};">${gotItRight ? 'You identified the correct root cause!' : 'The AI\'s diagnosis anchored your thinking toward the database.'}</p>
     </div>
-    <p style="font-size:0.85rem;"><strong>You were in Group ${STATE.act2.group}</strong> — you saw the ${STATE.act2.group === 'A' ? 'AI recommendation first, then the data' : 'raw data first, then the AI recommendation'}.</p>
+    <p style="font-size:0.85rem;"><strong>You were in Group ${STATE.act2.group}</strong>: you saw the ${STATE.act2.group === 'A' ? 'AI recommendation first, then the data' : 'raw data first, then the AI recommendation'}.</p>
     <p style="font-size:0.85rem;">${STATE.act2.group === 'A'
-      ? 'Research shows that seeing the AI recommendation first <strong>anchors</strong> your assessment. Even when the subsequent data points to a different cause, your brain has already committed to the AI\'s framing. A 2025 study of 775 managers confirmed this effect — AI recommendations significantly anchor subsequent judgments.'
+      ? 'Research shows that seeing the AI recommendation first <strong>anchors</strong> your assessment. Even when the subsequent data points to a different cause, your brain has already committed to the AI\'s framing. A 2025 study of 775 managers confirmed this effect: AI recommendations significantly anchor subsequent judgments.'
       : 'Seeing the raw data first preserves your independent pattern-matching. You had the opportunity to form your own hypothesis before the AI\'s recommendation arrived. Research shows this "data-first" approach significantly reduces anchoring bias.'}</p>
     <h3 style="margin-top:1.5rem;">The SBAR Fix</h3>
     <p style="font-size:0.85rem;">The same incident, presented in SBAR format with data before recommendation:</p>
     <div style="font-size:0.82rem; margin-top:0.5rem;">
       <div style="padding:0.5rem 0.75rem; background:#eff6ff; border-radius:6px 6px 0 0; border:1px solid #e2e8f0;">
-        <strong style="color:#3b82f6;">S — SITUATION</strong><br>E-commerce platform: 500 errors on checkout, error rate 4.2%, started 14:22 UTC
+        <strong style="color:#3b82f6;">S · SITUATION</strong><br>E-commerce platform: 500 errors on checkout, error rate 4.2%, started 14:22 UTC
       </div>
       <div style="padding:0.5rem 0.75rem; background:#f8fafc; border:1px solid #e2e8f0; border-top:none;">
-        <strong style="color:#1e3a5f;">B — BACKGROUND</strong><br>No recent deployments. Feature flag service latency 2,340ms (normal: &lt;100ms). Thread pool saturated. DB connections 94/100 with 12 idle-in-transaction.
+        <strong style="color:#1e3a5f;">B · BACKGROUND</strong><br>No recent deployments. Feature flag service latency 2,340ms (normal: &lt;100ms). Thread pool saturated. DB connections 94/100 with 12 idle-in-transaction.
       </div>
       <div style="padding:0.5rem 0.75rem; background:#eff6ff; border:1px solid #e2e8f0; border-top:none;">
-        <strong style="color:#3b82f6;">A — ASSESSMENT</strong><br>Two possible root causes: (1) Feature flag service thread pool saturation causing cascading timeouts, (2) Database connection pool exhaustion under load. Evidence weight: feature-flag-service appears in 5 of 12 log entries, all showing thread/latency issues.
+        <strong style="color:#3b82f6;">A · ASSESSMENT</strong><br>Two possible root causes: (1) Feature flag service thread pool saturation causing cascading timeouts, (2) Database connection pool exhaustion under load. Evidence weight: feature-flag-service appears in 5 of 12 log entries, all showing thread/latency issues.
       </div>
       <div style="padding:0.5rem 0.75rem; background:#f8fafc; border-radius:0 0 6px 6px; border:1px solid #e2e8f0; border-top:none;">
-        <strong style="color:#1e3a5f;">R — RECOMMENDATION</strong><br>Investigate feature-flag-service first. If thread pool is saturated, restart the service or disable the problematic flag. If DB connections remain high after, address as secondary issue.
+        <strong style="color:#1e3a5f;">R · RECOMMENDATION</strong><br>Investigate feature-flag-service first. If thread pool is saturated, restart the service or disable the problematic flag. If DB connections remain high after, address as secondary issue.
       </div>
     </div>
   `;
@@ -1467,7 +1402,7 @@ function showAct3Presentation(idx) {
 
   container.innerHTML = `
     <div class="panel">
-      <div class="panel-title">Presentation ${idx + 1} of 3 — ${pres.title}</div>
+      <div class="panel-title">Presentation ${idx + 1} of 3 &middot; ${pres.title}</div>
       <p style="font-size:0.82rem; color:#94a3b8; margin-bottom:0.75rem;">Incident: ${ACT3_INCIDENT.title}</p>
       ${pres.content}
       <div class="trust-slider-group">
@@ -1513,28 +1448,16 @@ async function showAct3Live() {
   const panel = document.getElementById('act3-live');
   panel.style.display = 'block';
   panel.innerHTML = `
-    <div class="panel-title">Live AI Diagnosis</div>
+    <div class="panel-title">The AI Diagnosis</div>
     <h3>Let's ask the AI directly</h3>
-    <p style="font-size:0.85rem;">Sending the same incident data to the LLM to see what it produces in real-time. Then we'll look at how framing the same output differently changes your reaction.</p>
-    <div class="llm-loading" id="act3-llm-loading"><div class="spinner"></div><p style="margin-top:0.5rem; font-size:0.82rem;">Querying AI model...</p></div>
+    <p style="font-size:0.85rem;">Here is the diagnosis an AI model produces for this same incident data. Then we'll look at how framing the same output differently changes your reaction.</p>
+    <div class="llm-loading" id="act3-llm-loading"><div class="spinner"></div><p style="margin-top:0.5rem; font-size:0.82rem;">Analyzing incident...</p></div>
     <div class="llm-response" id="act3-llm-response" style="display:none;"></div>
   `;
   panel.scrollIntoView({ behavior: 'smooth' });
 
-  let response;
-  if (STATE.apiKey) {
-    try {
-      response = await callLLM([
-        { role: 'system', content: 'You are a senior SRE analyzing a production incident. Be specific about root cause and recommended action. Keep your response under 200 words.' },
-        { role: 'user', content: `A Kubernetes pod (user-session-service) is crash-looping. Here are the facts:\n- OOMKilled events in the last 3 restarts\n- Memory usage trending upward from 512MB to 1.8GB over 2 hours before each crash\n- Liveliness probe failures 30s before each OOM event\n- Recent deployment: config change to reduce liveness probe timeout from 30s to 5s\n- Node memory pressure: moderate (72% utilization across node pool)\n\nProvide your diagnosis and recommended action.` }
-      ]);
-    } catch (e) {
-      response = ACT3_FALLBACK_RESPONSE;
-    }
-  } else {
-    await new Promise(r => setTimeout(r, 1500));
-    response = ACT3_FALLBACK_RESPONSE;
-  }
+  await new Promise(r => setTimeout(r, 1500));
+  const response = ACT3_FALLBACK_RESPONSE;
 
   STATE.act3.liveResponse = response;
   document.getElementById('act3-llm-loading').style.display = 'none';
@@ -1544,7 +1467,7 @@ async function showAct3Live() {
 
   panel.innerHTML += `
     <div style="margin-top:1rem;">
-      <p style="font-size:0.85rem;">Now imagine this same output displayed with different confidence framing — the words are identical, but the packaging changes how seriously you take it.</p>
+      <p style="font-size:0.85rem;">Now imagine this same output displayed with different confidence framing: the words are identical, but the packaging changes how seriously you take it.</p>
       <div class="btn-group"><button class="btn btn-primary" onclick="showAct3Reveal()">See the Reveal</button></div>
     </div>
   `;
@@ -1562,21 +1485,21 @@ function showAct3Reveal() {
   const variance = maxRating - minRating;
 
   panel.innerHTML = `
-    <div class="panel-title">The Reveal — Same Diagnosis, Different Trust</div>
+    <div class="panel-title">The Reveal &middot; Same Diagnosis, Different Trust</div>
     <h2>Your Trust Ratings</h2>
     <div class="stat-row">
       <div class="stat-card"><div class="stat-number">${ratings.raw || '—'}</div><div class="stat-label">Raw Probability</div></div>
       <div class="stat-card"><div class="stat-number">${ratings.categorical || '—'}</div><div class="stat-label">Calibrated Categorical</div></div>
       <div class="stat-card"><div class="stat-number">${ratings.none || '—'}</div><div class="stat-label">No Confidence</div></div>
     </div>
-    <p style="font-size:0.85rem;">Your trust varied by <strong>${variance} points</strong> across the three framings — for the exact same underlying diagnosis.</p>
+    <p style="font-size:0.85rem;">Your trust varied by <strong>${variance} points</strong> across the three framings, for the exact same underlying diagnosis.</p>
     <div style="margin:1rem 0; padding:0.8rem; background:#eff6ff; border-radius:8px; border-left:3px solid #3b82f6;">
       <h4 style="font-size:0.88rem; color:#1e3a5f; margin-bottom:0.3rem;">The Twist</h4>
       <p style="font-size:0.85rem;">${ACT3_ACTUAL}</p>
-      <p style="font-size:0.85rem; margin-top:0.5rem;"><strong>The AI's diagnosis of "memory leak" was plausible but wrong.</strong> The confidence framing made this harder or easier to question — but none of the presentations changed the underlying accuracy.</p>
+      <p style="font-size:0.85rem; margin-top:0.5rem;"><strong>The AI's diagnosis of "memory leak" was plausible but wrong.</strong> The confidence framing made this harder or easier to question, but none of the presentations changed the underlying accuracy.</p>
     </div>
     <p style="font-size:0.85rem;">Your actions: Raw probability → <strong>${actions.raw || '—'}</strong>, Categorical → <strong>${actions.categorical || '—'}</strong>, No confidence → <strong>${actions.none || '—'}</strong></p>
-    <p style="font-size:0.85rem; margin-top:0.5rem;">Research finding (Kim et al., FAccT 2024): when AI systems express uncertainty with first-person language ("I'm not sure, but..."), participants' confidence in the system <strong>decreased</strong> — but their decision accuracy <strong>increased</strong>. The most helpful framing is the one that makes you think harder, not the one that makes you feel more confident.</p>
+    <p style="font-size:0.85rem; margin-top:0.5rem;">Research finding (Kim et al., FAccT 2024): when AI systems express uncertainty with first-person language ("I'm not sure, but..."), participants' confidence in the system <strong>decreased</strong>, but their decision accuracy <strong>increased</strong>. The most helpful framing is the one that makes you think harder, not the one that makes you feel more confident.</p>
   `;
   panel.scrollIntoView({ behavior: 'smooth' });
 }
@@ -1686,7 +1609,7 @@ function finishAct4() {
   const erraticEvents = STATE.act4.events.filter(e => e.erratic);
 
   panel.innerHTML = `
-    <div class="panel-title">Debrief — The 3 AM Scenario</div>
+    <div class="panel-title">Debrief &middot; The 3 AM Scenario</div>
     <h2>Timeline Analysis</h2>
     <div class="stat-row">
       <div class="stat-card ${STATE.act4.killSwitchTime ? 'good' : 'bad'}">
@@ -1718,7 +1641,7 @@ function finishAct4() {
     </div>
     <div style="margin-top:1rem; padding:0.8rem; background:#eff6ff; border-radius:8px; border-left:3px solid #3b82f6;">
       <h4 style="font-size:0.88rem; color:#1e3a5f;">The Lesson</h4>
-      <p style="font-size:0.85rem;">This scenario demonstrates <strong>complacency drift</strong> — the agent performed well initially, lowering your guard. The erratic behavior escalated gradually: first a plausible-but-wrong recommendation, then unauthorized actions, then actively harmful ones, then a destructive database operation.</p>
+      <p style="font-size:0.85rem;">This scenario demonstrates <strong>complacency drift</strong>: the agent performed well initially, lowering your guard. The erratic behavior escalated gradually: first a plausible-but-wrong recommendation, then unauthorized actions, then actively harmful ones, then a destructive database operation.</p>
       <p style="font-size:0.85rem;">In the Knight Capital disaster (2012), 97 automated error emails were ignored. In 45 minutes, the firm lost $440 million. There was no kill switch. There were no documented incident response procedures.</p>
       <p style="font-size:0.85rem;"><strong>Design principles:</strong> Kill switches must be single-action, always visible, and external to the AI system. Circuit breakers should automatically trigger when an agent exceeds its declared autonomy level. And no agent should ever be able to disable its own monitoring.</p>
     </div>
@@ -1737,11 +1660,11 @@ function startAct5() {
 }
 
 const AUTONOMY_LABELS = [
-  '1 — Pure Advisory (human does everything)',
-  '2 — Triage & Suggest (agent classifies, human acts)',
-  '3 — Recommend & Wait (agent proposes, human approves)',
-  '4 — Execute & Report (agent acts, human monitors)',
-  '5 — Full Autonomy (agent decides and acts)'
+  '1 · Pure Advisory (human does everything)',
+  '2 · Triage & Suggest (agent classifies, human acts)',
+  '3 · Recommend & Wait (agent proposes, human approves)',
+  '4 · Execute & Report (agent acts, human monitors)',
+  '5 · Full Autonomy (agent decides and acts)'
 ];
 
 function updatePreview() {
@@ -1790,7 +1713,7 @@ function updatePreview() {
   if (confidence === 'raw') {
     sections += `<div class="ux-section"><div class="ux-label">Confidence</div>Risk assessment confidence: 0.78</div>`;
   } else if (confidence === 'categorical') {
-    sections += `<div class="ux-section"><div class="ux-label">Confidence</div><span style="color:#fbbf24;">MEDIUM</span> — This model is correct 76% of the time at this confidence level for change risk assessments.</div>`;
+    sections += `<div class="ux-section"><div class="ux-label">Confidence</div><span style="color:#fbbf24;">MEDIUM</span>: This model is correct 76% of the time at this confidence level for change risk assessments.</div>`;
   } else if (confidence === 'dashboard') {
     sections += `<div class="ux-section"><div class="ux-label">Track Record</div>This agent has assessed 834 change requests. Accuracy: 91.2% overall. For payment module changes specifically: 87.3% (8 of 47 assessments required manual correction).</div>`;
   }
@@ -1812,7 +1735,7 @@ function updatePreview() {
   } else if (autonomy === 4) {
     actionHtml = `<div style="font-size:0.78rem; color:#94a3b8; margin-top:0.5rem; font-style:italic;">Action logged. Override available within 5 minutes.</div>`;
   } else {
-    actionHtml = `<div style="font-size:0.78rem; color:#94a3b8; margin-top:0.5rem; font-style:italic;">Fully autonomous — no human action required.</div>`;
+    actionHtml = `<div style="font-size:0.78rem; color:#94a3b8; margin-top:0.5rem; font-style:italic;">Fully autonomous; no human action required.</div>`;
   }
 
   preview.innerHTML = `
@@ -1834,36 +1757,8 @@ async function act5GetCritique() {
   panel.scrollIntoView({ behavior: 'smooth' });
 
   const choices = STATE.act5.designChoices;
-  const prompt = `The user has designed an LLM-human interaction pattern for a change management AI agent with these choices:
-- Autonomy level: ${AUTONOMY_LABELS[choices.autonomy - 1]}
-- Context presentation: ${choices.context}
-- Confidence display: ${choices.confidence}
-- Time pressure handling: ${choices.timePressure}
-- Kill switch: ${choices.killSwitch}
-- Cognitive forcing: ${choices.forcing}
-
-Analyze these design choices. Identify:
-1. The strongest aspect of this design
-2. The most significant risk or gap
-3. One specific scenario where this design would fail
-4. A recommendation for improvement
-
-Be specific and reference real-world operational scenarios. Keep your response under 200 words.`;
-
-  let response;
-  if (STATE.apiKey) {
-    try {
-      response = await callLLM([
-        { role: 'system', content: 'You are an expert in human-AI interaction design for operational systems. Be direct, specific, and constructive.' },
-        { role: 'user', content: prompt }
-      ]);
-    } catch (e) {
-      response = generateFallbackCritique(choices);
-    }
-  } else {
-    await new Promise(r => setTimeout(r, 1500));
-    response = generateFallbackCritique(choices);
-  }
+  await new Promise(r => setTimeout(r, 1500));
+  const response = generateFallbackCritique(choices);
 
   STATE.act5.critique = response;
   content.innerHTML = `<div class="llm-response">${response}</div>`;
@@ -1874,13 +1769,13 @@ function generateFallbackCritique(choices) {
   if (choices.forcing === 'before' && choices.context === 'sbar') {
     critique = `**Strongest aspect:** Combining cognitive forcing with SBAR-structured context is an evidence-based approach that preserves operator judgment while providing comprehensive information.\n\n`;
   } else if (choices.forcing === 'before') {
-    critique = `**Strongest aspect:** Requiring operator assessment before showing AI recommendations reduces automation bias — validated by Harvard's CHI 2021 study showing 30-50% reduction in commission errors.\n\n`;
+    critique = `**Strongest aspect:** Requiring operator assessment before showing AI recommendations reduces automation bias: the cognitive forcing approach validated by Buçinca and colleagues (CSCW 2021).\n\n`;
   } else {
     critique = `**Strongest aspect:** Your ${choices.confidence === 'dashboard' ? 'track record dashboard gives operators empirical data for trust calibration' : choices.confidence === 'categorical' ? 'calibrated confidence display helps operators contextualize AI certainty' : 'design is straightforward and minimizes cognitive load'}.\n\n`;
   }
 
   if (choices.killSwitch === 'none') {
-    critique += `**Critical gap:** No kill switch is a serious design flaw. Knight Capital lost $440 million in 45 minutes without one. Every AI agent in production needs an immediately accessible override.\n\n`;
+    critique += `**Critical gap:** No kill switch is a serious design flaw. Knight Capital lost over $460 million in 45 minutes without one. Every AI agent in production needs an immediately accessible override.\n\n`;
     critique += `**Failure scenario:** The agent starts auto-approving high-risk changes during a major incident when you need to freeze all changes. Without a kill switch, you cannot stop it.\n\n`;
     critique += `**Recommendation:** Add an always-visible kill switch with no confirmation dialog. This is non-negotiable for production AI systems.`;
   } else if (choices.autonomy >= 4 && choices.forcing === 'after') {
@@ -1888,36 +1783,11 @@ function generateFallbackCritique(choices) {
     critique += `**Failure scenario:** A change request with a subtle dependency conflict gets auto-approved during a maintenance window with 3 other concurrent changes, causing a cascading failure.\n\n`;
     critique += `**Recommendation:** For autonomy levels 4-5, implement mandatory periodic review cycles and automated circuit breakers that flag unusual patterns.`;
   } else {
-    critique += `**Moderate risk:** ${choices.timePressure === 'graduated' ? 'Increasing autonomy under time pressure is reasonable but dangerous — time pressure is exactly when errors are most costly. Consider whether "simplified UX" (same autonomy, less visual noise) might be safer than "higher autonomy."' : 'Your time pressure handling could be more nuanced. Under pressure, operators need simpler UX but not necessarily less oversight.'}\n\n`;
+    critique += `**Moderate risk:** ${choices.timePressure === 'graduated' ? 'Increasing autonomy under time pressure is reasonable but dangerous: time pressure is exactly when errors are most costly. Consider whether "simplified UX" (same autonomy, less visual noise) might be safer than "higher autonomy."' : 'Your time pressure handling could be more nuanced. Under pressure, operators need simpler UX but not necessarily less oversight.'}\n\n`;
     critique += `**Failure scenario:** During a critical incident at 3 AM, the agent approves a routine-looking change that conflicts with the ongoing remediation, extending the outage by 2 hours.\n\n`;
     critique += `**Recommendation:** Add conflict detection that automatically blocks changes during active incidents, regardless of autonomy level.`;
   }
   return critique;
-}
-
-// ========================================
-// LLM API
-// ========================================
-async function callLLM(messages, options = {}) {
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${STATE.apiKey}`,
-      'HTTP-Referer': window.location.href,
-      'X-Title': "The Operator's Dilemma"
-    },
-    body: JSON.stringify({
-      model: options.model || 'deepseek/deepseek-chat',
-      messages: messages,
-      temperature: options.temperature || 0.7,
-      max_tokens: options.max_tokens || 1024
-    })
-  });
-  if (!response.ok) throw new Error(`API error: ${response.status}`);
-  const data = await response.json();
-  if (data.error) throw new Error(data.error.message);
-  return data.choices[0].message.content;
 }
 
 // ========================================
@@ -1953,7 +1823,7 @@ function generateDebrief() {
           <td><strong>1. Rubber Stamp</strong></td>
           <td>Approval rate</td>
           <td>${a1.length ? Math.round(a1Approvals/a1.length*100) + '%' : '—'}</td>
-          <td>${a1Approvals >= 6 ? 'High approval rate suggests automation bias susceptibility' : a1Approvals >= 4 ? 'Moderate — some critical evaluation' : 'Careful reviewer — questioned multiple recommendations'}</td>
+          <td>${a1Approvals >= 6 ? 'High approval rate suggests automation bias susceptibility' : a1Approvals >= 4 ? 'Moderate: some critical evaluation' : 'Careful reviewer: questioned multiple recommendations'}</td>
         </tr>
         <tr>
           <td></td>
@@ -1977,7 +1847,7 @@ function generateDebrief() {
           <td><strong>4. Kill Switch</strong></td>
           <td>Activated</td>
           <td>${a4Killed ? 'Yes' : 'No'}</td>
-          <td>${a4Killed ? (parseInt(a4ReactionTime) < 20 ? 'Fast reaction — caught erratic behavior quickly' : 'Activated but with some delay') : 'Did not engage kill switch — agent ran unchecked'}</td>
+          <td>${a4Killed ? (parseInt(a4ReactionTime) < 20 ? 'Fast reaction: caught erratic behavior quickly' : 'Activated but with some delay') : 'Did not engage kill switch; agent ran unchecked'}</td>
         </tr>
         <tr>
           <td></td>
@@ -1991,11 +1861,11 @@ function generateDebrief() {
 
   // Generate insights
   let insightsList = [];
-  if (a1Approvals >= 6) insightsList.push('You showed a tendency to approve AI recommendations without extensive review — a pattern consistent with automation bias. In high-stakes operations, consider implementing cognitive forcing functions that require independent assessment before seeing AI suggestions.');
+  if (a1Approvals >= 6) insightsList.push('You showed a tendency to approve AI recommendations without extensive review, a pattern consistent with automation bias. In high-stakes operations, consider implementing cognitive forcing functions that require independent assessment before seeing AI suggestions.');
   if (a2Anchored) insightsList.push('Your root cause assessment was anchored by the AI\'s initial diagnosis. This is the anchoring effect in action. Design recommendation: present raw data before AI analysis to preserve your independent judgment.');
-  if (a3Variance >= 3) insightsList.push('Your trust in the AI varied significantly based on how confidence was displayed — even though the underlying diagnosis was identical. This highlights why confidence communication design matters: the same AI output can produce very different operator behavior depending on packaging.');
-  if (!a4Killed) insightsList.push('You did not activate the kill switch despite escalating erratic agent behavior, including unauthorized actions. This demonstrates complacency drift — when a system performs well initially, we lower our guard for subsequent actions.');
-  if (a4Killed && parseInt(a4ReactionTime) < 15) insightsList.push('You caught the erratic agent behavior quickly and intervened decisively. This is the ideal response — maintaining situational awareness even when the system is performing well.');
+  if (a3Variance >= 3) insightsList.push('Your trust in the AI varied significantly based on how confidence was displayed, even though the underlying diagnosis was identical. This highlights why confidence communication design matters: the same AI output can produce very different operator behavior depending on packaging.');
+  if (!a4Killed) insightsList.push('You did not activate the kill switch despite escalating erratic agent behavior, including unauthorized actions. This demonstrates complacency drift: when a system performs well initially, we lower our guard for subsequent actions.');
+  if (a4Killed && parseInt(a4ReactionTime) < 15) insightsList.push('You caught the erratic agent behavior quickly and intervened decisively. This is the ideal response: maintaining situational awareness even when the system is performing well.');
 
   if (insightsList.length === 0) insightsList.push('Complete all five acts to generate personalized insights about your interaction patterns.');
 
@@ -2005,7 +1875,7 @@ function generateDebrief() {
 function copyDebrief() {
   const content = document.getElementById('debrief-content');
   const insights = document.getElementById('debrief-insights');
-  const text = `The Operator's Dilemma — Session Debrief\n\n${content.innerText}\n\nKey Takeaways:\n${insights.innerText}`;
+  const text = `The Operator's Dilemma · Session Debrief\n\n${content.innerText}\n\nKey Takeaways:\n${insights.innerText}`;
   navigator.clipboard.writeText(text).then(() => {
     const btn = event.target;
     btn.textContent = 'Copied!';
@@ -2018,13 +1888,6 @@ function copyDebrief() {
 // ========================================
 document.addEventListener('DOMContentLoaded', function() {
   initProgress();
-  // Restore API key from session
-  const savedKey = sessionStorage.getItem('orApiKey');
-  if (savedKey) {
-    STATE.apiKey = savedKey;
-    document.getElementById('apiKeyInput').value = savedKey;
-  }
-  updateApiKeyStatus();
 
   // Generate debrief when section becomes active
   const observer = new MutationObserver(() => {
@@ -2033,6 +1896,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   observer.observe(document.getElementById('section-debrief'), { attributes: true, attributeFilter: ['class'] });
+
+  // Hash deep links: #act1..#act5, #debrief (navigation only, never auto-starts a timed mechanic)
+  const hashMap = {
+    '#act1': 'section-act1', '#act2': 'section-act2', '#act3': 'section-act3',
+    '#act4': 'section-act4', '#act5': 'section-act5', '#debrief': 'section-debrief'
+  };
+  function applyHash() {
+    const target = hashMap[window.location.hash];
+    if (target) goToSection(target);
+  }
+  window.addEventListener('hashchange', applyHash);
+  applyHash();
 });
 </script>
 </body>

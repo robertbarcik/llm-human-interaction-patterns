@@ -290,6 +290,31 @@ blockquote p:last-child {
     margin-bottom: 0;
 }
 
+/* "Try it yourself" demo callouts (Human-in-the-Loop Lab) */
+.demo-link {
+    border: 1px solid #bfdbfe;
+    border-left: 4px solid var(--navy);
+    background: #eff6ff;
+    border-radius: 0 8px 8px 0;
+    padding: 0.9rem 1.5rem;
+    margin: 1.5rem 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.88rem;
+    line-height: 1.55;
+}
+.demo-link .demo-link-label {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+}
+.demo-link a {
+    font-weight: 600;
+}
+
 /* Horizontal rules (chapter dividers) */
 hr {
     border: none;
@@ -474,6 +499,15 @@ def build():
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LLM-Human Interaction Design Patterns for Operations</title>
+    <meta name="description" content="How to design the seam between AI agents and human operators: interaction patterns, trust calibration, SBAR handoffs, kill switches, and governance design.">
+    <link rel="canonical" href="https://publications.barcik.training/llm-human-interaction-patterns/">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="LLM-Human Interaction Design Patterns for Operations">
+    <meta property="og:description" content="How to design the seam between AI agents and human operators: interaction patterns, trust calibration, SBAR handoffs, kill switches, and governance design.">
+    <meta property="og:url" content="https://publications.barcik.training/llm-human-interaction-patterns/">
+    <meta property="og:image" content="https://publications.barcik.training/assets/og-card.png">
+    <meta name="twitter:card" content="summary_large_image">
     <style>{CSS}</style>
 </head>
 <body>

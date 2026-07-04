@@ -1,14 +1,14 @@
-# Chapter 6: Implementing the Patterns
+# Chapter 8: Implementing the Patterns
 
-The preceding chapters described what to build and why. This chapter describes how to build it. Every section produces an artifact --- a prompt template, a decision table, a configuration, a workflow, or a checklist --- that can be taken directly into a production system. The goal is not to restate theory but to translate it into implementation.
+The preceding chapters described what to build and why. This chapter describes how to build it. Every section produces an artifact (a prompt template, a decision table, a configuration, a workflow, or a checklist) that can be taken directly into a production system. The goal is not to restate theory but to translate it into implementation.
 
 ## Prompt Templates for Structured Output
 
-The interaction patterns described in Chapters 2 through 5 depend on the LLM agent producing output in specific formats. Left to its own defaults, a model will generate fluent, conversational prose --- exactly the wrong format for an operator making time-sensitive decisions. Structured output requires structured prompts. The three templates below address the most common formatting needs: situation reporting, uncertainty expression, and confidence classification.
+The interaction patterns described in Chapters 2 through 5 depend on the LLM agent producing output in specific formats. Left to its own defaults, a model will generate fluent, conversational prose: exactly the wrong format for an operator making time-sensitive decisions. Structured output requires structured prompts. The three templates below address the most common formatting needs: situation reporting, uncertainty expression, and confidence classification.
 
 ### Template 1: SBAR-Formatted Output
 
-Chapter 4 introduced the SBAR framework adapted for AI agent output: WHAT HAPPENED, WHAT I TRIED, WHAT I RECOMMEND, RISK LEVEL, COST OF INACTION, and EVIDENCE. The following system prompt instructs the agent to use this structure for every recommendation.
+Chapter 5 introduced the SBAR framework adapted for AI agent output: WHAT HAPPENED, WHAT I TRIED, WHAT I RECOMMEND, RISK LEVEL, COST OF INACTION, and EVIDENCE. The following system prompt instructs the agent to use this structure for every recommendation.
 
 ```
 You are an AI operations agent. Structure EVERY recommendation using this exact format:
@@ -29,7 +29,7 @@ Rules:
 - Never skip a section. If you have nothing for a section, write "None identified."
 - WHAT I RECOMMEND must contain exactly one recommended action, not a list of options.
 - COST OF INACTION must describe a concrete consequence, not a vague risk statement.
-- EVIDENCE must reference specific, verifiable data --- not summaries of data.
+- EVIDENCE must reference specific, verifiable data, not summaries of data.
 ```
 
 **Example output:**
@@ -59,11 +59,11 @@ EVIDENCE: [Pod logs: OOMKilled x4] [Metrics: memory peak 508/512Mi]
 [Deployment log: v3.12.1 at 14:23 UTC] [Git diff: +PDF generation]
 ```
 
-**Watch for:** The most common failure mode is the model conflating Assessment and Recommendation --- producing a RISK LEVEL that is actually a recommendation ("RISK LEVEL: HIGH --- we should restart the service immediately") or a WHAT I RECOMMEND that is actually an assessment ("I recommend monitoring the situation"). Enforce the distinction in your prompt and in post-processing validation. A second failure mode is omitting COST OF INACTION or filling it with a tautology ("If no action is taken, the problem will persist"). Explicitly instruct the model to describe a concrete consequence with a timeline.
+**Watch for:** The most common failure mode is the model conflating Assessment and Recommendation (producing a RISK LEVEL that is actually a recommendation ("RISK LEVEL: HIGH) we should restart the service immediately") or a WHAT I RECOMMEND that is actually an assessment ("I recommend monitoring the situation"). Enforce the distinction in your prompt and in post-processing validation. A second failure mode is omitting COST OF INACTION or filling it with a tautology ("If no action is taken, the problem will persist"). Explicitly instruct the model to describe a concrete consequence with a timeline.
 
 ### Template 2: First-Person Uncertainty Expression
 
-Chapter 5 discussed the Kim et al. (FAccT 2024) finding that first-person uncertainty expression ("I'm not sure, but...") decreases operator confidence while increasing decision accuracy. The following template implements this behavior, keyed to a confidence threshold.
+Chapter 6 discussed the Kim et al. (FAccT 2024) finding that first-person uncertainty expression ("I'm not sure, but...") decreases operator confidence while increasing decision accuracy. The following template implements this behavior, keyed to a confidence threshold.
 
 ```
 You are an AI operations agent. After analyzing each situation, 
@@ -77,7 +77,7 @@ If your confidence is below 75:
   Begin your recommendation with a first-person uncertainty 
   expression. Use phrases like:
   - "I'm not confident about this, but..."
-  - "I'm uncertain here --- my best assessment is..."
+  - "I'm uncertain here; my best assessment is..."
   - "I don't have strong evidence for this, but..."
   
   Then state what specifically you are uncertain about and why.
@@ -87,7 +87,7 @@ or "there may be an issue with." Always use first-person language
 that attributes the uncertainty to your own judgment.
 
 After your recommendation, state your confidence level explicitly:
-  [Confidence: XX/100 — one-sentence reason]
+  [Confidence: XX/100 - one-sentence reason]
 ```
 
 **Example output at high confidence (82/100):**
@@ -101,7 +101,7 @@ payment processing endpoints.
 Recommended action: Increase max_connections from 100 to 200 and 
 investigate the long-running queries holding connections open.
 
-[Confidence: 82/100 — Strong correlation between connection pool 
+[Confidence: 82/100 - Strong correlation between connection pool 
 saturation and error pattern; confirmed via two independent metrics.]
 ```
 
@@ -117,11 +117,11 @@ immediately, and I cannot find a clear causal link in the logs.
 Recommended action: Temporarily disable the new rate limiter and 
 observe whether 502 errors subside.
 
-[Confidence: 38/100 — Temporal correlation is weak; no direct 
+[Confidence: 38/100 - Temporal correlation is weak; no direct 
 evidence linking the rate limiter to the 502 responses.]
 ```
 
-**Watch for:** Models tend toward one of two failure modes with uncertainty expression. The first is universal hedging --- the model prepends "I'm not sure" to every response regardless of actual confidence, which trains operators to ignore the signal entirely. The second is false precision --- the model never drops below 70/100 even when its reasoning is clearly speculative. Both modes require calibration (see Section 5 of this chapter). If you observe universal hedging, raise the threshold or add few-shot examples of confident responses. If you observe false precision, add explicit instructions to lower confidence when reasoning depends on assumptions rather than evidence.
+**Watch for:** Models tend toward one of two failure modes with uncertainty expression. The first is universal hedging: the model prepends "I'm not sure" to every response regardless of actual confidence, which trains operators to ignore the signal entirely. The second is false precision: the model never drops below 70/100 even when its reasoning is clearly speculative. Both modes require calibration (see Section 5 of this chapter). If you observe universal hedging, raise the threshold or add few-shot examples of confident responses. If you observe false precision, add explicit instructions to lower confidence when reasoning depends on assumptions rather than evidence.
 
 ### Template 3: Graduated Confidence with Reasoning
 
@@ -131,25 +131,25 @@ For systems where a numeric confidence score is too granular and a binary high/l
 You are an AI operations agent. For every recommendation, classify 
 your confidence using exactly one of these levels:
 
-CONFIRMED — I have verified this through multiple independent 
+CONFIRMED - I have verified this through multiple independent 
 sources. I am certain this is correct.
 
-HIGH — Strong evidence supports this conclusion. One or more 
+HIGH - Strong evidence supports this conclusion. One or more 
 independent signals corroborate it.
 
-MODERATE — The evidence is suggestive but not conclusive. There 
+MODERATE - The evidence is suggestive but not conclusive. There 
 are plausible alternative explanations.
 
-LOW — I am reasoning from limited or indirect evidence. My 
+LOW - I am reasoning from limited or indirect evidence. My 
 conclusion is an educated guess.
 
-SPECULATIVE — I have very little evidence. This is my best 
+SPECULATIVE - I have very little evidence. This is my best 
 hypothesis, but it could easily be wrong.
 
 After the confidence label, provide exactly one sentence explaining 
 what evidence supports (or fails to support) your assessment.
 
-Format: [Confidence: LEVEL — reasoning sentence]
+Format: [Confidence: LEVEL - reasoning sentence]
 ```
 
 **Example output:**
@@ -162,7 +162,7 @@ PostgreSQL WAL files accumulating in pg_wal/. Current usage is
 Recommended action: Run pg_archivecleanup to remove WAL files 
 older than the last successful backup checkpoint.
 
-[Confidence: CONFIRMED — Verified via df output, ls -la pg_wal/, 
+[Confidence: CONFIRMED - Verified via df output, ls -la pg_wal/, 
 and pg_controldata showing last checkpoint LSN.]
 ```
 
@@ -170,7 +170,7 @@ and pg_controldata showing last checkpoint LSN.]
 
 ## Graduated Autonomy Decision Framework
 
-Chapter 2 introduced five structural patterns. The question every implementation team faces is: which pattern applies to which action? The following framework provides a systematic method for making that classification.
+Chapter 3 introduced five structural patterns. The question every implementation team faces is: which pattern applies to which action? The following framework provides a systematic method for making that classification.
 
 > **Terminology note:** If you have read *Building Agentic AI*, the risk classification system (LOW/MEDIUM/HIGH) and assertiveness levels (cautious/balanced/autonomous) described there map directly to the Recommend & Wait through Execute & Report spectrum below. The taxonomies are complementary: *Building Agentic AI* addresses the agent-internal engineering; this guide addresses the operator-facing interaction design.
 
@@ -195,7 +195,7 @@ Chapter 2 introduced five structural patterns. The question every implementation
 
 ### Action Classification Worksheet
 
-The following worksheet demonstrates the framework applied to common infrastructure operations actions. Use it as a template --- replace the example rows with your own agent's action inventory.
+The following worksheet demonstrates the framework applied to common infrastructure operations actions. Use it as a template: replace the example rows with your own agent's action inventory.
 
 | Action | Consequence if Wrong | Reversible? | Time to Decide | Confidence Required | Pattern | Autonomy Level |
 |--------|---------------------|-------------|----------------|--------------------:|---------|:--------------:|
@@ -212,7 +212,7 @@ The following worksheet demonstrates the framework applied to common infrastruct
 
 ## Circuit Breaker and Fallback Architecture
 
-Chapter 6 described the circuit breaker pattern and its rationale. This section provides the implementation specification: what to monitor, what thresholds to set, and what fallbacks to configure.
+Chapter 7 described the circuit breaker pattern and its rationale. This section provides the implementation specification: what to monitor, what thresholds to set, and what fallbacks to configure.
 
 ### Three Levels of Circuit Breakers
 
@@ -220,9 +220,9 @@ An LLM agent system has three categories of dependencies, each requiring its own
 
 **Level 1: LLM API circuit breaker.** This monitors response latency and error rate from the model provider. It trips after N consecutive failures (recommended starting value: 3) or when the error rate exceeds P% in a rolling time window (recommended starting values: 30% error rate in a 60-second window). Fallback options, in order of preference: route to a backup LLM provider with an adapted prompt; return pre-generated responses from a cache of common scenarios; escalate directly to human with raw context data and no AI synthesis. The choice depends on whether a backup provider is contractually and technically available.
 
-**Level 2: Tool execution circuit breaker.** This monitors the tools the agent calls --- monitoring APIs, ticketing systems, knowledge bases, databases. Each tool gets its own circuit breaker instance because tool failures are typically independent. A monitoring API outage should not prevent the agent from querying the knowledge base. Trips after 5 consecutive failures or 50% error rate in a 120-second window (adjust per tool criticality). Fallback: skip the failing tool and note its unavailability in the output ("Note: monitoring API unavailable --- metrics data not included in this assessment"), use cached data from the last successful query, or escalate to human if the tool is essential to the action.
+**Level 2: Tool execution circuit breaker.** This monitors the tools the agent calls: monitoring APIs, ticketing systems, knowledge bases, databases. Each tool gets its own circuit breaker instance because tool failures are typically independent. A monitoring API outage should not prevent the agent from querying the knowledge base. Trips after 5 consecutive failures or 50% error rate in a 120-second window (adjust per tool criticality). Fallback: skip the failing tool and note its unavailability in the output ("Note: monitoring API unavailable; metrics data not included in this assessment"), use cached data from the last successful query, or escalate to human if the tool is essential to the action.
 
-**Level 3: Quality gate circuit breaker.** This monitors the quality of the agent's own outputs --- the distribution of confidence scores, the pass rate of validation checks, and the rate of operator overrides. It trips when quality degrades below a defined threshold: for example, when more than 40% of recommendations in a 30-minute window are classified as LOW or SPECULATIVE confidence, or when the operator override rate exceeds 60% in the same window. Fallback: downshift autonomy level for all actions. Any action currently classified as Execute & Report reverts to Recommend & Wait. The system continues to analyze and recommend, but takes no autonomous action until the quality gate circuit breaker closes.
+**Level 3: Quality gate circuit breaker.** This monitors the quality of the agent's own outputs: the distribution of confidence scores, the pass rate of validation checks, and the rate of operator overrides. It trips when quality degrades below a defined threshold: for example, when more than 40% of recommendations in a 30-minute window are classified as LOW or SPECULATIVE confidence, or when the operator override rate exceeds 60% in the same window. Fallback: downshift autonomy level for all actions. Any action currently classified as Execute & Report reverts to Recommend & Wait. The system continues to analyze and recommend, but takes no autonomous action until the quality gate circuit breaker closes.
 
 ### Fallback Configuration Template
 
@@ -236,7 +236,7 @@ An LLM agent system has three categories of dependencies, each requiring its own
 
 ### State Machine
 
-The circuit breaker state machine is identical across all three levels. Only the thresholds and fallback actions differ.
+The circuit breaker state machine (Chapter 7 introduces the concept) is identical across all three levels. Only the thresholds and fallback actions differ.
 
 ```
 CLOSED ──(threshold exceeded)──► OPEN
@@ -254,7 +254,7 @@ CLOSED ──(threshold exceeded)──► OPEN
 
 ## Kill Switch Architecture
 
-Chapter 6 established the requirements and rationale for kill switches. This section specifies the architecture.
+Chapter 7 established the requirements and rationale for kill switches. This section specifies the architecture.
 
 ### What the Kill Switch Must Control
 
@@ -303,13 +303,13 @@ The distinction is critical. A kill switch that also disables monitoring leaves 
 └─────────────────────────────────────────────┘
 ```
 
-The `agent_enabled` flag lives in infrastructure the agent cannot reach --- a separate configuration store, a feature flag service, or a hardware switch. The agent reads this flag but cannot write to it. The audit log records every state change with timestamp, operator identity, and reason.
+The `agent_enabled` flag lives in infrastructure the agent cannot reach: a separate configuration store, a feature flag service, or a hardware switch. The agent reads this flag but cannot write to it. The audit log records every state change with timestamp, operator identity, and reason.
 
 ### Implementation Requirements
 
-The agent process must check `agent_enabled` at two points: before every LLM API call, and before every tool invocation. This is a synchronous, blocking check --- not an asynchronous polling loop. If the flag is `false`, the agent immediately returns a standard "agent disabled" response without making the call.
+The agent process must check `agent_enabled` at two points: before every LLM API call, and before every tool invocation. This is a synchronous, blocking check, not an asynchronous polling loop. If the flag is `false`, the agent immediately returns a standard "agent disabled" response without making the call.
 
-Queued and scheduled actions require additional handling. When the kill switch is activated, the system must drain or cancel all pending actions. A kill switch that stops new actions but allows queued actions to execute is not a kill switch --- it is a pause button with a potentially long tail.
+Queued and scheduled actions require additional handling. When the kill switch is activated, the system must drain or cancel all pending actions. A kill switch that stops new actions but allows queued actions to execute is not a kill switch but a pause button with a potentially long tail.
 
 ### Testing Cadence
 
@@ -323,13 +323,30 @@ Test the kill switch monthly. Each test should document:
 
 If any actions leak through during a test, the kill switch implementation has a bug. Fix it before the next production deployment.
 
+### The KILLSWITCH.md Specification
+
+Kill switch design should not be left to ad hoc implementation decisions. The KILLSWITCH.md specification provides a structured template for documenting the kill switch architecture of any AI-augmented system. A compliant KILLSWITCH.md file includes:
+
+**Trigger definitions.** What conditions warrant kill switch activation? These should include both automated triggers (e.g., error rate exceeds threshold for sustained period) and human-initiated triggers (e.g., operator observes behavior inconsistent with system design). Each trigger should specify the expected response time: the maximum acceptable interval between trigger condition and complete system halt.
+
+**Forbidden actions.** What must the AI system never do, under any circumstances? This section defines hard boundaries that, if crossed, constitute automatic kill switch triggers regardless of other conditions. Examples include: modifying its own configuration, accessing systems outside its defined scope, taking actions that cannot be reversed, or providing recommendations in categories explicitly excluded from its mandate.
+
+**Three-level escalation.** Not every concerning behavior warrants immediate full shutdown. The specification defines three escalation levels:
+- **Level 1 (Restrict):** Reduce the system's autonomy. Disable autonomous action; switch to recommendation-only mode.
+- **Level 2 (Pause):** Halt all AI-generated outputs. Maintain system state for investigation. Route all work to human operators.
+- **Level 3 (Terminate):** Complete shutdown of the AI system. Disconnect from all data sources and action channels. Preserve all logs and state for forensic review.
+
+**Append-only audit logs.** All kill switch events (activations, deactivations, escalation level changes, and the reasoning behind each) must be recorded in append-only logs that cannot be modified or deleted by any system component, including the AI system itself and its administrators. These logs serve as the evidentiary foundation for incident review, regulatory compliance, and trust repair.
+
 ## Confidence Calibration Workflow
 
 The prompt templates in Section 1 instruct the model to report confidence levels. But a model's self-reported confidence is only useful if it correlates with actual accuracy. This section describes the operational workflow for calibrating confidence empirically.
 
+> **A field note from the author.** Whenever I present this workflow, someone asks whether they can skip Step 1, because two hundred logged recommendations sounds like a long wait. Then we count what their agent actually produces in a week, and it turns out to be a few days of traffic. The wait is never the real obstacle. The discipline of recording the outcome of every recommendation is. Budget for the logging, not the calendar.
+
 ### Step 1: Collect Baseline Data
 
-Run the agent in Recommend & Wait mode --- no autonomous actions --- for a minimum of 200 recommendations. For each recommendation, record four data points: the agent's recommendation, the model's reported confidence (numeric or categorical), the human operator's decision (accept without modification, accept with modification, or reject), and the actual outcome (was the action correct or incorrect, assessed after the fact).
+Run the agent in Recommend & Wait mode (no autonomous actions) for a minimum of 200 recommendations. For each recommendation, record four data points: the agent's recommendation, the model's reported confidence (numeric or categorical), the human operator's decision (accept without modification, accept with modification, or reject), and the actual outcome (was the action correct or incorrect, assessed after the fact).
 
 Two hundred is a minimum for statistical significance. For systems with high action diversity (many different types of recommendations), increase the sample size to ensure at least 30 observations per action type.
 
@@ -345,7 +362,7 @@ Group recommendations by confidence band. For numeric confidence, use bands of 2
 | 61--80% (HIGH) | 68 | 57 | 84% |
 | 81--100% (CONFIRMED) | 45 | 42 | 93% |
 
-A perfectly calibrated model would show accuracy that matches the midpoint of each confidence band: 10% accuracy in the 0--20% band, 30% in the 21--40% band, and so on. In practice, models are almost always overconfident --- their stated confidence exceeds their actual accuracy. The calibration curve quantifies by how much, which is the information you need to set operational thresholds.
+A perfectly calibrated model would show accuracy that matches the midpoint of each confidence band: 10% accuracy in the 0--20% band, 30% in the 21--40% band, and so on. In practice, models are almost always overconfident: their stated confidence exceeds their actual accuracy. The calibration curve quantifies by how much, which is the information you need to set operational thresholds.
 
 ### Step 3: Set Operational Thresholds
 
@@ -388,26 +405,26 @@ The following template captures the data needed for calibration. Maintain this l
 | 4 | Increase DB connection pool to 200 | 45 | 41--60 | Accept | Pool exhaustion resolved | Yes |
 | 5 | Failover to DR region (primary unresponsive) | 71 | 61--80 | Reject (primary recovered) | Primary recovered in 3 min | No |
 
-> **Key insight:** Most teams skip calibration because it requires running the system in Recommend & Wait mode long enough to collect meaningful data. This is not a shortcut you can take. An uncalibrated confidence system is worse than no confidence system --- it teaches operators to ignore confidence signals entirely.
+> **Key insight:** Most teams skip calibration because it requires running the system in Recommend & Wait mode long enough to collect meaningful data. This is not a shortcut you can take. An uncalibrated confidence system is worse than no confidence system; it teaches operators to ignore confidence signals entirely.
 
 ## Design Your System: Self-Assessment Worksheet
 
-The patterns, templates, and frameworks in this booklet are only useful if they are applied systematically. The following worksheet consolidates the key design questions from every chapter into a single assessment. For each AI-human interaction point in your system --- each place where the agent produces output, takes action, or requests human input --- answer these ten questions.
+The patterns, templates, and frameworks in this booklet are only useful if they are applied systematically. The following worksheet consolidates the key design questions from every chapter into a single assessment. For each AI-human interaction point in your system (each place where the agent produces output, takes action, or requests human input) answer these ten questions.
 
 ### The Worksheet
 
 | # | Question | Chapter Reference | Your Answer |
 |--:|----------|:-----------------:|:-----------:|
-| 1 | What pattern are you using for this action? (Recommend & Wait / Triage & Escalate / Execute & Report / Draft & Refine / Graduated Autonomy) | Chapter 2 | |
+| 1 | What pattern are you using for this action? (Recommend & Wait / Triage & Escalate / Execute & Report / Draft & Refine / Graduated Autonomy) | Chapter 3 | |
 | 2 | Is the autonomy level appropriate for the action's consequence severity, reversibility, and time sensitivity? | This chapter, Section 2 | |
-| 3 | How is context presented to the operator? (Raw dump / SBAR / Progressive disclosure) | Chapter 4 | |
-| 4 | How is confidence communicated? (Raw probability / Categorical with calibration / None) | Chapter 5 | |
-| 5 | Is the AI's recommendation shown before or after the operator forms their own assessment? | Chapter 3 (anchoring) | |
+| 3 | How is context presented to the operator? (Raw dump / SBAR / Progressive disclosure) | Chapter 5 | |
+| 4 | How is confidence communicated? (Raw probability / Categorical with calibration / None) | Chapter 6 | |
+| 5 | Is the AI's recommendation shown before or after the operator forms their own assessment? | Chapter 4 (anchoring) | |
 | 6 | Has confidence been empirically calibrated? When was the last calibration? | This chapter, Section 5 | |
 | 7 | Does a kill switch exist? Is it external to the AI, always visible, and tested monthly? | This chapter, Section 4 | |
 | 8 | Are circuit breakers implemented for all external dependencies? | This chapter, Section 3 | |
 | 9 | Is there a tested fallback for when the AI is unavailable? | This chapter, Section 3 | |
-| 10 | Is there a named human owner who is authorized to shut down the system? | Chapter 8 | |
+| 10 | Is there a named human owner who is authorized to shut down the system? | Chapter 9 | |
 
 ### Scoring
 
@@ -425,4 +442,4 @@ This worksheet is not a one-time exercise. Re-assess quarterly, or after any sig
 
 Keep completed worksheets. They form a design history that is invaluable during incident review ("What did we believe about this system's readiness when we promoted it to Execute & Report?") and during audits ("Show us your assessment of this system's safety infrastructure").
 
-The patterns in this booklet are not prescriptions. They are tools for making deliberate, documented, defensible decisions about how AI agents and human operators work together. The worksheet ensures those decisions are made explicitly rather than by default --- and that they are revisited as conditions change.
+The patterns in this booklet are not prescriptions but tools for making deliberate, documented, defensible decisions about how AI agents and human operators work together. The worksheet ensures those decisions are made explicitly rather than by default, and that they are revisited as conditions change.
