@@ -5,6 +5,12 @@ import os
 import re
 import glob
 import markdown
+import sys
+import importlib.util
+
+# Language: default English; `--lang sk` builds the Slovak edition from chapters_sk/ (same filenames;
+# section ids are derived from the English chapter titles so anchors stay stable across editions).
+LANG = 'sk' if '--lang' in sys.argv and sys.argv[sys.argv.index('--lang') + 1] == 'sk' else 'en'
 
 # AI transparency notice (voluntary, Art 50 EU AI Act) - same wording on every barcik.training publication.
 AI_TRANSPARENCY_NOTICE = r'''
@@ -20,8 +26,38 @@ AI_TRANSPARENCY_NOTICE = r'''
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CHAPTERS_DIR = os.path.join(BASE_DIR, "chapters")
-OUTPUT_FILE = os.path.join(BASE_DIR, "output", "booklet.html")
+EN_CHAPTERS_DIR = os.path.join(BASE_DIR, "chapters")
+CHAPTERS_DIR = os.path.join(BASE_DIR, "chapters_sk" if LANG == 'sk' else "chapters")
+OUTPUT_FILE = os.path.join(BASE_DIR, "output", "booklet_sk.html" if LANG == 'sk' else "booklet.html")
+
+def _sk_notice():
+    """Slovak colophon from the shared generator in the training-ops repo (sibling of this repo)."""
+    repos_root = os.path.dirname(os.path.dirname(os.path.dirname(BASE_DIR)))  # .../git-repos
+    label_py = os.path.join(repos_root, 'training-ops', 'web', 'ai_transparency_label.py')
+    spec = importlib.util.spec_from_file_location('ait', label_py)
+    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+    return m.colophon('pub_sk', 'sk', uid='c')
+
+T = {
+    'en': dict(
+        title="LLM-Human Interaction Design Patterns for Operations",
+        description="How to design the seam between AI agents and human operators: interaction patterns, trust calibration, SBAR handoffs, kill switches, and governance design.",
+        slug="llm-human-interaction-patterns", other_slug="llm-human-interaction-patterns-sk",
+        other_label="Čítať po slovensky &rarr;", other_hreflang="sk",
+        all_pubs="&larr; All Publications", sidebar_h2="Interaction Design Patterns",
+        sidebar_p="Designing the Seam Between AI Agents and Human Operators",
+        chapter_word="Chapter", nav_label="Toggle navigation",
+    ),
+    'sk': dict(
+        title="Vzory interakcie LLM a človeka pre prevádzku",
+        description="Ako navrhnúť šev medzi AI agentmi a ľudskými operátormi: vzory interakcie, kalibrácia dôvery, odovzdania SBAR, vypínače a návrh governance.",
+        slug="llm-human-interaction-patterns-sk", other_slug="llm-human-interaction-patterns",
+        other_label="Read in English &rarr;", other_hreflang="en",
+        all_pubs="&larr; Všetky publikácie", sidebar_h2="Vzory interakcie",
+        sidebar_p="Návrh švu medzi AI agentmi a ľudskými operátormi",
+        chapter_word="Kapitola", nav_label="Prepnúť navigáciu",
+    ),
+}[LANG]
 
 CSS = """
 :root {
@@ -97,6 +133,8 @@ body {
 #sidebar-header .all-pubs-link:hover {
     color: var(--accent);
 }
+#sidebar-header .lang-link{display:inline-block;margin-top:.6rem;font-size:.78rem;font-weight:600;color:var(--accent);text-decoration:none}
+#sidebar-header .lang-link:hover{text-decoration:underline}
 
 #sidebar-header h2 {
     font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -495,7 +533,9 @@ def build():
             content = fh.read().strip()
         title = extract_title(content) or os.path.basename(f).replace(".md", "").replace("_", " ")
         html_content = md_to_html(content)
-        ch_id = make_id(title)
+        with open(os.path.join(EN_CHAPTERS_DIR, os.path.basename(f)), "r", encoding="utf-8") as fh:
+            en_title = extract_title(fh.read().strip()) or title
+        ch_id = make_id(en_title)
         chapters.append((title, ch_id, html_content))
 
     # Build sidebar nav
@@ -513,7 +553,7 @@ def build():
     for i, (title, ch_id, html_content) in enumerate(chapters):
         ch_num = ""
         if i > 0:
-            ch_num = f'<div class="chapter-number">Chapter {i}</div>'
+            ch_num = f'<div class="chapter-number">{T["chapter_word"]} {i}</div>'
         sections.append(f'''
         <section class="chapter" id="{ch_id}">
             {ch_num}
@@ -524,18 +564,20 @@ def build():
 
     # Assemble full HTML
     html = f"""<!DOCTYPE html>
-<html lang="en">
+<html lang="{LANG}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LLM-Human Interaction Design Patterns for Operations</title>
-    <meta name="description" content="How to design the seam between AI agents and human operators: interaction patterns, trust calibration, SBAR handoffs, kill switches, and governance design.">
-    <link rel="canonical" href="https://publications.barcik.training/llm-human-interaction-patterns/">
+    <title>{T['title']}</title>
+    <meta name="description" content="{T['description']}">
+    <link rel="canonical" href="https://publications.barcik.training/{T['slug']}/">
+    <link rel="alternate" hreflang="{LANG}" href="https://publications.barcik.training/{T['slug']}/">
+    <link rel="alternate" hreflang="{T['other_hreflang']}" href="https://publications.barcik.training/{T['other_slug']}/">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <meta property="og:type" content="article">
-    <meta property="og:title" content="LLM-Human Interaction Design Patterns for Operations">
-    <meta property="og:description" content="How to design the seam between AI agents and human operators: interaction patterns, trust calibration, SBAR handoffs, kill switches, and governance design.">
-    <meta property="og:url" content="https://publications.barcik.training/llm-human-interaction-patterns/">
+    <meta property="og:title" content="{T['title']}">
+    <meta property="og:description" content="{T['description']}">
+    <meta property="og:url" content="https://publications.barcik.training/{T['slug']}/">
     <meta property="og:image" content="https://publications.barcik.training/assets/og-card.png">
     <meta name="twitter:card" content="summary_large_image">
     <style>{CSS}</style>
@@ -543,13 +585,14 @@ def build():
 <body>
     <div id="progress-bar"></div>
 
-    <button id="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+    <button id="menu-toggle" aria-label="{T['nav_label']}">&#9776;</button>
 
     <aside id="sidebar">
         <div id="sidebar-header">
-            <a class="all-pubs-link" href="/">&larr; All Publications</a>
-            <h2>Interaction Design Patterns</h2>
-            <p>Designing the Seam Between AI Agents and Human Operators</p>
+            <a class="all-pubs-link" href="/">{T['all_pubs']}</a>
+            <h2>{T['sidebar_h2']}</h2>
+            <p>{T['sidebar_p']}</p>
+            <a class="lang-link" href="/{T['other_slug']}/">{T['other_label']}</a>
         </div>
         <nav>
             <ul>
@@ -561,7 +604,7 @@ def build():
     <div id="content-wrapper">
         <main id="content">
             {sections_html}
-        {AI_TRANSPARENCY_NOTICE}
+        {AI_TRANSPARENCY_NOTICE if LANG == 'en' else _sk_notice()}
         </main>
     </div>
 

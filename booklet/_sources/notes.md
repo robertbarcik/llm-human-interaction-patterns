@@ -22,3 +22,14 @@ Full editorial + factual overhaul following three independent fact-check passes 
 ## Game / Human-in-the-Loop Lab (same date)
 
 `app/index.html` (source of truth): OpenRouter/API-key support fully removed (Acts 3+5 use the richer pre-generated responses behind a 1.5s spinner); hash deep links added; header + debrief links to booklet and demos landing; theory-panel fact fixes mirroring the booklet (Skitka, Buçinca CSCW venue, Klein, CSA downshifting, Goddard 30-50% softened); voice sweep (85 → 9 em dashes, the 9 survivors are `'—'` empty-stat placeholders). Deployed copy: `barcik-training-demos/demos/operators-dilemma.html` (byte-identical). Six new sector demos (credit-desk, triage-ward, watchlist, shortlist, border-queue, docket) live in barcik-training-demos only.
+
+## 2026-08-16 — Slovak edition (Vzory interakcie LLM a človeka pre prevádzku)
+
+- `chapters_sk/` (same filenames as `chapters/`), translated entirely by Fable 5, meaning-first, per the
+  shared glossary in `barcik-training-publications/_sources/_translation/GLOSSARY_SK.md`.
+- `tools/build_html.py --lang sk` → `output/booklet_sk.html`; section ids derived from the English titles
+  (stable anchors); Slovak colophon from training-ops; sidebar lang links both ways (EN build gained
+  "Čítať po slovensky →" + hreflang alternates, otherwise unchanged).
+- Prompt templates and example outputs in Chapter 8's code blocks are kept in English (they are
+  copy-paste artifacts); the surrounding prose and tables are translated. Demo links stay EN (demos are English).
+- Deployed copies: publications `/llm-human-interaction-patterns-sk/` (+ EN refreshed).
