@@ -33,3 +33,22 @@ Full editorial + factual overhaul following three independent fact-check passes 
 - Prompt templates and example outputs in Chapter 8's code blocks are kept in English (they are
   copy-paste artifacts); the surrounding prose and tables are translated. Demo links stay EN (demos are English).
 - Deployed copies: publications `/llm-human-interaction-patterns-sk/` (+ EN refreshed).
+
+## 2026-09-15 — Game: plain-IT frame, pressure mechanics, theory slides, lecture mode
+
+- `app/index.html` rewritten for a mixed audience ahead of the GenAI Engineer lecture. Vocabulary
+  dropped to office level (no pods, p99, WAF, probes); every wrong Act 1 recommendation now
+  contradicts a sentence in the incident text (office network address, end-of-month report,
+  duplicate uploads, security-approval gate), so the test measures attention, not expertise.
+  4 of 8 Act 1 incidents are wrong (the old debrief hard-coded "/3"; now computed).
+- Pressure mechanics: per-incident timer budget 30→12 s, shift strip (clock, hours awake, fatigue
+  meter, growing queue), 7 chat pings in Act 1 + 2 in Act 4 (WebAudio beeps, sound toggle),
+  "what the pressure did" block (incidents 1–4 vs 5–8 accuracy, timer share, pings dismissed),
+  same split in the session debrief.
+- Theory panels → one-screen slides (trap / number / story / design answer + booklet chapter link),
+  dark, numbers and cases carried over verbatim from the fact-checked July text.
+- Lecture mode (bigger type, wider column; localStorage + `?lecture`), room "show of hands" card
+  after Act 1, Act 5 studio grid responsive, Act 3/4 handlers no longer rely on the global `event`.
+- Deployed copy in barcik-training-demos: source + suite pill (now `position:absolute` in all 27
+  demos, it used to follow the scroll) + AI transparency pill; in-header "All demos" link removed
+  there (the pill replaces it). Staging script kept in the session scratchpad only.

@@ -11,6 +11,10 @@ Lecture materials for teaching GenAI engineers how to design the seam between AI
 
 A multi-act browser-based experience that doubles as a screenshare lecture tool and a participant simulation. Five acts cover automation bias, anchoring effects, confidence calibration, graduated autonomy, and interaction pattern design.
 
+**Audience (since 2026-09-15): no IT expertise required.** You play the person on night duty for an online shop; all scenarios use plain office vocabulary (servers, the website, logins, payments, backups). Every wrong AI recommendation contradicts something written in the incident text itself, so catching it is a matter of attention, not domain knowledge. The demo measures attention under pressure: a shrinking timer (30 s down to 12 s), a fatigue strip with a simulated clock and hours awake, chat interruptions that slide in mid-incident (boss, marketing, partner, monitoring bot), optional beeps, and a first-half vs. second-half accuracy comparison in the results and the debrief.
+
+**Theory as slides.** Each act's theory panel is one viewport-sized slide with four fixed slots (the trap, one number, one story, the design answer) and a link to the booklet chapter. **Lecture mode** (header button, persisted, or `?lecture`) enlarges type for a projector. After Act 1 a "show of hands" card lets a room compare results without any backend.
+
 **Run it:** Open `app/index.html` directly in any browser: no server, no build step, no dependencies, no API keys. Everything runs client-side with pre-generated AI responses.
 
 Deep links work per act: `#act1` through `#act5` and `#debrief` (e.g. `index.html#act3`).
