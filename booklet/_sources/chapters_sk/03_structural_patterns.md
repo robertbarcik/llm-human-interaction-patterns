@@ -155,6 +155,8 @@ Najužitočnejšia myšlienka, ktorú si z diskusie CSA odniesť, je **dynamick�
 
 > **Kľúčový postreh:** Odstupňovaná autonómia nie je o dosiahnutí najvyššej možnej úrovne autonómie, ale o dosiahnutí tej správnej pre každé konkrétne rozhodnutie v každom konkrétnom okamihu. Najlepšie systémy nie sú tie najautonómnejšie; sú to tie, ktoré vedia, kedy požiadať o pomoc.
 
+<!-- fig:autonomy-ladder -->
+
 ## Rámec výberu vzoru
 
 Výber správneho vzoru vyžaduje vyhodnotiť štyri dimenzie prevádzkového kontextu:

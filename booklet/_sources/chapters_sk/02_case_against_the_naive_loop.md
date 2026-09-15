@@ -16,6 +16,8 @@ Teraz si všimnite, ktorý prípad je vaše nasadenie. Ak dávate AI systém do 
 
 Nič z toho neargumentuje za odstránenie ľudí. Tá istá metaanalýza našla zisky pri úlohách tvorby obsahu a v usporiadaniach, kde deľba práce hrala na silné stránky každej strany. Argument je užší a užitočnejší: *predvolená* slučka, jeden človek schvaľujúci prúd výstupov AI, ktoré nevyprodukoval, o situáciách, ktoré nevyšetril, zlyháva, pokiaľ niečo v návrhu neurobí príspevok človeka skutočným. Kapitoly 3 až 6 sú o tom, čo to niečo je.
 
+<!-- fig:naive-vs-designed -->
+
 ## Dohľad ako politické divadlo
 
 Druhý súbor dôkazov pochádza od ľudí, ktorí študujú požiadavky na dohľad po tom, čo sa stanú politikou.

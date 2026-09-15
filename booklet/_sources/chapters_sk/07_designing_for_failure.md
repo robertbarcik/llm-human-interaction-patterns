@@ -114,6 +114,8 @@ Uplatnené na prevádzku AI zahŕňajú obranné vrstvy (tieto konceptuálne vrs
 
 Poučenie modelu švajčiarskeho syra je, že bezpečnosť pochádza z *obrany do hĺbky*: viacerých nezávislých vrstiev, každej navrhnutej tak, aby chytila to, čo ostatné prehliadnu. Najnebezpečnejším návrhovým rozhodnutím je odstrániť vrstvu, lebo iná vrstva „by mala“ problém chytiť.
 
+<!-- fig:swiss-cheese -->
+
 ## Kontrolný zoznam pripravenosti na zlyhanie
 
 Nasledujúci kontrolný zoznam poskytuje konkrétny hodnotiaci rámec na posúdenie, či je prevádzka rozšírená o AI primerane navrhnutá pre zlyhanie:

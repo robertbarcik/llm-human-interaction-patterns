@@ -18,6 +18,8 @@ Každý AI systém musí mať **pomenovaného vlastníka**: nie tím, nie výbor
 
 Dôkazy pre túto štruktúru presahujú teóriu, hoci sú smerové, nie presné: prieskumy odvetvia konzistentne zisťujú, že organizácie s najlepšími výsledkami v AI oveľa pravdepodobnejšie prevádzkujú medzifunkčné orgány governance spájajúce inžinierstvo, riziko, právo a doménovú odbornosť. Rýchlostná výhoda, ktorú takéto prieskumy hlásia, je protiintuitívna, ale konzistentná: jasná governance znižuje nejednoznačnosť, čo skracuje čas cyklu procesov revízie a schvaľovania, ktoré inak nasadenie brzdia.
 
+<!-- fig:three-lines -->
+
 ## Model Rady pre agentov od Galileo AI
 
 Štruktúry governance sa musia operacionalizovať pravidelnými rytmami, inak sa rozpadnú na dokumentáciu, ktorú nikto nečíta. Model „Agent Council“ od Galileo AI poskytuje otestovanú šablónu:

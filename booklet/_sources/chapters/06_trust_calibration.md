@@ -18,6 +18,8 @@ Each dimension can be miscalibrated independently. An operator might trust the s
 
 The practical implication for GenAI engineers is that trust calibration requires deliberate design across all three dimensions. Displaying accuracy metrics addresses Performance. Showing reasoning traces addresses Process. Documenting design decisions and optimization targets addresses Purpose. Neglecting any dimension creates a calibration gap.
 
+<!-- fig:trust-calibration -->
+
 ## Dispositional, Situational, and Learned Trust
 
 Hoff and Bashir (2015) extended the trust literature into a layered model that explains why different operators respond so differently to the same system. Their framework identifies three layers of trust that operate simultaneously:

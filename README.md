@@ -25,6 +25,8 @@ The deployed copy lives at [demos.barcik.training/demos/operators-dilemma.html](
 
 A ten-chapter guide: the case against the naive human-in-the-loop, five structural interaction patterns, the psychology of handoff, context presentation, trust calibration, failure design (kill switches, circuit breakers), implementation artifacts, and organizational governance. Revised July 2026 with a full fact-check and per-chapter links into the Lab.
 
+**Lecture layer (September 2026):** every chapter opens with an "in one screen" card (claim, key points, the numbers that carry it) and the booklet carries eleven inline SVG figures (both editions, labels translated). The sidebar's **Lecture view** button (or `?skim`) hides the prose and leaves titles, cards and figures, for screensharing during a lecture. Sources: `booklet/_sources/tools/one_screen.py` and `figures.py`; figures are placed with `<!-- fig:NAME -->` markers in the chapter markdown.
+
 **Read it:** Open `booklet/index.html` in a browser, or the live version above.
 
 ## Structure
@@ -44,7 +46,8 @@ booklet/
 
 ```bash
 pip install markdown
-python booklet/_sources/tools/build_html.py
+python3 booklet/_sources/tools/build_html.py            # English
+python3 booklet/_sources/tools/build_html.py --lang sk  # Slovak (from chapters_sk/)
 cp booklet/_sources/output/booklet.html booklet/index.html
 # and copy the same file to barcik-training-publications/llm-human-interaction-patterns/index.html for deployment
 ```

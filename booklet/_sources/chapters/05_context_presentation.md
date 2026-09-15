@@ -16,6 +16,8 @@ The framework's effect on communication quality is measurable and large. In one 
 
 The magnitude of such improvements demands explanation. The information available to the nurses did not change. Their clinical knowledge did not change. What changed was the structure in which they communicated. SBAR gave them a framework that ensured they included all critical information, presented it in a predictable order, and made an explicit distinction between observation (Situation, Background) and interpretation (Assessment, Recommendation).
 
+<!-- fig:sbar-order -->
+
 ### SBAR Adapted for AI Agent Output
 
 The same principles apply directly to how an AI agent communicates with a human operator. An unstructured output (a wall of text summarizing an investigation) forces the operator to extract structure, which is exactly the kind of cognitive work that leads to missed information and anchoring on the first pattern recognized. A structured output reduces cognitive load and ensures completeness.
@@ -170,6 +172,8 @@ Layer 2 includes:
 This is the full evidence chain: raw logs, metrics timeseries, configuration diffs, knowledge base articles, historical incident records, and the AI's reasoning chain. It is used for post-incident review, for cases where the operator disagrees with the AI's assessment, or for novel situations that do not match any known pattern.
 
 Layer 3 is also where evidence linking (discussed below) provides its value, allowing the operator to trace the AI's conclusions back to specific data points.
+
+<!-- fig:three-layers -->
 
 ### Why Three Layers
 

@@ -52,3 +52,31 @@ Full editorial + factual overhaul following three independent fact-check passes 
 - Deployed copy in barcik-training-demos: source + suite pill (now `position:absolute` in all 27
   demos, it used to follow the scroll) + AI transparency pill; in-header "All demos" link removed
   there (the pill replaces it). Staging script kept in the session scratchpad only.
+
+## 2026-09-15 — Booklet: lecture layer (one-screen cards, 11 SVG figures, lecture view) + fact fixes
+
+- **Why:** Robert screenshares the booklet when a lecture audience asks for details; 28k words of prose
+  do not scroll well. Nothing was cut (the SK edition derives from the EN chapters and the July text
+  is fact-checked); a scannable layer was added on top.
+- `tools/one_screen.py`: an "in one screen" card per chapter (claim, 3–5 one-line points, the numbers
+  that carry the chapter), EN + SK, injected after each chapter `<h1>` by the build.
+- `tools/figures.py`: 11 inline SVG figures with EN/SK labels, placed via `<!-- fig:NAME -->` markers
+  in both `chapters/` and `chapters_sk/` (same positions): 2.1 declared vs designed loop, 3.1 five
+  patterns on the Sheridan–Verplank scale, 4.1 how the phenomena reinforce each other, 5.1 order of
+  information (verdict-first vs SBAR), 5.2 three layers, 6.1 trust calibration chart, 7.1 Swiss cheese,
+  8.1 consequence × reversibility matrix, 8.2 circuit-breaker state machine (replaces the ASCII block),
+  8.3 kill-switch architecture (replaces the ASCII block), 9.1 three lines + named owner.
+  Preview all figures: `python3 tools/figures.py [en|sk] > /tmp/figs.html`.
+- **Lecture view** (sidebar button, persisted in localStorage, or `?skim`): hides everything except
+  chapter titles, cards and figures. Full text one click away.
+- Build now needs Homebrew `python3` (3.14, has `markdown`); `/usr/bin/python3` lacks it on this Mac.
+- **Fact fixes** (online spot-check of 10 load-bearing claims: 8 verified, 2 attribution slips):
+  the 100 % commission / 55 % omission figures are Mosier, Skitka, Heers & Burdick (1998), real pilots
+  and a false engine-fire alert; Skitka, Mosier & Burdick (1999) is the non-pilot replication (65 % /
+  41 %); the two-person-crew null result is Skitka et al. (2000) / Mosier et al. (2001), not 1998.
+  Chapter 4 EN + SK corrected. Also verified: Knight $461.1M (8-K) → booklet's "$460M+" stands, game
+  moved from the $440M press estimate; Royal Majesty, Horizon 736, Kim N=404, Klein (<12 % compared
+  options, so "~80 %" is conservative), Buçinca, Vaccaro. The "775 managers" study is in the
+  *International Journal of Information Management* (booklet never named the journal; fine).
+  "50 % less likely to detect failures" (old game slide) is not a figure in Parasuraman & Manzey; the
+  underlying result is 82 % vs 33 % detection (Parasuraman, Molloy & Singh, 1993); slide corrected.

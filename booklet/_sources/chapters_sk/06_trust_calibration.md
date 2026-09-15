@@ -18,6 +18,8 @@ Každá dimenzia sa môže nezávisle zle kalibrovať. Operátor môže dôverov
 
 Praktický dôsledok pre inžinierov GenAI je, že kalibrácia dôvery vyžaduje zámerný návrh naprieč všetkými tromi dimenziami. Zobrazovanie metrík presnosti rieši výkon. Ukazovanie stôp uvažovania rieši proces. Dokumentovanie návrhových rozhodnutí a optimalizačných cieľov rieši účel. Zanedbanie ktorejkoľvek dimenzie vytvára kalibračnú medzeru.
 
+<!-- fig:trust-calibration -->
+
 ## Dispozičná, situačná a naučená dôvera
 
 Hoff a Bashir (2015) rozšírili literatúru o dôvere do vrstveného modelu, ktorý vysvetľuje, prečo rôzni operátori reagujú na ten istý systém tak rôzne. Ich rámec identifikuje tri vrstvy dôvery, ktoré pôsobia súčasne:

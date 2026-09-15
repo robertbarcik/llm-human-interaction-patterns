@@ -16,6 +16,8 @@ SBAR (Situation, Background, Assessment, Recommendation: situácia, pozadie, hod
 
 Veľkosť takýchto zlepšení si žiada vysvetlenie. Informácie dostupné sestrám sa nezmenili. Ich klinické znalosti sa nezmenili. Zmenila sa štruktúra, v ktorej komunikovali. SBAR im dal rámec, ktorý zabezpečil, že zahrnú všetky kritické informácie, predložia ich v predvídateľnom poradí a urobia výslovný rozdiel medzi pozorovaním (situácia, pozadie) a interpretáciou (hodnotenie, odporúčanie).
 
+<!-- fig:sbar-order -->
+
 ### SBAR prispôsobený výstupu AI agenta
 
 Rovnaké princípy sa priamo vzťahujú na to, ako AI agent komunikuje s ľudským operátorom. Neštruktúrovaný výstup (stena textu zhŕňajúca vyšetrovanie) núti operátora extrahovať štruktúru, čo je presne ten druh kognitívnej práce, ktorý vedie k prehliadnutým informáciám a ukotveniu na prvom rozpoznanom vzore. Štruktúrovaný výstup znižuje kognitívnu záťaž a zabezpečuje úplnosť.
@@ -171,6 +173,8 @@ Vrstva 2 zahŕňa:
 To je úplný reťazec dôkazov: surové logy, časové rady metrík, rozdiely konfigurácií, články znalostnej bázy, historické záznamy incidentov a reťazec uvažovania AI. Používa sa na revíziu po incidente, v prípadoch, keď operátor nesúhlasí s hodnotením AI, alebo pri nových situáciách, ktoré nezodpovedajú žiadnemu známemu vzoru.
 
 Vrstva 3 je aj miestom, kde prepojenie s dôkazmi (diskutované nižšie) prináša svoju hodnotu, lebo dovoľuje operátorovi vystopovať závery AI späť ku konkrétnym dátovým bodom.
+
+<!-- fig:three-layers -->
 
 ### Prečo tri vrstvy
 

@@ -8,6 +8,10 @@ import markdown
 import sys
 import importlib.util
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from figures import render as render_figure   # inline SVG figures (<!-- fig:NAME --> markers)
+from one_screen import render_card            # per-chapter "in one screen" cards
+
 # Language: default English; `--lang sk` builds the Slovak edition from chapters_sk/ (same filenames;
 # section ids are derived from the English chapter titles so anchors stay stable across editions).
 LANG = 'sk' if '--lang' in sys.argv and sys.argv[sys.argv.index('--lang') + 1] == 'sk' else 'en'
@@ -47,6 +51,8 @@ T = {
         all_pubs="&larr; All Publications", sidebar_h2="Interaction Design Patterns",
         sidebar_p="Designing the Seam Between AI Agents and Human Operators",
         chapter_word="Chapter", nav_label="Toggle navigation",
+        skim_on="Lecture view: summaries and figures", skim_off="Back to the full text",
+        skim_note="Lecture view: each chapter reduced to its one-screen summary and figures.",
     ),
     'sk': dict(
         title="Vzory interakcie LLM a človeka pre prevádzku",
@@ -56,6 +62,8 @@ T = {
         all_pubs="&larr; Všetky publikácie", sidebar_h2="Vzory interakcie",
         sidebar_p="Návrh švu medzi AI agentmi a ľudskými operátormi",
         chapter_word="Kapitola", nav_label="Prepnúť navigáciu",
+        skim_on="Prednáškový pohľad: zhrnutia a obrázky", skim_off="Späť na celý text",
+        skim_note="Prednáškový pohľad: každá kapitola zredukovaná na zhrnutie na jednu obrazovku a obrázky.",
     ),
 }[LANG]
 
@@ -383,6 +391,40 @@ blockquote p:last-child {
     font-weight: 600;
 }
 
+/* "In one screen" chapter cards */
+.one-screen {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--navy); color: #e2e8f0; border-radius: 12px;
+    padding: 1.3rem 1.5rem 1.1rem; margin: 0 0 2.2rem;
+}
+.one-screen .os-kicker { font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: #93c5fd; margin-bottom: 0.4rem; }
+.one-screen .os-claim { font-size: 1.22rem; font-weight: 700; color: #fff; line-height: 1.3; margin: 0 0 0.85rem; }
+.one-screen .os-points { list-style: none; padding: 0; margin: 0 0 0.9rem; }
+.one-screen .os-points li { font-size: 0.9rem; line-height: 1.45; padding-left: 1.1rem; position: relative; margin-bottom: 0.45rem; }
+.one-screen .os-points li::before { content: ''; position: absolute; left: 0; top: 0.55em; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: #fbbf24; }
+.one-screen .os-facts { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 0.7rem; }
+.one-screen .os-facts-label { font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: #94a3b8; margin-right: 0.3rem; }
+.one-screen .os-fact { font-size: 0.78rem; font-weight: 600; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); border-radius: 999px; padding: 0.2rem 0.65rem; color: #fff; }
+
+/* Inline SVG figures */
+.figure { margin: 2rem 0; }
+.figure svg { width: 100%; height: auto; display: block; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+.figure figcaption { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 0.82rem; color: var(--text-light); line-height: 1.5; margin-top: 0.55rem; }
+
+/* Lecture view (skim): only chapter titles, one-screen cards and figures */
+.skim-toggle {
+    display: block; width: 100%; margin-top: 0.8rem; padding: 0.5rem 0.7rem; text-align: left;
+    border: 1px solid var(--accent); border-radius: 8px; background: #fff; color: var(--accent);
+    font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 0.76rem; font-weight: 600; cursor: pointer;
+}
+.skim-toggle.on { background: var(--accent); color: #fff; }
+.skim-note { display: none; font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 0.8rem; color: var(--text-light); background: var(--bg-sidebar); border: 1px dashed var(--border); border-radius: 8px; padding: 0.6rem 0.9rem; margin-bottom: 2rem; }
+body.skim .skim-note { display: block; }
+body.skim .chapter > :not(h1):not(.chapter-number):not(.one-screen):not(.figure) { display: none; }
+body.skim .chapter:first-child > :not(h1):not(h2) { display: none; }
+body.skim .chapter { margin-bottom: 3rem; }
+body.skim .figure { margin: 1.4rem 0; }
+
 /* Horizontal rules (chapter dividers) */
 hr {
     border: none;
@@ -492,6 +534,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Mark first nav item as active
     if (navLinks.length > 0) navLinks[0].classList.add('active');
+
+    // Lecture view (skim): summaries and figures only. Persisted; also via ?skim in the URL.
+    const skimBtn = document.getElementById('skim-toggle');
+    function setSkim(on) {
+        document.body.classList.toggle('skim', on);
+        skimBtn.classList.toggle('on', on);
+        skimBtn.textContent = on ? skimBtn.dataset.off : skimBtn.dataset.on;
+        try { localStorage.setItem('booklet-skim', on ? '1' : '0'); } catch (e) {}
+    }
+    skimBtn.addEventListener('click', function() { setSkim(!document.body.classList.contains('skim')); });
+    let skim = false;
+    try { skim = localStorage.getItem('booklet-skim') === '1'; } catch (e) {}
+    if (window.location.search.indexOf('skim') !== -1) skim = true;
+    if (skim) setSkim(true);
 });
 """
 
@@ -533,6 +589,9 @@ def build():
             content = fh.read().strip()
         title = extract_title(content) or os.path.basename(f).replace(".md", "").replace("_", " ")
         html_content = md_to_html(content)
+        # <!-- fig:NAME --> markers (markdown passes them through, sometimes wrapped in <p>) -> SVG figures
+        html_content = re.sub(r'(?:<p>)?<!--\s*fig:([a-z0-9-]+)\s*-->(?:</p>)?',
+                              lambda m: render_figure(m.group(1), LANG), html_content)
         with open(os.path.join(EN_CHAPTERS_DIR, os.path.basename(f)), "r", encoding="utf-8") as fh:
             en_title = extract_title(fh.read().strip()) or title
         ch_id = make_id(en_title)
@@ -554,6 +613,9 @@ def build():
         ch_num = ""
         if i > 0:
             ch_num = f'<div class="chapter-number">{T["chapter_word"]} {i}</div>'
+            # "In one screen" card right after the chapter title
+            assert html_content.count('</h1>') == 1, f'chapter {i}: expected one <h1>'
+            html_content = html_content.replace('</h1>', '</h1>\n' + render_card(i, LANG), 1)
         sections.append(f'''
         <section class="chapter" id="{ch_id}">
             {ch_num}
@@ -593,6 +655,7 @@ def build():
             <h2>{T['sidebar_h2']}</h2>
             <p>{T['sidebar_p']}</p>
             <a class="lang-link" href="/{T['other_slug']}/">{T['other_label']}</a>
+            <button id="skim-toggle" class="skim-toggle" data-on="{T['skim_on']}" data-off="{T['skim_off']}">{T['skim_on']}</button>
         </div>
         <nav>
             <ul>
@@ -603,6 +666,7 @@ def build():
 
     <div id="content-wrapper">
         <main id="content">
+            <div class="skim-note">{T['skim_note']}</div>
             {sections_html}
         {AI_TRANSPARENCY_NOTICE if LANG == 'en' else _sk_notice()}
         </main>

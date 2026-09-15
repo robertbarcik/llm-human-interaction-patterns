@@ -155,6 +155,8 @@ The most useful idea to take from the CSA's discussion is **dynamic downshifting
 
 > **Key insight:** Graduated autonomy is not about achieving the highest possible autonomy level but about achieving the right one for each specific decision at each specific moment. The best systems are not the most autonomous; they are the ones that know when to ask for help.
 
+<!-- fig:autonomy-ladder -->
+
 ## Pattern Selection Framework
 
 Choosing the right pattern requires evaluating four dimensions of the operational context:

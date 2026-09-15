@@ -18,6 +18,8 @@ Each AI system must have a **named owner**: not a team, not a committee, but an 
 
 The evidence for this structure extends beyond theory, though it is directional rather than precise: industry surveys consistently find that organizations leading on AI outcomes are substantially more likely to run cross-functional governance bodies combining engineering, risk, legal, and domain expertise. The speed advantage such surveys report is counterintuitive but consistent: clear governance reduces ambiguity, which reduces the cycle time of review-and-approve processes that otherwise bottleneck deployment.
 
+<!-- fig:three-lines -->
+
 ## The Galileo AI Agent Council Model
 
 Governance structures must be operationalized through regular cadences, or they decay into documentation that no one reads. The Galileo AI "Agent Council" model provides a tested template:

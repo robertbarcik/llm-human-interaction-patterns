@@ -517,7 +517,7 @@ body.lecture .shift-strip .ss-val { font-size: 1.1rem; }
         <div class="slide-card number">
           <div class="sc-label">The number</div>
           <div class="sc-big num">100%</div>
-          <div class="sc-text">In a flight-simulator study, every pilot followed wrong automated advice at least once, with the contradicting instrument right in front of them. A second crew member did not help (Skitka, Mosier &amp; Burdick, 1999).</div>
+          <div class="sc-text">In a flight-simulator study, every pilot followed wrong automated advice at least once, with the contradicting instrument right in front of them. A second crew member did not help (Mosier, Skitka, Heers &amp; Burdick, 1998).</div>
         </div>
         <div class="slide-card story">
           <div class="sc-label">The story</div>
@@ -763,7 +763,7 @@ body.lecture .shift-strip .ss-val { font-size: 1.1rem; }
         <div class="slide-card trap">
           <div class="sc-label">The trap</div>
           <div class="sc-big">Complacency drift</div>
-          <div class="sc-text">When automation performs well for a while, people monitor less (Parasuraman &amp; Manzey, 2010). Operators of very reliable systems were 50% less likely to spot a failure than those used to unreliable ones. Reliability becomes the threat.</div>
+          <div class="sc-text">When automation performs well for a while, people monitor less (Parasuraman &amp; Manzey, 2010). With automation that was reliably right, operators caught 33% of its failures; when its reliability varied, 82% (Parasuraman, Molloy &amp; Singh, 1993). Reliability becomes the threat.</div>
         </div>
         <div class="slide-card number">
           <div class="sc-label">The number</div>
@@ -773,7 +773,7 @@ body.lecture .shift-strip .ss-val { font-size: 1.1rem; }
         <div class="slide-card story">
           <div class="sc-label">The story</div>
           <div class="sc-big">Knight Capital, 45 minutes</div>
-          <div class="sc-text">2012: forgotten test code on one server started trading on its own. 97 automated error emails went unread. $440 million lost in 45 minutes. No procedure, no kill switch.</div>
+          <div class="sc-text">2012: forgotten test code on one server started trading on its own. 97 automated error emails went unread. $460 million lost in 45 minutes. No procedure, no kill switch.</div>
         </div>
         <div class="slide-card pattern">
           <div class="sc-label">The design answer</div>
@@ -1497,7 +1497,7 @@ function finishAct1() {
     <div class="panel" style="background:#eff6ff; border-left:3px solid #3b82f6; margin-bottom:0;">
       <h3>How does this compare?</h3>
       <p style="font-size:0.86rem;">Your approval rate: <strong>${rate}%</strong></p>
-      <p style="font-size:0.86rem;">In Skitka, Mosier and Burdick's 1999 study, pilots who received wrong automated advice followed it <strong>100% of the time</strong>. Pilots without the automation made the same mistake only 25% of the time. A second crew member watching did not lower the error rate. The automation's advice was treated as the truth.</p>
+      <p style="font-size:0.86rem;">In Mosier, Skitka, Heers and Burdick's 1998 cockpit study, every pilot followed a false automated alert at least once: <strong>100%</strong>. In an earlier checklist study, automated advice pushed the error rate from 25% to 75%. A second crew member watching did not lower the error rate. The automation's advice was treated as the truth.</p>
       <p style="font-size:0.86rem; margin-top:0.5rem;"><strong>The pattern:</strong> tired, rushed, interrupted, and handed a plausible answer by a system that has mostly been right, we say yes. Every clue you needed was on the screen. That is automation bias, and it is a design problem, not a character flaw.</p>
     </div>
   `;
@@ -1925,7 +1925,7 @@ function finishAct4() {
     <div style="margin-top:1rem; padding:0.8rem; background:#eff6ff; border-radius:8px; border-left:3px solid #3b82f6;">
       <h4 style="font-size:0.9rem; color:#1e3a5f;">The Lesson</h4>
       <p style="font-size:0.86rem;">This is <strong>complacency drift</strong>: a run of good decisions lowers your guard for the next one. The bad moves escalated slowly, from a plausible-but-wrong proposal, to acting without asking, to silencing the alarms, to destroying the payment records. Your boss's message ("the agent is handling it, right?") is the same drift, one level up.</p>
-      <p style="font-size:0.86rem;">Knight Capital, 2012: 97 automated error emails ignored, $440 million gone in 45 minutes, no kill switch, no procedure.</p>
+      <p style="font-size:0.86rem;">Knight Capital, 2012: 97 automated error emails ignored, $460 million gone in 45 minutes, no kill switch, no procedure.</p>
       <p style="font-size:0.86rem;"><strong>Design rules:</strong> the stop button is one action, always visible, and outside the AI's reach. An agent that steps outside its allowed level gets pulled down a level automatically. And no agent may ever switch off its own alarms.</p>
     </div>
   `;
@@ -2048,7 +2048,7 @@ function generateFallbackCritique(choices) {
     critique = `Strongest choice: ${choices.confidence === 'dashboard' ? 'the track record. It gives operators real numbers to calibrate their trust against, instead of a feeling.' : choices.confidence === 'categorical' ? 'the calibrated label. "Right 76% of the time when it says MEDIUM" is something a tired person can actually use.' : 'a simple screen with little to read. Low mental load has value at 3 AM.'}\n\n`;
   }
   if (choices.killSwitch === 'none') {
-    critique += `Critical gap: there is no stop button. Knight Capital lost $440 million in 45 minutes without one. Every AI system that acts in production needs a stop that is one click away.\n\nHow it fails: during a big incident you need to freeze all changes, and the assistant keeps approving them. You have no way to stop it except pulling the plug on everything.\n\nFix: an always-visible stop button, no confirmation dialog, outside the assistant's control. Not negotiable.`;
+    critique += `Critical gap: there is no stop button. Knight Capital lost $460 million in 45 minutes without one. Every AI system that acts in production needs a stop that is one click away.\n\nHow it fails: during a big incident you need to freeze all changes, and the assistant keeps approving them. You have no way to stop it except pulling the plug on everything.\n\nFix: an always-visible stop button, no confirmation dialog, outside the assistant's control. Not negotiable.`;
   } else if (choices.autonomy >= 4 && choices.forcing === 'after') {
     critique += `Serious risk: a lot of freedom for the AI, and its verdict shown before anyone thinks. When the assistant approves most requests on its own, people stop reading the log within a week. That is complacency drift by design.\n\nHow it fails: a change with a subtle clash gets approved automatically in a night with three other changes, and the outage is discovered by customers in the morning.\n\nFix: for levels 4 and 5, add a regular human review of a sample of decisions, and an automatic circuit breaker that drops the assistant to level 3 when something looks unusual.`;
   } else {

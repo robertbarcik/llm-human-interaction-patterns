@@ -195,6 +195,8 @@ Kapitola 3 predstavila päť štrukturálnych vzorov. Otázka, ktorej čelí ka�
 - **Nízke dôsledky + vratné + časovo kritické** = Vykonať a hlásiť (úroveň 7)
 - **Akákoľvek úroveň dôsledkov + nízka istota AI** = Odporučiť a čakať, vždy
 
+<!-- fig:four-dials -->
+
 ### Pracovný list klasifikácie krokov
 
 Nasledujúci pracovný list ukazuje rámec uplatnený na bežné kroky v prevádzke infraštruktúry. Použite ho ako šablónu: nahraďte ukážkové riadky inventárom krokov vlastného agenta.
@@ -240,17 +242,7 @@ Systém LLM agenta má tri kategórie závislostí, z ktorých každá vyžaduje
 
 Stavový automat ističa (koncept predstavuje kapitola 7) je identický naprieč všetkými tromi úrovňami. Líšia sa iba prahy a záložné kroky.
 
-```
-CLOSED ──(threshold exceeded)──► OPEN
-  ▲                                │
-  │                                │ (timeout elapsed)
-  │                                ▼
-  └──(test succeeds)──── HALF_OPEN
-                            │
-                            │ (test fails)
-                            ▼
-                           OPEN
-```
+<!-- fig:circuit-breaker -->
 
 **CLOSED:** Normálna prevádzka. Počítadlo zlyhaní sa pri každom zlyhaní zvýši, resetuje sa pri úspechu alebo po vypršaní časového okna. **OPEN:** Všetky požiadavky smerované na záložnú cestu. Začína časový limit zotavenia (odporúčaná východisková hodnota: 60 sekúnd pre API LLM, 120 sekúnd pre nástroje, 300 sekúnd pre kvalitatívnu bránu). **HALF_OPEN:** Na primárnu cestu sa pošle jediná testovacia požiadavka. Úspech vráti do CLOSED a resetuje počítadlo zlyhaní. Zlyhanie vráti do OPEN a zdvojnásobí časový limit zotavenia, až po nakonfigurované maximum (odporúčané: 10 minút).
 
@@ -276,34 +268,7 @@ Rozlíšenie je kritické. Vypínač, ktorý vypne aj monitorovanie, nechá oper
 
 ### Architektúra
 
-```
-┌─────────────────────────────────────────────┐
-│  OPERATOR INTERFACE                         │
-│  ┌─────────────────────────────────────┐    │
-│  │  [KILL SWITCH]  ← always visible    │    │
-│  └──────────┬──────────────────────────┘    │
-│             │                               │
-│             ▼                               │
-│  ┌─────────────────────────────────────┐    │
-│  │  INFRASTRUCTURE CONTROL PLANE       │    │
-│  │  (external to AI agent process)     │    │
-│  │                                     │    │
-│  │  agent_enabled: true/false          │    │
-│  │  ─────────────────────────────      │    │
-│  │  append-only audit log              │    │
-│  └──────────┬──────────────────────────┘    │
-│             │                               │
-│             ▼                               │
-│  ┌─────────────────────────────────────┐    │
-│  │  AI AGENT PROCESS                   │    │
-│  │  checks agent_enabled before        │    │
-│  │  every LLM call and tool invocation │    │
-│  │                                     │    │
-│  │  CANNOT modify agent_enabled        │    │
-│  │  CANNOT access audit log            │    │
-│  └─────────────────────────────────────┘    │
-└─────────────────────────────────────────────┘
-```
+<!-- fig:kill-switch-architecture -->
 
 Príznak `agent_enabled` žije v infraštruktúre, na ktorú agent nedosiahne: v samostatnom konfiguračnom úložisku, službe feature flagov alebo hardvérovom prepínači. Agent tento príznak číta, ale nemôže doň zapisovať. Auditný log zaznamenáva každú zmenu stavu s časovou pečiatkou, identitou operátora a dôvodom.
 

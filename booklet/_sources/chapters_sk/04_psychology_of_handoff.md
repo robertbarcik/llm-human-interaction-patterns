@@ -10,14 +10,14 @@ Automatizačná zaujatosť je sklon ľudí uprednostňovať návrhy automatizova
 
 ### Dôkazy
 
-Prelomovou štúdiou je Skitka, Mosier a Burdick (1999), ktorá testovala pilotov aj nepilotov v simulovanom letovom prostredí, kde automatizovaný monitorovací systém občas poskytol nesprávne odporúčania.
+Prelomové štúdie pochádzajú z výskumného programu Kathleen Mosierovej a Lindy Skitkovej z konca 90. rokov. V štúdii Mosier, Skitka, Heers a Burdick (1998) lietali skúsení piloti dopravných lietadiel na simulátore, v ktorom automatizovaný výstražný systém občas poskytol nesprávne odporúčania; Skitka, Mosier a Burdick (1999) vzor zopakovali s nepilotmi v jednoduchšej úlohe (65 % chýb konania, 41 % chýb opomenutia).
 
 Výsledky boli neúprosné:
 
-- **Chyby konania** (vykonanie nesprávneho kroku odporúčaného automatizáciou): **100 % účastníkov** sa dopustilo aspoň jednej chyby konania. Každý jeden účastník vrátane skúsených pilotov sa aspoň raz riadil odporúčaním automatizácie, keď bolo preukázateľne nesprávne.
-- **Chyby opomenutia** (nevšimnutie si problémov, ktoré automatizácia prehliadla): **55 % účastníkov** prehliadlo udalosti, ktoré automatizácia neoznačila, aj keď boli na ich prístrojoch jasne viditeľné.
+- **Chyby konania** (vykonanie nesprávneho kroku odporúčaného automatizáciou): **100 % pilotov** sa dopustilo aspoň jednej chyby konania. Každý jeden pilot sa aspoň raz riadil odporúčaním automatizácie, keď bolo preukázateľne nesprávne (falošný poplach požiaru motora).
+- **Chyby opomenutia** (nevšimnutie si problémov, ktoré automatizácia prehliadla): **55 % pilotov** prehliadlo udalosti, ktoré automatizácia neoznačila, aj keď boli na ich prístrojoch jasne viditeľné.
 
-Azda najznepokojivejšie: prítomnosť druhého člena posádky (štandardné zmiernenie ľudskej chyby v letectve) chyby z automatizačnej zaujatosti neznížila (Mosierová a kolegovia spustili tímovú verziu štúdie v roku 1998; miery chýb v dvojčlenných posádkach boli štatisticky nerozlíšiteľné od samostatných operátorov). Prehľad Parasuramana a Manzeya (2010) potvrdil vzor naprieč viacerými doménami a podkladový paradox spoľahlivosti bol zmeraný priamo: v experimentoch Baileyho a Scerba zvýšenie spoľahlivosti automatizácie z 87 % na 98 % posunulo prehliadnutia zlyhaní operátormi zo zhruba tretiny udalostí na takmer polovicu. Čím dôveryhodnejší je záznam automatizácie, tým menej ju človek monitoruje.
+Azda najznepokojivejšie: prítomnosť druhého člena posádky (štandardné zmiernenie ľudskej chyby v letectve) chyby z automatizačnej zaujatosti neznížila (Skitková, Mosierová, Burdick a kolegovia spustili dvojčlennú verziu v roku 2000 a Mosierová a kolegovia ju v roku 2001 zopakovali so 48 skúsenými pilotmi moderných kokpitov; miery chýb v posádkach boli štatisticky nerozlíšiteľné od samostatných operátorov). Prehľad Parasuramana a Manzeya (2010) potvrdil vzor naprieč viacerými doménami a podkladový paradox spoľahlivosti bol zmeraný priamo: v experimentoch Baileyho a Scerba zvýšenie spoľahlivosti automatizácie z 87 % na 98 % posunulo prehliadnutia zlyhaní operátormi zo zhruba tretiny udalostí na takmer polovicu. Čím dôveryhodnejší je záznam automatizácie, tým menej ju človek monitoruje.
 
 ### Dôsledky v skutočnom svete
 
@@ -105,6 +105,8 @@ Centre for International Governance Innovation opisuje štvorstupňový organiza
 > **Poznámka z terénu od autora.** Tieto javy púšťam na svojich workshopoch ako živú simuláciu (cvičenie nakoniec vyrástlo do hry The Operator's Dilemma, na ktorú táto kapitola stále odkazuje). Okamih, keď som prestal potrebovať slajdy, nastal, keď bezpečnostný inžinier, hlboko v časovanom kole triáže, schválil odporúčanie, ktoré protirečilo dátam na jeho vlastnej obrazovke, zdvihol zrak a povedal: „Vedel som, že niečo nesedí, ale bežal časovač.“ Nikto sa nezasmial. Polovica miestnosti urobila to isté o pár incidentov skôr. O automatizačnej zaujatosti môžete prednášať hodinu a ľudia zdvorilo prikyvujú. Deväťdesiat sekúnd odpočtu ich obráti.
 
 ## Zhrnutie
+
+<!-- fig:bias-loop -->
 
 Týchto päť javov (automatizačná zaujatosť, únava z výstrah, ukotvenie, posun k sebauspokojeniu a degradácia zručností) nie je nezávislých. Interagujú a navzájom sa posilňujú:
 

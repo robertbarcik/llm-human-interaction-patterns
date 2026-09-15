@@ -10,14 +10,14 @@ Automation bias is the tendency of humans to favor suggestions from automated sy
 
 ### The Evidence
 
-The landmark study is Skitka, Mosier, and Burdick (1999), which tested pilots and non-pilots in a simulated flight environment where an automated monitoring system occasionally provided incorrect recommendations.
+The landmark studies come from Kathleen Mosier and Linda Skitka's research program of the late 1990s. In Mosier, Skitka, Heers, and Burdick (1998), experienced commercial pilots flew a simulator in which an automated alerting system occasionally provided incorrect recommendations; Skitka, Mosier, and Burdick (1999) replicated the pattern with non-pilots in a lower-fidelity task (65% commission errors, 41% omission errors).
 
 The results were stark:
 
-- **Commission errors** (taking an incorrect action recommended by the automation): **100% of participants** committed at least one commission error. Every single participant, including experienced pilots, followed the automation's recommendation at least once when it was demonstrably wrong.
-- **Omission errors** (failing to notice problems the automation missed): **55% of participants** missed events that the automation failed to flag, even when clearly visible on their instruments.
+- **Commission errors** (taking an incorrect action recommended by the automation): **100% of the pilots** committed at least one commission error. Every single pilot followed the automation's recommendation at least once when it was demonstrably wrong (a false engine-fire alert).
+- **Omission errors** (failing to notice problems the automation missed): **55% of the pilots** missed events that the automation failed to flag, even when clearly visible on their instruments.
 
-Perhaps most troubling: having a second crew member present (a standard mitigation for human error in aviation) did not reduce automation bias errors (Mosier and colleagues ran the team version of the study in 1998; error rates in two-person crews were statistically indistinguishable from solo operators). Parasuraman and Manzey's review (2010) confirmed the pattern across multiple domains, and the underlying reliability paradox has been measured directly: in Bailey and Scerbo's experiments, raising automation reliability from 87% to 98% pushed operators' failure-detection misses from roughly a third of events to nearly half. The more trustworthy the automation's track record, the less the human monitors it.
+Perhaps most troubling: having a second crew member present (a standard mitigation for human error in aviation) did not reduce automation bias errors (Skitka, Mosier, Burdick, and colleagues ran the two-person version in 2000, and Mosier and colleagues replicated it with 48 experienced glass-cockpit pilots in 2001; error rates in crews were statistically indistinguishable from solo operators). Parasuraman and Manzey's review (2010) confirmed the pattern across multiple domains, and the underlying reliability paradox has been measured directly: in Bailey and Scerbo's experiments, raising automation reliability from 87% to 98% pushed operators' failure-detection misses from roughly a third of events to nearly half. The more trustworthy the automation's track record, the less the human monitors it.
 
 ### Real-World Consequences
 
@@ -105,6 +105,8 @@ The Centre for International Governance Innovation describes a four-stage organi
 > **A field note from the author.** I run these phenomena as a live simulation in my workshops (the exercise eventually grew into The Operator's Dilemma, the game linked throughout this chapter). The moment I stopped needing slides was when a security engineer, deep into a timed triage round, approved a recommendation that contradicted the data on his own screen, looked up, and said: "I knew something was off, but the timer was running." Nobody laughed. Half the room had done the same thing a few incidents earlier. You can lecture about automation bias for an hour and people nod politely. Ninety seconds of countdown timer converts them.
 
 ## Bringing It Together
+
+<!-- fig:bias-loop -->
 
 These five phenomena (automation bias, alert fatigue, anchoring, complacency drift, and skill degradation) are not independent. They interact and reinforce each other:
 

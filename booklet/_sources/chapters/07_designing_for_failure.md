@@ -114,6 +114,8 @@ No single layer is reliable on its own. Model-level defenses have known failure 
 
 The Swiss Cheese Model's lesson is that safety comes from *defense in depth*: multiple independent layers, each designed to catch what the others miss. The most dangerous design decision is removing a layer because another layer "should" catch the problem.
 
+<!-- fig:swiss-cheese -->
+
 ## Failure-Readiness Checklist
 
 The following checklist provides a concrete assessment framework for evaluating whether an AI-augmented operation is adequately designed for failure:

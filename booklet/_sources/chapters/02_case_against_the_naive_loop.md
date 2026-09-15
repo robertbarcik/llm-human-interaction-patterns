@@ -16,6 +16,8 @@ Now notice which case your deployment is. If you are putting an AI system into t
 
 None of this argues for removing humans. The same meta-analysis found gains in content-creation tasks and in setups where the division of labor played to each side's strength. The argument is narrower and more useful: the *default* loop, one human approving a stream of AI outputs they did not produce, about situations they did not investigate, fails unless something in the design makes the human's contribution real. Chapters 3 through 6 are about what that something is.
 
+<!-- fig:naive-vs-designed -->
+
 ## Oversight as Policy Theater
 
 The second body of evidence comes from the people who study oversight requirements after they become policy.

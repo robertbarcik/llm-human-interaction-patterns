@@ -193,6 +193,8 @@ Chapter 3 introduced five structural patterns. The question every implementation
 - **Low consequence + Reversible + Time-critical** = Execute & Report (Level 7)
 - **Any consequence level + Low AI confidence** = Recommend & Wait, always
 
+<!-- fig:four-dials -->
+
 ### Action Classification Worksheet
 
 The following worksheet demonstrates the framework applied to common infrastructure operations actions. Use it as a template: replace the example rows with your own agent's action inventory.
@@ -238,17 +240,7 @@ An LLM agent system has three categories of dependencies, each requiring its own
 
 The circuit breaker state machine (Chapter 7 introduces the concept) is identical across all three levels. Only the thresholds and fallback actions differ.
 
-```
-CLOSED ──(threshold exceeded)──► OPEN
-  ▲                                │
-  │                                │ (timeout elapsed)
-  │                                ▼
-  └──(test succeeds)──── HALF_OPEN
-                            │
-                            │ (test fails)
-                            ▼
-                           OPEN
-```
+<!-- fig:circuit-breaker -->
 
 **CLOSED:** Normal operation. Failure counter increments on each failure, resets on success or after the time window expires. **OPEN:** All requests routed to fallback. A recovery timeout begins (recommended starting value: 60 seconds for LLM API, 120 seconds for tools, 300 seconds for quality gate). **HALF_OPEN:** A single test request is sent to the primary path. Success returns to CLOSED and resets the failure counter. Failure returns to OPEN and doubles the recovery timeout, up to a configured maximum (recommended: 10 minutes).
 
@@ -274,34 +266,7 @@ The distinction is critical. A kill switch that also disables monitoring leaves 
 
 ### Architecture
 
-```
-┌─────────────────────────────────────────────┐
-│  OPERATOR INTERFACE                         │
-│  ┌─────────────────────────────────────┐    │
-│  │  [KILL SWITCH]  ← always visible    │    │
-│  └──────────┬──────────────────────────┘    │
-│             │                               │
-│             ▼                               │
-│  ┌─────────────────────────────────────┐    │
-│  │  INFRASTRUCTURE CONTROL PLANE       │    │
-│  │  (external to AI agent process)     │    │
-│  │                                     │    │
-│  │  agent_enabled: true/false          │    │
-│  │  ─────────────────────────────      │    │
-│  │  append-only audit log              │    │
-│  └──────────┬──────────────────────────┘    │
-│             │                               │
-│             ▼                               │
-│  ┌─────────────────────────────────────┐    │
-│  │  AI AGENT PROCESS                   │    │
-│  │  checks agent_enabled before        │    │
-│  │  every LLM call and tool invocation │    │
-│  │                                     │    │
-│  │  CANNOT modify agent_enabled        │    │
-│  │  CANNOT access audit log            │    │
-│  └─────────────────────────────────────┘    │
-└─────────────────────────────────────────────┘
-```
+<!-- fig:kill-switch-architecture -->
 
 The `agent_enabled` flag lives in infrastructure the agent cannot reach: a separate configuration store, a feature flag service, or a hardware switch. The agent reads this flag but cannot write to it. The audit log records every state change with timestamp, operator identity, and reason.
 
