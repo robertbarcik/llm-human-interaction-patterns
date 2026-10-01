@@ -4,106 +4,138 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Operator's Dilemma &middot; robert@barcik.training</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&display=swap" rel="stylesheet">
 <style>
+/* ===== RISO TOKENS (training-ops/web/riso/demo-kit.css) ===== */
+:root {
+  --paper: #f3efe4; --panel: #fbf8f0; --ink: #1d2a6b; --muted: #525b8c; --rule: #c9c3ae; --rule-soft: #e2dccb;
+  --blue: #2a4bd7; --pink: #ff5fa2; --yellow: #ffe14d; --pink-ink: #c81e63;
+  --danger: #d5312a; --danger-bg: #fbe1dc; --safe: #178a5e; --safe-bg: #dcf1e4; --warn: #b85f00; --warn-bg: #ffefc2; --neutral: #8a8fa8;
+  --cat-1: #2a4bd7; --cat-2: #e0368a; --cat-3: #178a5e; --cat-4: #e8710c; --cat-5: #7a4fd0; --cat-6: #0f8fa3;
+  --font: 'Bricolage Grotesque', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .11 0 0 0 0 .16 0 0 0 0 .42 0 0 0 .22 -.07'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* night console (kept dark on purpose: the 2 AM shift, the projector slides, the operator's screen) */
+  --night: #1d2a6b; --night-text: #f3efe4; --night-muted: #c3c8e3; --night-soft: #d9dcec;
+  --night-danger: #ff8f87; --night-safe: #7fd8a8; --night-warn: #ffe14d; --night-info: #9db1ff; --night-story: #c9b8ff;
+  --ai-tint: #e6eafb; /* "the AI says" boxes */
+}
+
+/* ===== RESET & BASE ===== */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { font-size: 16px; }
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #f0f4f8; color: #1a202c; min-height: 100vh; line-height: 1.5;
+  font-family: var(--font);
+  background: var(--paper) var(--grain); color: var(--ink); min-height: 100vh; line-height: 1.5;
 }
+button, select, input { font-family: inherit; }
+button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible, .sev-btn:focus-visible, .rc-opt:focus-visible { outline: 3px solid var(--pink); outline-offset: 2px; }
 
 /* Header */
-header { background: #1e3a5f; color: #fff; padding: 1.2rem 2rem; text-align: center; position: relative; }
-header h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.1rem; }
-header .subtitle { font-size: 0.82rem; color: #94a3b8; max-width: 600px; margin: 0 auto; }
-header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; margin-top: 0.3rem; }
-.header-tools { position: absolute; top: 0.75rem; right: 0.9rem; display: flex; gap: 0.4rem; }
-.tool-btn {
-  background: rgba(255,255,255,0.08); color: #cbd5e0; border: 1px solid rgba(255,255,255,0.18);
-  border-radius: 999px; padding: 0.3rem 0.7rem; font-size: 0.7rem; font-weight: 600; cursor: pointer;
-  font-family: inherit; transition: all 0.15s;
+header { background: transparent; color: var(--ink); padding: 1.25rem 2rem 1.1rem; text-align: center; position: relative; border-bottom: 2px solid var(--ink); }
+header h1 {
+  font-size: clamp(2rem, 4.6vw, 3.2rem); font-weight: 800; font-stretch: 78%; letter-spacing: -0.02em; line-height: .95;
+  color: var(--blue); text-shadow: .045em .04em 0 var(--pink); margin-bottom: 0.45rem;
 }
-.tool-btn:hover { background: rgba(255,255,255,0.16); color: #fff; }
-.tool-btn.on { background: #fbbf24; color: #1e3a5f; border-color: #fbbf24; }
+header .subtitle { font-size: 0.95rem; font-weight: 600; color: var(--ink); max-width: 600px; margin: 0 auto; }
+header .brand { font-size: 0.82rem; font-weight: 700; color: var(--muted); margin-top: 0.25rem; }
+.header-tools { position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem; }
+.tool-btn {
+  background: var(--panel); color: var(--ink); border: 2px solid var(--ink);
+  border-radius: 0; padding: 0.4rem 0.75rem; font-size: 0.8rem; font-weight: 700; cursor: pointer;
+  font-family: inherit; transition: background 0.15s; box-shadow: 2px 2px 0 var(--ink);
+}
+.tool-btn:hover { background: var(--yellow); }
+.tool-btn.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 
 /* Progress bar */
-.progress-bar { max-width: 960px; margin: 1.2rem auto 0; padding: 0 1.25rem; }
+.progress-bar { max-width: 960px; margin: 1.4rem auto 0; padding: 0 1.25rem; }
 .progress-track { display: flex; gap: 0.4rem; }
-.progress-step { flex: 1; height: 6px; border-radius: 3px; background: #e2e8f0; transition: background 0.3s; cursor: pointer; }
-.progress-step.active { background: #1e3a5f; }
-.progress-step.done { background: #16a34a; }
+.progress-step { flex: 1; height: 8px; border-radius: 0; background: var(--rule-soft); border: 1px solid var(--rule); transition: background 0.3s; cursor: pointer; }
+.progress-step.active { background: var(--ink); border-color: var(--ink); }
+.progress-step.done { background: var(--safe); border-color: var(--safe); }
 .progress-labels { display: flex; gap: 0.4rem; margin-top: 0.35rem; }
-.progress-labels span { flex: 1; text-align: center; font-size: 0.65rem; color: #94a3b8; font-weight: 600; cursor: pointer; }
-.progress-labels span.active { color: #1e3a5f; }
+.progress-labels span { flex: 1; text-align: center; font-size: 0.75rem; color: var(--muted); font-weight: 600; cursor: pointer; line-height: 1.25; }
+.progress-labels span.active { color: var(--ink); font-weight: 800; }
 
 /* Sections */
-.section { display: none; max-width: 960px; margin: 1.2rem auto; padding: 0 1.25rem; }
+.section { display: none; max-width: 960px; margin: 1.4rem auto; padding: 0 1.25rem; }
 .section.active { display: block; }
 
 /* Panels */
-.panel { background: #fff; border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 4px rgba(0,0,0,0.07); margin-bottom: 1.25rem; }
-.panel-title { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: #94a3b8; margin-bottom: 0.75rem; font-weight: 600; }
-.panel h2 { font-size: 1.3rem; color: #1e3a5f; margin-bottom: 0.5rem; font-weight: 700; }
-.panel h3 { font-size: 1.05rem; color: #1e3a5f; margin-bottom: 0.4rem; font-weight: 600; }
-.panel p { font-size: 0.88rem; color: #4a5568; line-height: 1.6; margin-bottom: 0.6rem; }
-.panel p:last-child { margin-bottom: 0; }
-
-/* Theory slides */
-.theory-panel { margin-bottom: 1.25rem; }
-.theory-toggle {
-  width: 100%; text-align: left; background: #f8fafc; border: 1px solid #e2e8f0;
-  border-radius: 10px; padding: 0.85rem 1.2rem; font-size: 0.82rem; font-weight: 600;
-  color: #1e3a5f; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.5rem;
-  font-family: inherit;
+.panel { background: var(--panel); border: 2px solid var(--ink); border-radius: 0; padding: 1.5rem; box-shadow: 5px 5px 0 var(--blue); margin-bottom: 1.5rem; }
+.panel .panel { box-shadow: none; border-width: 0 0 0 4px; border-color: var(--blue); }
+.panel-title {
+  display: inline-block; font-size: 1.05rem; font-stretch: 78%; color: var(--ink); margin-bottom: 0.75rem; font-weight: 800;
+  background: linear-gradient(transparent 55%, var(--yellow) 55%); padding: 0 4px; margin-left: -4px;
 }
-.theory-toggle:hover { background: #eef2f7; }
-.theory-toggle .chevron { transition: transform 0.3s; font-size: 0.7rem; }
-.theory-toggle.open { border-radius: 10px 10px 0 0; }
+.panel h2 { font-size: 1.7rem; font-stretch: 78%; line-height: 1.1; color: var(--ink); margin-bottom: 0.6rem; font-weight: 800; letter-spacing: -0.01em; }
+.panel h3 { font-size: 1.2rem; font-stretch: 82%; line-height: 1.2; color: var(--ink); margin-bottom: 0.45rem; font-weight: 800; }
+.panel p { font-size: 0.92rem; color: var(--ink); line-height: 1.6; margin-bottom: 0.6rem; }
+.panel p:last-child { margin-bottom: 0; }
+.panel a { color: var(--pink-ink); }
+
+/* Theory slides (kept dark: a projector slide) */
+.theory-panel { margin-bottom: 1.5rem; }
+.theory-toggle {
+  width: 100%; text-align: left; background: var(--panel); border: 2px solid var(--ink);
+  border-radius: 0; padding: 0.85rem 1.2rem; font-size: 0.92rem; font-weight: 700;
+  color: var(--ink); cursor: pointer; transition: background 0.15s; display: flex; align-items: center; gap: 0.6rem;
+  font-family: inherit; box-shadow: 3px 3px 0 var(--ink);
+}
+.theory-toggle:hover { background: var(--yellow); }
+.theory-toggle .chevron { transition: transform 0.3s; font-size: 0.7rem; color: var(--pink-ink); }
+.theory-toggle.open { border-radius: 0; box-shadow: none; background: var(--yellow); }
 .theory-toggle.open .chevron { transform: rotate(90deg); }
 .theory-content {
-  display: none; background: #1e3a5f; color: #e2e8f0; border-radius: 0 0 10px 10px; padding: 1.4rem 1.6rem 1.1rem;
+  display: none; background: var(--night); color: var(--night-text); border: 2px solid var(--ink); border-top: none; border-radius: 0;
+  padding: 1.4rem 1.6rem 1.1rem; box-shadow: 5px 5px 0 var(--pink);
 }
 .theory-content.open { display: block; }
 .slide-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
-.slide-head h4 { font-size: 1.35rem; font-weight: 800; color: #fff; letter-spacing: -0.01em; line-height: 1.2; }
-.slide-head .slide-kicker { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: #93c5fd; font-weight: 700; }
+.slide-head h4 { font-size: 1.7rem; font-weight: 800; font-stretch: 78%; color: var(--night-text); letter-spacing: -0.01em; line-height: 1.1; }
+.slide-head .slide-kicker { font-size: 0.85rem; color: var(--night-warn); font-weight: 700; margin-bottom: 0.2rem; }
 .slide-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
 @media (max-width: 700px) { .slide-grid { grid-template-columns: 1fr; } }
-.slide-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 0.9rem 1.05rem; }
-.slide-card .sc-label { font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 0.3rem; }
-.slide-card .sc-big { font-size: 1.05rem; font-weight: 800; color: #fff; line-height: 1.25; margin-bottom: 0.3rem; }
-.slide-card .sc-big.num { font-size: 2rem; letter-spacing: -0.02em; }
-.slide-card .sc-text { font-size: 0.82rem; color: #cbd5e0; line-height: 1.5; }
-.slide-card.trap .sc-label { color: #fca5a5; }
-.slide-card.number .sc-label { color: #fbbf24; }
-.slide-card.story .sc-label { color: #c4b5fd; }
-.slide-card.pattern { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.3); }
-.slide-card.pattern .sc-label { color: #86efac; }
-.slide-foot { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 0.9rem; font-size: 0.74rem; color: #94a3b8; flex-wrap: wrap; }
-.slide-foot a { color: #93c5fd; text-decoration: none; font-weight: 600; }
+.slide-card { background: rgba(243,239,228,0.07); border: 1px solid rgba(243,239,228,0.25); border-radius: 0; padding: 0.9rem 1.05rem; }
+.slide-card .sc-label { font-size: 0.8rem; font-weight: 700; margin-bottom: 0.3rem; }
+.slide-card .sc-big { font-size: 1.2rem; font-weight: 800; font-stretch: 82%; color: var(--night-text); line-height: 1.2; margin-bottom: 0.3rem; }
+.slide-card .sc-big.num { font-size: 2.3rem; font-stretch: 78%; letter-spacing: -0.02em; line-height: 1.05; }
+.slide-card .sc-text { font-size: 0.86rem; color: var(--night-soft); line-height: 1.5; }
+.slide-card.trap .sc-label { color: var(--night-danger); }
+.slide-card.number .sc-label { color: var(--night-warn); }
+.slide-card.story .sc-label { color: var(--night-story); }
+.slide-card.pattern { background: rgba(23,138,94,0.28); border-color: rgba(127,216,168,0.5); }
+.slide-card.pattern .sc-label { color: var(--night-safe); }
+.slide-foot { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 0.9rem; font-size: 0.8rem; color: var(--night-muted); flex-wrap: wrap; }
+.slide-foot a { color: var(--night-warn); text-decoration: none; font-weight: 700; }
 .slide-foot a:hover { text-decoration: underline; }
 .slide-foot .slide-quote { font-style: italic; }
 
 /* Buttons */
 .btn {
-  display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.6rem 1.2rem;
-  border-radius: 8px; font-size: 0.82rem; font-weight: 600; cursor: pointer;
-  border: none; transition: all 0.2s; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.6rem 1.2rem; min-height: 40px;
+  border-radius: 0; font-size: 0.88rem; font-weight: 700; cursor: pointer;
+  border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); transition: transform 0.12s, box-shadow 0.12s, background 0.15s; font-family: inherit;
 }
-.btn-primary { background: #1e3a5f; color: #fff; }
-.btn-primary:hover { background: #2a5280; }
-.btn-success { background: #16a34a; color: #fff; }
-.btn-success:hover { background: #15803d; }
-.btn-danger { background: #dc2626; color: #fff; }
-.btn-danger:hover { background: #b91c1c; }
-.btn-warning { background: #d97706; color: #fff; }
-.btn-warning:hover { background: #b45309; }
-.btn-outline { background: transparent; border: 2px solid #1e3a5f; color: #1e3a5f; }
-.btn-outline:hover { background: #1e3a5f; color: #fff; }
-.btn-ghost { background: transparent; color: #64748b; border: 1px solid #e2e8f0; }
-.btn-ghost:hover { background: #f8fafc; }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-group { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.75rem; }
+.btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
+.btn:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 var(--ink); }
+.btn-primary { background: var(--pink); color: var(--ink); }
+.btn-primary:hover { background: #ff79b2; }
+.btn-success { background: var(--safe); color: var(--panel); }
+.btn-success:hover { background: #127a52; }
+.btn-danger { background: var(--danger); color: var(--panel); }
+.btn-danger:hover { background: #bd2721; }
+.btn-warning { background: #e8890c; color: var(--ink); }
+.btn-warning:hover { background: #f09a24; }
+.btn-outline { background: var(--panel); border: 2px solid var(--ink); color: var(--ink); }
+.btn-outline:hover { background: var(--yellow); color: var(--ink); }
+.btn-ghost { background: var(--panel); color: var(--ink); border: 2px solid var(--ink); box-shadow: none; }
+.btn-ghost:hover { background: var(--yellow); box-shadow: 3px 3px 0 var(--ink); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-group { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.85rem; }
 
 /* Navigation */
 .nav-row { display: flex; justify-content: space-between; margin-top: 1.5rem; gap: 0.5rem; flex-wrap: wrap; }
@@ -111,285 +143,310 @@ header .brand { font-size: 0.75rem; color: #64748b; letter-spacing: 0.03em; marg
 /* Timer */
 .timer {
   display: inline-flex; align-items: center; gap: 0.4rem;
-  font-size: 1.6rem; font-weight: 800; color: #1e3a5f; font-variant-numeric: tabular-nums;
+  font-size: 2.2rem; font-weight: 800; font-stretch: 78%; line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums;
 }
-.timer.urgent { color: #dc2626; animation: pulse 0.5s ease-in-out infinite alternate; }
+.timer.urgent { color: var(--danger); animation: pulse 0.5s ease-in-out infinite alternate; }
 @keyframes pulse { from { opacity: 1; } to { opacity: 0.5; } }
-.timer.paused { color: #94a3b8 !important; animation: none !important; }
-.timer-pause-label { font-size: 0.7rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; margin-left: 0.3rem; }
+.timer.paused { color: var(--neutral) !important; animation: none !important; }
+.timer-pause-label { font-size: 0.8rem; font-stretch: 100%; color: var(--neutral); font-weight: 700; margin-left: 0.3rem; }
 
-/* Shift strip (fatigue + clock) */
+/* Shift strip (fatigue + clock) — the night console, kept dark */
 .shift-strip {
   display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap;
-  background: #0f172a; color: #cbd5e0; border-radius: 10px; padding: 0.6rem 1rem; margin-bottom: 0.9rem;
-  font-size: 0.78rem; font-variant-numeric: tabular-nums;
+  background: var(--night); color: var(--night-text); border: 2px solid var(--ink); border-radius: 0; padding: 0.6rem 1rem; margin-bottom: 1rem;
+  font-size: 0.82rem; font-variant-numeric: tabular-nums; box-shadow: 3px 3px 0 var(--pink);
 }
-.shift-strip .ss-item { display: flex; align-items: center; gap: 0.4rem; }
-.shift-strip .ss-label { color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.64rem; font-weight: 700; }
-.shift-strip .ss-val { color: #fff; font-weight: 700; font-size: 0.95rem; }
-.shift-strip .ss-val.tired { color: #fbbf24; }
-.shift-strip .ss-val.exhausted { color: #f87171; }
-.fatigue-meter { width: 90px; height: 6px; background: rgba(255,255,255,0.12); border-radius: 3px; overflow: hidden; }
-.fatigue-meter div { height: 100%; background: linear-gradient(90deg, #22c55e, #fbbf24, #ef4444); width: 60%; transition: width 0.6s; }
-.shift-strip .ss-queue { color: #fca5a5; font-weight: 700; }
+.shift-strip .ss-item { display: flex; align-items: center; gap: 0.45rem; }
+.shift-strip .ss-label { color: var(--night-muted); font-size: 0.78rem; font-weight: 700; }
+.shift-strip .ss-val { color: var(--night-text); font-weight: 800; font-size: 1rem; }
+.shift-strip .ss-val.tired { color: var(--night-warn); }
+.shift-strip .ss-val.exhausted { color: var(--night-danger); }
+.fatigue-meter { width: 90px; height: 8px; background: rgba(243,239,228,0.18); border-radius: 0; overflow: hidden; }
+.fatigue-meter div { height: 100%; background: linear-gradient(90deg, #3fbf86, #ffe14d, #ff6b5e); width: 60%; transition: width 0.6s; }
+.shift-strip .ss-queue { color: var(--night-danger); font-weight: 800; }
 
 /* Ping toasts (interruptions) */
-.ping-stack { position: fixed; right: 1rem; top: 5.5rem; z-index: 900; display: flex; flex-direction: column; gap: 0.5rem; width: min(320px, calc(100vw - 2rem)); pointer-events: none; }
+.ping-stack { position: fixed; right: 1rem; top: 5.5rem; z-index: 900; display: flex; flex-direction: column; gap: 0.6rem; width: min(320px, calc(100vw - 2rem)); pointer-events: none; }
 .ping {
-  pointer-events: auto; background: #fff; border-radius: 12px; box-shadow: 0 8px 28px rgba(15,23,42,0.28);
-  border: 1px solid #e2e8f0; padding: 0.7rem 0.9rem; display: flex; gap: 0.6rem; align-items: flex-start;
+  pointer-events: auto; background: var(--panel); border-radius: 0; box-shadow: 5px 5px 0 var(--ink);
+  border: 2px solid var(--ink); padding: 0.7rem 0.9rem; display: flex; gap: 0.6rem; align-items: flex-start;
   transform: translateX(0); opacity: 1; transition: transform 0.35s cubic-bezier(.2,.8,.2,1), opacity 0.3s;
 }
 .ping.enter, .ping.leaving { transform: translateX(120%); opacity: 0; }
-.ping .ping-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem; color: #fff; flex-shrink: 0; }
+.ping .ping-avatar { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--ink); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; color: var(--panel); flex-shrink: 0; }
 .ping .ping-body { flex: 1; min-width: 0; }
-.ping .ping-from { font-size: 0.7rem; font-weight: 700; color: #1e3a5f; display: flex; justify-content: space-between; gap: 0.5rem; }
-.ping .ping-from span { color: #94a3b8; font-weight: 500; }
-.ping .ping-msg { font-size: 0.8rem; color: #1a202c; line-height: 1.35; margin-top: 0.1rem; }
-.ping .ping-x { background: none; border: none; color: #94a3b8; font-size: 1rem; cursor: pointer; line-height: 1; padding: 0 0.1rem; font-family: inherit; }
-.ping .ping-x:hover { color: #1e3a5f; }
+.ping .ping-from { font-size: 0.8rem; font-weight: 800; color: var(--ink); display: flex; justify-content: space-between; gap: 0.5rem; }
+.ping .ping-from span { color: var(--muted); font-weight: 600; }
+.ping .ping-msg { font-size: 0.86rem; color: var(--ink); line-height: 1.35; margin-top: 0.1rem; }
+.ping .ping-x { background: none; border: none; color: var(--muted); font-size: 1.1rem; cursor: pointer; line-height: 1; padding: 0 0.15rem; font-family: inherit; }
+.ping .ping-x:hover { color: var(--ink); }
 @media (max-width: 700px) { .ping-stack { top: auto; bottom: 4.5rem; right: 0.75rem; } }
 
 /* Incident card */
 .incident-card {
-  background: #fff; border: 2px solid #e2e8f0; border-radius: 10px; padding: 1.2rem;
-  margin-bottom: 1rem; transition: all 0.3s;
+  background: var(--panel); border: 2px solid var(--rule); border-radius: 0; padding: 1.2rem;
+  margin-bottom: 1rem; transition: border-color 0.3s, box-shadow 0.3s;
 }
-.incident-card.current { border-color: #1e3a5f; box-shadow: 0 2px 12px rgba(30,58,95,0.12); }
+.incident-card.current { border-color: var(--ink); box-shadow: 4px 4px 0 var(--ink); }
 .incident-card .ic-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
 .incident-card .ic-severity {
-  font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
-  padding: 0.2rem 0.6rem; border-radius: 4px;
+  font-size: 0.8rem; font-weight: 800; text-transform: capitalize;
+  padding: 0.15rem 0.55rem; border-radius: 0; border: 1.5px solid currentColor;
 }
-.sev-critical { background: #fef2f2; color: #dc2626; }
-.sev-high { background: #fff7ed; color: #ea580c; }
-.sev-medium { background: #fefce8; color: #ca8a04; }
-.sev-low { background: #f0fdf4; color: #16a34a; }
-.incident-card .ic-title { font-size: 1.02rem; font-weight: 700; color: #1e3a5f; margin-bottom: 0.3rem; }
-.incident-card .ic-details { font-size: 0.86rem; color: #4a5568; line-height: 1.55; }
+.sev-critical { background: var(--danger-bg); color: var(--danger); }
+.sev-high { background: #ffe3d1; color: #c2410c; }
+.sev-medium { background: var(--warn-bg); color: var(--warn); }
+.sev-low { background: var(--safe-bg); color: var(--safe); }
+.incident-card .ic-title { font-size: 1.2rem; font-weight: 800; font-stretch: 82%; color: var(--ink); margin-bottom: 0.3rem; line-height: 1.2; }
+.incident-card .ic-details { font-size: 0.92rem; color: var(--ink); line-height: 1.55; }
 .incident-card .ic-recommendation {
-  margin-top: 0.7rem; padding: 0.75rem 0.9rem; background: #eff6ff; border-radius: 8px;
-  border-left: 3px solid #3b82f6; font-size: 0.86rem; color: #1e3a5f; line-height: 1.5;
+  margin-top: 0.75rem; padding: 0.75rem 0.9rem; background: var(--ai-tint); border-radius: 0;
+  border-left: 4px solid var(--blue); font-size: 0.92rem; color: var(--ink); line-height: 1.5;
 }
-.incident-card .ic-recommendation strong { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: #3b82f6; margin-bottom: 0.2rem; }
-.act1-actions .btn { font-size: 0.92rem; padding: 0.75rem 1.4rem; }
+.incident-card .ic-recommendation strong { display: block; font-size: 0.82rem; color: var(--blue); margin-bottom: 0.2rem; font-weight: 800; }
+.act1-actions .btn { font-size: 1rem; padding: 0.75rem 1.4rem; }
 
 /* Results */
 .stat-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; }
 .stat-card {
-  flex: 1; min-width: 130px; background: #f8fafc; border: 1px solid #e2e8f0;
-  border-radius: 10px; padding: 1rem; text-align: center;
+  flex: 1; min-width: 130px; background: var(--paper); border: 1px solid var(--rule);
+  border-radius: 0; padding: 1rem; text-align: center;
 }
-.stat-card .stat-number { font-size: 1.8rem; font-weight: 800; color: #1e3a5f; }
-.stat-card .stat-label { font-size: 0.72rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
-.stat-card.bad .stat-number { color: #dc2626; }
-.stat-card.good .stat-number { color: #16a34a; }
-.stat-card.warn .stat-number { color: #d97706; }
+.stat-card .stat-number { font-size: 2.2rem; font-weight: 800; font-stretch: 78%; line-height: 1.1; color: var(--ink); font-variant-numeric: tabular-nums; }
+.stat-card .stat-label { font-size: 0.8rem; color: var(--muted); font-weight: 700; line-height: 1.3; }
+.stat-card.bad { border-top: 4px solid var(--danger); }
+.stat-card.good { border-top: 4px solid var(--safe); }
+.stat-card.warn { border-top: 4px solid #e8890c; }
+.stat-card.bad .stat-number { color: var(--danger); }
+.stat-card.good .stat-number { color: var(--safe); }
+.stat-card.warn .stat-number { color: var(--warn); }
 
-/* Room poll */
-.room-poll { background: #0f172a; color: #e2e8f0; border-radius: 12px; padding: 1.3rem 1.5rem; margin-bottom: 1.25rem; }
-.room-poll .rp-kicker { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.1em; color: #fbbf24; font-weight: 700; margin-bottom: 0.3rem; }
-.room-poll h3 { color: #fff; font-size: 1.15rem; margin-bottom: 0.8rem; }
+/* Room poll (kept dark: a card for the projector) */
+.room-poll { background: var(--night); color: var(--night-text); border: 2px solid var(--ink); border-radius: 0; padding: 1.3rem 1.5rem; margin-bottom: 1.5rem; box-shadow: 5px 5px 0 var(--pink); }
+.room-poll .rp-kicker { font-size: 0.85rem; color: var(--night-warn); font-weight: 700; margin-bottom: 0.3rem; }
+.room-poll h3 { color: var(--night-text); font-size: 1.4rem; font-weight: 800; font-stretch: 78%; line-height: 1.15; margin-bottom: 0.8rem; }
 .room-poll .rp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.6rem; }
-.room-poll .rp-q { background: rgba(255,255,255,0.06); border-radius: 8px; padding: 0.7rem 0.9rem; font-size: 0.84rem; line-height: 1.4; }
-.room-poll .rp-q strong { color: #fff; display: block; margin-bottom: 0.15rem; }
-.room-poll .rp-you { margin-top: 0.8rem; font-size: 0.8rem; color: #94a3b8; }
-.room-poll .rp-you b { color: #fbbf24; }
+.room-poll .rp-q { background: rgba(243,239,228,0.07); border: 1px solid rgba(243,239,228,0.22); border-radius: 0; padding: 0.7rem 0.9rem; font-size: 0.88rem; line-height: 1.4; color: var(--night-soft); }
+.room-poll .rp-q strong { color: var(--night-text); display: block; margin-bottom: 0.15rem; }
+.room-poll .rp-you { margin-top: 0.8rem; font-size: 0.86rem; color: var(--night-muted); }
+.room-poll .rp-you b { color: var(--night-warn); }
 
 /* Decision result badges */
 .badge {
-  display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px;
-  font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+  display: inline-block; padding: 0.1rem 0.5rem; border-radius: 0; border: 1.5px solid currentColor;
+  font-size: 0.78rem; font-weight: 800;
 }
-.badge-correct { background: #f0fdf4; color: #16a34a; }
-.badge-incorrect { background: #fef2f2; color: #dc2626; }
-.badge-missed { background: #fefce8; color: #ca8a04; }
+.badge-correct { background: var(--safe-bg); color: var(--safe); }
+.badge-incorrect { background: var(--danger-bg); color: var(--danger); }
+.badge-missed { background: var(--warn-bg); color: var(--warn); }
 
 /* Act 2: Assessment form */
 .severity-scale { display: flex; gap: 0.5rem; margin: 0.5rem 0; }
 .severity-scale .sev-btn {
-  flex: 1; padding: 0.5rem; text-align: center; border: 2px solid #e2e8f0;
-  border-radius: 8px; cursor: pointer; font-size: 0.82rem; font-weight: 600;
-  transition: all 0.2s; background: #fff;
+  flex: 1; padding: 0.5rem; text-align: center; border: 2px solid var(--ink);
+  border-radius: 0; cursor: pointer; font-size: 0.95rem; font-weight: 800;
+  transition: background 0.15s; background: var(--panel); color: var(--ink);
 }
-.severity-scale .sev-btn:hover { border-color: #1e3a5f; }
-.severity-scale .sev-btn.selected { border-color: #1e3a5f; background: #1e3a5f; color: #fff; }
+.severity-scale .sev-btn:hover { background: var(--yellow); }
+.severity-scale .sev-btn.selected { border-color: var(--ink); background: var(--ink); color: var(--paper); }
+.severity-scale .sev-btn.selected div { color: var(--night-muted) !important; }
 .root-cause-options { display: grid; grid-template-columns: 1fr; gap: 0.5rem; margin: 0.5rem 0; }
 .root-cause-options .rc-opt {
-  padding: 0.7rem 1rem; border: 2px solid #e2e8f0; border-radius: 8px;
-  cursor: pointer; font-size: 0.84rem; transition: all 0.2s; background: #fff;
+  padding: 0.7rem 1rem; border: 2px solid var(--rule); border-radius: 0; color: var(--ink);
+  cursor: pointer; font-size: 0.9rem; transition: border-color 0.15s, background 0.15s; background: var(--panel);
 }
-.root-cause-options .rc-opt:hover { border-color: #1e3a5f; }
-.root-cause-options .rc-opt.selected { border-color: #1e3a5f; background: #eff6ff; }
+.root-cause-options .rc-opt:hover { border-color: var(--ink); }
+.root-cause-options .rc-opt.selected { border-color: var(--ink); background: #fff1a8; box-shadow: 3px 3px 0 var(--ink); font-weight: 700; }
 
-/* Act 2: Event timeline (plain-language "logs") */
+/* Act 2: Event timeline (plain-language "logs") — a console, kept dark */
 .data-panel {
-  background: #1a1a2e; color: #e2e8f0; border-radius: 10px; padding: 1rem 1.2rem;
-  font-size: 0.8rem; line-height: 1.55; margin: 0.75rem 0; overflow-x: auto;
+  background: var(--night); color: var(--night-text); border: 2px solid var(--ink); border-radius: 0; padding: 1rem 1.2rem;
+  font-size: 0.86rem; line-height: 1.55; margin: 0.75rem 0; overflow-x: auto;
 }
 .data-panel .log-line { display: flex; gap: 0.6rem; margin-bottom: 0.3rem; align-items: baseline; }
-.data-panel .log-ts { color: #64748b; font-variant-numeric: tabular-nums; flex-shrink: 0; font-family: 'SF Mono', 'Fira Code', Consolas, monospace; font-size: 0.74rem; }
+.data-panel .log-ts { color: var(--night-muted); font-variant-numeric: tabular-nums; flex-shrink: 0; font-family: var(--mono); font-size: 0.78rem; }
 .data-panel .log-src { flex-shrink: 0; font-weight: 700; min-width: 9.5em; }
-.data-panel .log-error .log-src { color: #f87171; }
-.data-panel .log-warn .log-src { color: #fbbf24; }
-.data-panel .log-info .log-src { color: #60a5fa; }
-.data-panel .log-msg { color: #e2e8f0; }
-.sbar { font-size: 0.84rem; margin-top: 0.5rem; }
-.sbar > div { padding: 0.55rem 0.8rem; border: 1px solid #e2e8f0; border-top: none; }
-.sbar > div:first-child { border-top: 1px solid #e2e8f0; border-radius: 6px 6px 0 0; }
-.sbar > div:last-child { border-radius: 0 0 6px 6px; }
-.sbar > div:nth-child(odd) { background: #eff6ff; }
-.sbar > div:nth-child(even) { background: #f8fafc; }
-.sbar strong { color: #3b82f6; }
-.sbar > div:nth-child(even) strong { color: #1e3a5f; }
+.data-panel .log-error .log-src { color: var(--night-danger); }
+.data-panel .log-warn .log-src { color: var(--night-warn); }
+.data-panel .log-info .log-src { color: var(--night-info); }
+.data-panel .log-msg { color: var(--night-text); }
+.sbar { font-size: 0.9rem; margin-top: 0.5rem; border: 2px solid var(--ink); }
+.sbar > div { padding: 0.55rem 0.8rem; border-top: 1px solid var(--rule); }
+.sbar > div:first-child { border-top: none; border-radius: 0; }
+.sbar > div:last-child { border-radius: 0; }
+.sbar > div:nth-child(odd) { background: var(--ai-tint); }
+.sbar > div:nth-child(even) { background: var(--paper); }
+.sbar strong { color: var(--blue); }
+.sbar > div:nth-child(even) strong { color: var(--ink); }
 
 /* Act 3: Trust sliders */
 .trust-slider-group { margin: 0.75rem 0; }
-.trust-slider-group label { font-size: 0.84rem; color: #4a5568; font-weight: 600; display: block; margin-bottom: 0.3rem; }
+.trust-slider-group label { font-size: 0.9rem; color: var(--ink); font-weight: 700; display: block; margin-bottom: 0.3rem; }
 .trust-slider-row { display: flex; align-items: center; gap: 0.75rem; }
-.trust-slider-row input[type="range"] { flex: 1; accent-color: #1e3a5f; }
-.trust-slider-row .trust-val { font-size: 1.1rem; font-weight: 800; color: #1e3a5f; min-width: 2rem; text-align: center; }
-.trust-labels { display: flex; justify-content: space-between; font-size: 0.68rem; color: #94a3b8; margin-top: 0.15rem; }
-.confidence-card { background: #fff; border: 2px solid #e2e8f0; border-radius: 10px; padding: 1.2rem; margin-bottom: 1rem; }
-.confidence-card h4 { font-size: 0.92rem; color: #1e3a5f; margin-bottom: 0.5rem; }
-.confidence-card p { font-size: 0.86rem; color: #4a5568; line-height: 1.6; }
+.trust-slider-row input[type="range"] { flex: 1; accent-color: var(--blue); min-height: 28px; }
+.trust-slider-row .trust-val { font-size: 1.6rem; font-weight: 800; font-stretch: 78%; color: var(--blue); min-width: 2rem; text-align: center; }
+.trust-labels { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--muted); margin-top: 0.15rem; }
+.confidence-card { background: var(--panel); border: 2px solid var(--ink); border-radius: 0; padding: 1.2rem; margin-bottom: 1rem; }
+.confidence-card h4 { font-size: 1.05rem; font-weight: 800; font-stretch: 82%; color: var(--ink); margin-bottom: 0.5rem; }
+.confidence-card p { font-size: 0.92rem; color: var(--ink); line-height: 1.6; }
 .confidence-badge {
-  display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px;
-  font-size: 0.72rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem;
+  display: inline-block; padding: 0.15rem 0.6rem; border-radius: 0; border: 1.5px solid currentColor;
+  font-size: 0.8rem; font-weight: 800; margin-bottom: 0.5rem;
 }
-.cb-high { background: #f0fdf4; color: #16a34a; }
-.cb-medium { background: #fefce8; color: #ca8a04; }
-.cb-low { background: #fef2f2; color: #dc2626; }
+.cb-high { background: var(--safe-bg); color: var(--safe); }
+.cb-medium { background: var(--warn-bg); color: var(--warn); }
+.cb-low { background: var(--danger-bg); color: var(--danger); }
 
 /* Act 4: Event feed */
 .event-feed { max-height: 420px; overflow-y: auto; padding-right: 0.5rem; }
 .event-item {
-  display: flex; gap: 0.75rem; padding: 0.6rem 0; border-bottom: 1px solid #f1f5f9;
-  font-size: 0.84rem; animation: fadeIn 0.3s ease-in;
+  display: flex; gap: 0.75rem; padding: 0.6rem 0; border-bottom: 1px solid var(--rule-soft);
+  font-size: 0.9rem; animation: fadeIn 0.3s ease-in;
 }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
-.event-item .ev-time { color: #94a3b8; font-weight: 600; min-width: 48px; font-variant-numeric: tabular-nums; }
-.event-item .ev-badge {
-  font-size: 0.65rem; font-weight: 700; text-transform: uppercase; padding: 0.15rem 0.5rem;
-  border-radius: 4px; white-space: nowrap;
+.event-item .ev-time { color: var(--muted); font-weight: 700; min-width: 48px; font-variant-numeric: tabular-nums; }
+.ev-badge {
+  display: inline-block; font-size: 0.74rem; font-weight: 800; padding: 0.12rem 0.5rem;
+  border-radius: 0; white-space: nowrap; border: 1.5px solid currentColor;
 }
-.ev-execute { background: #f0fdf4; color: #16a34a; }
-.ev-recommend { background: #fefce8; color: #ca8a04; }
-.ev-escalate { background: #fef2f2; color: #dc2626; }
-.ev-erratic { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
-.event-item .ev-text { flex: 1; color: #4a5568; line-height: 1.45; }
-.event-item.erratic { background: #fef2f2; border-radius: 6px; padding: 0.6rem; border-bottom: none; }
-.event-item .ev-actions { display: flex; gap: 0.4rem; align-items: flex-start; margin-top: 0.3rem; }
+.ev-execute { background: var(--safe-bg); color: var(--safe); }
+.ev-recommend { background: var(--warn-bg); color: var(--warn); }
+.ev-escalate { background: var(--danger-bg); color: var(--danger); }
+.ev-erratic { background: var(--panel); color: var(--danger); border: 2px solid var(--danger); }
+.event-item .ev-text { flex: 1; color: var(--ink); line-height: 1.45; }
+.event-item.erratic { background: var(--danger-bg); border-radius: 0; padding: 0.6rem; border-bottom: none; margin-bottom: 2px; }
+.event-item .ev-actions { display: flex; gap: 0.4rem; align-items: flex-start; margin-top: 0.35rem; }
+.event-item .ev-actions .btn { box-shadow: 2px 2px 0 var(--ink); min-height: 0; }
 @media (max-width: 700px) { .event-item { flex-wrap: wrap; } .event-item .ev-text { flex-basis: 100%; } }
 
-/* Kill switch */
+/* Kill switch: the one alarm that stays loud */
 .kill-switch-container { position: sticky; bottom: 1rem; z-index: 50; text-align: center; margin-top: 1rem; }
 .kill-switch {
-  background: #dc2626; color: #fff; border: 3px solid #991b1b; border-radius: 12px;
-  padding: 0.8rem 2rem; font-size: 1rem; font-weight: 800; cursor: pointer; font-family: inherit;
-  text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 4px 15px rgba(220,38,38,0.3);
-  transition: all 0.15s;
+  background: var(--danger); color: var(--panel); border: 3px solid var(--ink); border-radius: 0;
+  padding: 0.85rem 2rem; font-size: 1.05rem; font-weight: 800; cursor: pointer; font-family: inherit;
+  text-transform: uppercase; letter-spacing: 0.04em; box-shadow: 5px 5px 0 var(--ink);
+  transition: transform 0.12s, box-shadow 0.12s, background 0.15s;
 }
-.kill-switch:hover { background: #b91c1c; transform: scale(1.03); box-shadow: 0 6px 20px rgba(220,38,38,0.4); }
-.kill-switch:active { transform: scale(0.98); }
+.kill-switch:hover { background: #bd2721; transform: translate(-2px,-2px); box-shadow: 7px 7px 0 var(--ink); }
+.kill-switch:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
 .kill-switch.disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
 
 /* Act 5: Design controls */
-.studio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+.studio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
 @media (max-width: 760px) { .studio-grid { grid-template-columns: 1fr; } }
-.control-group { margin-bottom: 0.75rem; }
-.control-group label { display: block; font-size: 0.78rem; font-weight: 600; color: #1e3a5f; margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.control-group { margin-bottom: 0.9rem; }
+.control-group label { display: block; font-size: 0.9rem; font-weight: 700; color: var(--ink); margin-bottom: 0.3rem; }
 .control-group select, .control-group input[type="range"] { width: 100%; }
 .control-group select {
-  padding: 0.5rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 0.82rem;
-  background: #fff; color: #1e3a5f; cursor: pointer; font-family: inherit;
+  padding: 0.5rem; border: 2px solid var(--ink); border-radius: 0; font-size: 0.88rem; min-height: 40px;
+  background: var(--panel); color: var(--ink); cursor: pointer; font-family: inherit;
 }
-.control-group .range-val { font-size: 0.82rem; font-weight: 700; color: #1e3a5f; text-align: center; margin-top: 0.2rem; }
-.control-group input[type="range"] { accent-color: #1e3a5f; }
+.control-group .range-val { font-size: 0.88rem; font-weight: 700; color: var(--ink); text-align: center; margin-top: 0.2rem; }
+.control-group input[type="range"] { accent-color: var(--blue); min-height: 28px; }
 
-/* UX Preview */
-.ux-preview { background: #1a1a2e; border-radius: 10px; padding: 1.2rem; color: #e2e8f0; min-height: 300px; font-size: 0.82rem; }
-.ux-preview .ux-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2d2d44; padding-bottom: 0.6rem; margin-bottom: 0.8rem; gap: 0.5rem; flex-wrap: wrap; }
-.ux-preview .ux-header h4 { color: #fff; font-size: 0.92rem; }
-.ux-preview .ux-badge { padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; }
-.ux-section { margin-bottom: 0.8rem; padding: 0.6rem 0.8rem; background: rgba(255,255,255,0.05); border-radius: 6px; }
-.ux-section .ux-label { font-size: 0.68rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+/* UX Preview: the operator's screen, kept dark */
+.ux-preview { background: var(--night); border: 2px solid var(--ink); border-radius: 0; padding: 1.2rem; color: var(--night-text); min-height: 300px; font-size: 0.88rem; }
+.ux-preview .ux-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(243,239,228,0.25); padding-bottom: 0.6rem; margin-bottom: 0.8rem; gap: 0.5rem; flex-wrap: wrap; }
+.ux-preview .ux-header h4 { color: var(--night-text); font-size: 1.05rem; font-weight: 800; font-stretch: 82%; }
+.ux-preview .ux-badge { padding: 0.15rem 0.6rem; border-radius: 0; font-size: 0.78rem; font-weight: 800; border: 1.5px solid var(--night-text); }
+.ux-section { margin-bottom: 0.8rem; padding: 0.6rem 0.8rem; background: rgba(243,239,228,0.07); border-radius: 0; }
+.ux-section .ux-label { font-size: 0.78rem; font-weight: 700; color: var(--night-muted); margin-bottom: 0.3rem; }
 
 /* LLM response */
-.llm-response { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1.2rem; font-size: 0.86rem; color: #4a5568; line-height: 1.7; white-space: pre-wrap; }
-.llm-loading { text-align: center; padding: 2rem; color: #94a3b8; }
-.llm-loading .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #e2e8f0; border-top-color: #1e3a5f; border-radius: 50%; animation: spin 0.8s linear infinite; }
+.llm-response { background: var(--paper); border: 1px solid var(--rule); border-radius: 0; padding: 1.2rem; font-size: 0.92rem; color: var(--ink); line-height: 1.7; white-space: pre-wrap; }
+.llm-loading { text-align: center; padding: 2rem; color: var(--muted); }
+.llm-loading .spinner { display: inline-block; width: 22px; height: 22px; border: 3px solid var(--rule); border-top-color: var(--pink); border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* Debrief */
-.debrief-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-.debrief-table th { background: #1e3a5f; color: #fff; padding: 0.6rem 1rem; text-align: left; font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; }
-.debrief-table td { padding: 0.6rem 1rem; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
-.debrief-table tr:nth-child(even) { background: #f8fafc; }
+.debrief-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; border: 2px solid var(--ink); }
+.debrief-table th { background: var(--ink); color: var(--paper); padding: 0.6rem 1rem; text-align: left; font-weight: 700; font-size: 0.86rem; }
+.debrief-table td { padding: 0.6rem 1rem; border-bottom: 1px solid var(--rule-soft); vertical-align: top; color: var(--ink); }
+.debrief-table tr:nth-child(even) { background: var(--paper); }
 .table-scroll { overflow-x: auto; }
 
 /* Homepage act cards */
-.act-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+.act-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 1rem; }
 @media (max-width: 700px) { .act-cards { grid-template-columns: 1fr; } }
-.act-card { background: #fff; border: 2px solid #e2e8f0; border-radius: 12px; padding: 1.2rem; transition: all 0.2s; cursor: default; }
-.act-card:hover { border-color: #1e3a5f; box-shadow: 0 2px 12px rgba(30,58,95,0.08); }
-.act-card .act-card-num { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #3b82f6; margin-bottom: 0.3rem; }
-.act-card h3 { font-size: 1rem; color: #1e3a5f; margin-bottom: 0.5rem; font-weight: 700; }
-.act-card .act-card-theory { font-size: 0.8rem; color: #4a5568; line-height: 1.5; margin-bottom: 0.4rem; }
-.act-card .act-card-practice { font-size: 0.8rem; color: #94a3b8; line-height: 1.5; font-style: italic; margin-bottom: 0.75rem; }
+.act-card { background: var(--panel); border: 2px solid var(--ink); border-radius: 0; padding: 1.2rem; transition: transform 0.12s, box-shadow 0.12s; cursor: default; box-shadow: 4px 4px 0 var(--blue); }
+.act-card:hover { border-color: var(--ink); box-shadow: 6px 6px 0 var(--pink); transform: translate(-1px,-1px); }
+.act-card .act-card-num { font-size: 0.86rem; font-weight: 800; color: var(--pink-ink); margin-bottom: 0.2rem; }
+.act-card h3 { font-size: 1.35rem; font-stretch: 78%; line-height: 1.1; color: var(--ink); margin-bottom: 0.5rem; font-weight: 800; }
+.act-card .act-card-theory { font-size: 0.88rem; color: var(--ink); line-height: 1.5; margin-bottom: 0.4rem; }
+.act-card .act-card-practice { font-size: 0.86rem; color: var(--muted); line-height: 1.5; font-style: italic; margin-bottom: 0.75rem; }
 
 /* Header links + self-contained note */
-.header-links { margin-top: 0.45rem; font-size: 0.78rem; }
-.header-links a { color: #93c5fd; text-decoration: none; }
+.header-links { margin-top: 0.5rem; font-size: 0.88rem; }
+.header-links a { color: var(--pink-ink); text-decoration: none; font-weight: 700; }
 .header-links a:hover { text-decoration: underline; }
-.header-links-sep { color: #64748b; margin: 0 0.4rem; }
-.self-contained-note { max-width: 960px; margin: 0 auto; padding: 0.55rem 1.25rem; font-size: 0.78rem; color: #94a3b8; text-align: center; }
+.header-links-sep { color: var(--muted); margin: 0 0.4rem; }
+.self-contained-note { max-width: 960px; margin: 0 auto; padding: 0.55rem 1.25rem; font-size: 0.86rem; color: var(--muted); text-align: center; }
 
 /* Lecture mode: bigger type, wider column, built for a projector */
 body.lecture { font-size: 1.15rem; }
 body.lecture .section, body.lecture .progress-bar { max-width: 1140px; }
 body.lecture .panel p, body.lecture .incident-card .ic-details, body.lecture .incident-card .ic-recommendation,
-body.lecture .root-cause-options .rc-opt, body.lecture .confidence-card p, body.lecture .event-item, body.lecture .llm-response { font-size: 1.02rem; }
-body.lecture .incident-card .ic-title { font-size: 1.25rem; }
-body.lecture .panel h2 { font-size: 1.6rem; }
-body.lecture .panel h3 { font-size: 1.2rem; }
-body.lecture .btn { font-size: 0.95rem; padding: 0.75rem 1.4rem; }
-body.lecture .act1-actions .btn { font-size: 1.1rem; padding: 0.9rem 1.7rem; }
-body.lecture .timer { font-size: 2.2rem; }
-body.lecture .slide-head h4 { font-size: 1.7rem; }
-body.lecture .slide-card .sc-big { font-size: 1.25rem; }
-body.lecture .slide-card .sc-big.num { font-size: 2.6rem; }
-body.lecture .slide-card .sc-text { font-size: 0.98rem; }
-body.lecture .slide-foot { font-size: 0.86rem; }
-body.lecture .data-panel { font-size: 0.95rem; }
-body.lecture .progress-labels span { font-size: 0.78rem; }
-body.lecture .act-card h3 { font-size: 1.2rem; }
-body.lecture .act-card .act-card-theory, body.lecture .act-card .act-card-practice { font-size: 0.95rem; }
-body.lecture .stat-card .stat-number { font-size: 2.3rem; }
-body.lecture .room-poll .rp-q { font-size: 1.02rem; }
-body.lecture .ping .ping-msg { font-size: 0.95rem; }
-body.lecture .shift-strip { font-size: 0.9rem; }
-body.lecture .shift-strip .ss-val { font-size: 1.1rem; }
+body.lecture .root-cause-options .rc-opt, body.lecture .confidence-card p, body.lecture .event-item, body.lecture .llm-response { font-size: 1.08rem; }
+body.lecture .incident-card .ic-title { font-size: 1.45rem; }
+body.lecture .panel h2 { font-size: 2.1rem; }
+body.lecture .panel h3 { font-size: 1.4rem; }
+body.lecture .panel-title { font-size: 1.2rem; }
+body.lecture .btn { font-size: 1rem; padding: 0.75rem 1.4rem; }
+body.lecture .act1-actions .btn { font-size: 1.15rem; padding: 0.9rem 1.7rem; }
+body.lecture .timer { font-size: 3rem; }
+body.lecture .slide-head h4 { font-size: 2.1rem; }
+body.lecture .slide-card .sc-big { font-size: 1.4rem; }
+body.lecture .slide-card .sc-big.num { font-size: 2.9rem; }
+body.lecture .slide-card .sc-text { font-size: 1rem; }
+body.lecture .slide-foot { font-size: 0.9rem; }
+body.lecture .data-panel { font-size: 1rem; }
+body.lecture .progress-labels span { font-size: 0.85rem; }
+body.lecture .act-card h3 { font-size: 1.55rem; }
+body.lecture .act-card .act-card-theory, body.lecture .act-card .act-card-practice { font-size: 1rem; }
+body.lecture .stat-card .stat-number { font-size: 2.8rem; }
+body.lecture .room-poll .rp-q { font-size: 1.05rem; }
+body.lecture .ping .ping-msg { font-size: 1rem; }
+body.lecture .shift-strip { font-size: 0.95rem; }
+body.lecture .shift-strip .ss-val { font-size: 1.2rem; }
+
+/* Tablet: header tools move below the title so they never sit on it */
+@media (max-width: 1000px) {
+  .header-tools { position: static; justify-content: center; margin-top: 0.7rem; }
+  header { padding-top: 3.6rem; }
+}
 
 /* Responsive */
 @media (max-width: 700px) {
-  header { padding: 1rem 1rem 0.9rem; }
-  header h1 { font-size: 1.15rem; }
-  .header-tools { position: static; justify-content: center; margin-top: 0.5rem; }
-  .panel { padding: 1rem; }
+  header { padding: 0.8rem 1rem 0.9rem; }
+  header h1 { font-size: 2rem; }
+  .header-tools { position: static; justify-content: center; margin-top: 0.6rem; }
+  .tool-btn { min-height: 40px; }
+  .section, .progress-bar { padding: 0 1rem; }
+  .progress-labels span { font-size: 0.68rem; }
+  .panel { padding: 1rem; box-shadow: 4px 4px 0 var(--blue); }
+  .panel h2 { font-size: 1.45rem; }
   .stat-row { flex-direction: column; }
   .incident-card { padding: 0.9rem; }
   .act1-actions .btn { flex: 1; justify-content: center; }
   .severity-scale { flex-wrap: wrap; }
   .severity-scale .sev-btn { min-width: 30%; }
+  .theory-content { padding: 1.1rem 1rem 1rem; }
+  .slide-head h4 { font-size: 1.4rem; }
+  .data-panel .log-line { flex-wrap: wrap; gap: 0.15rem 0.6rem; }
+  .data-panel .log-src { min-width: 0; }
+  .data-panel .log-msg { flex-basis: 100%; }
+  .kill-switch { padding: 0.8rem 1.1rem; font-size: 0.95rem; }
+  .kill-switch-container { bottom: 3.4rem; } /* sits above the AI transparency tab instead of under it */
 }
 
 /* Print */
 @media print {
   header, .progress-bar, .theory-panel, .nav-row, .btn-group, .kill-switch-container, .ping-stack, .header-tools { display: none !important; }
+  body { background: #fff; }
   .section { display: block !important; max-width: 100%; }
-  .panel { box-shadow: none; border: 1px solid #e2e8f0; }
+  .panel { box-shadow: none; border: 1px solid var(--rule); }
 }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } .timer.urgent { animation: none; } }
 </style>
 </head>
 <body>
@@ -423,7 +480,7 @@ body.lecture .shift-strip .ss-val { font-size: 1.1rem; }
   <div class="panel">
     <h2>The Operator's Dilemma</h2>
     <p>Five acts, each a different trap in how people and AI systems work together. Use it as a <strong>lecture tool</strong> (screenshare, open the theory slides, walk through the acts) or as a <strong>participant simulation</strong> (play it yourself and feel the traps from the inside).</p>
-    <p style="font-size:0.82rem; color:#94a3b8;">No IT expertise needed. You play the person on night duty for a company's computer systems. Every wrong AI recommendation can be caught from what is on the screen. The question is whether you will be looking.</p>
+    <p style="font-size:0.82rem; color:#525b8c;">No IT expertise needed. You play the person on night duty for a company's computer systems. Every wrong AI recommendation can be caught from what is on the screen. The question is whether you will be looking.</p>
   </div>
 
   <div class="self-contained-note">Fully self-contained: nothing to configure, no account, no API. Every simulation runs right here in your browser.</div>
@@ -484,7 +541,7 @@ body.lecture .shift-strip .ss-val { font-size: 1.1rem; }
       </div>
     </div>
 
-    <div class="act-card" onclick="launchAct('section-debrief')" style="background:#f8fafc;">
+    <div class="act-card" onclick="launchAct('section-debrief')" style="background:#f3efe4;">
       <div class="act-card-num">Session Debrief</div>
       <h3>Your Interaction Profile</h3>
       <div class="act-card-theory">A summary of your decisions across the acts, what pressure did to your accuracy, and what it says about how you work with AI systems.</div>
@@ -546,20 +603,20 @@ body.lecture .shift-strip .ss-val { font-size: 1.1rem; }
     <div style="margin:0.75rem 0; font-size:0.86rem;">
       <div style="display:flex; gap:0.5rem; align-items:flex-start; margin-bottom:0.5rem;">
         <span class="btn btn-success" style="cursor:default; font-size:0.75rem; min-width:110px; justify-content:center;">Approve</span>
-        <span style="color:#4a5568;">You agree. The fix is carried out immediately.</span>
+        <span style="color:#1d2a6b;">You agree. The fix is carried out immediately.</span>
       </div>
       <div style="display:flex; gap:0.5rem; align-items:flex-start; margin-bottom:0.5rem;">
         <span class="btn btn-danger" style="cursor:default; font-size:0.75rem; min-width:110px; justify-content:center;">Reject</span>
-        <span style="color:#4a5568;">You disagree. Nothing is done. The problem stays open for you to handle by hand.</span>
+        <span style="color:#1d2a6b;">You disagree. Nothing is done. The problem stays open for you to handle by hand.</span>
       </div>
       <div style="display:flex; gap:0.5rem; align-items:flex-start; margin-bottom:0.5rem;">
         <span class="btn btn-warning" style="cursor:default; font-size:0.75rem; min-width:110px; justify-content:center;">Investigate</span>
-        <span style="color:#4a5568;">You are not sure. You want to look closer before anything happens.</span>
+        <span style="color:#1d2a6b;">You are not sure. You want to look closer before anything happens.</span>
       </div>
     </div>
-    <p style="font-size:0.84rem; color:#64748b;">Two things you should know. <strong>The timer shrinks</strong> with every incident, because the queue keeps growing. And <strong>people will message you</strong> while you work. If the timer runs out, the recommendation is <strong>approved automatically</strong>, which is what happens in real life when the overwhelmed person on duty defaults to "yes".</p>
-    <p style="font-size:0.84rem; color:#64748b;">Every wrong recommendation can be caught from the text on the screen. No technical knowledge is needed, only attention. After all 8 incidents you see which ones you caught.</p>
-    <p style="font-size:0.78rem; color:#94a3b8; margin-top:0.5rem;">Tip: open the theory slide above at any time; the timer pauses while it is open.</p>
+    <p style="font-size:0.84rem; color:#525b8c;">Two things you should know. <strong>The timer shrinks</strong> with every incident, because the queue keeps growing. And <strong>people will message you</strong> while you work. If the timer runs out, the recommendation is <strong>approved automatically</strong>, which is what happens in real life when the overwhelmed person on duty defaults to "yes".</p>
+    <p style="font-size:0.84rem; color:#525b8c;">Every wrong recommendation can be caught from the text on the screen. No technical knowledge is needed, only attention. After all 8 incidents you see which ones you caught.</p>
+    <p style="font-size:0.78rem; color:#525b8c; margin-top:0.5rem;">Tip: open the theory slide above at any time; the timer pauses while it is open.</p>
     <div class="btn-group">
       <button class="btn btn-primary" onclick="startAct1()">Start the Shift</button>
     </div>
@@ -612,7 +669,7 @@ body.lecture .shift-strip .ss-val { font-size: 1.1rem; }
     <h2>What If You Had to Think First?</h2>
     <p>The same incident, redesigned. Instead of seeing the AI's recommendation right away, you first see only the facts and must write down your own reading. Only then does the AI's proposal appear, as a <em>second opinion</em>, not as an anchor.</p>
     <div id="act1-redesign-demo"></div>
-    <p style="margin-top:1rem; font-size:0.86rem; color:#4a5568;">This one change (your own answer before the AI's) is the best-supported way to cut wrong approvals. The cost: it is slower and people find it annoying. In high-stakes operations that friction is the feature.</p>
+    <p style="margin-top:1rem; font-size:0.86rem; color:#1d2a6b;">This one change (your own answer before the AI's) is the best-supported way to cut wrong approvals. The cost: it is slower and people find it annoying. In high-stakes operations that friction is the feature.</p>
   </div>
 
   <div class="nav-row" id="act1-nav" style="display:none;">
@@ -667,7 +724,7 @@ body.lecture .shift-strip .ss-val { font-size: 1.1rem; }
     <div class="panel-title">Act 2 &middot; The Anchoring Trap</div>
     <h2>Same Outage, Different Order</h2>
     <p>It is a busy afternoon at the online shop and customers cannot finish their purchases. Several systems are complaining at once. You will get the information in a particular order, then you will be asked what you think went wrong.</p>
-    <p style="font-size:0.84rem; color:#94a3b8;">Pay attention to how the order shapes your reasoning.</p>
+    <p style="font-size:0.84rem; color:#525b8c;">Pay attention to how the order shapes your reasoning.</p>
     <div class="btn-group">
       <button class="btn btn-primary" onclick="startAct2()">Look at the Outage</button>
     </div>
@@ -730,7 +787,7 @@ body.lecture .shift-strip .ss-val { font-size: 1.1rem; }
     <div class="panel-title">Act 3 &middot; Confidence Theater</div>
     <h2>Same Verdict, Different Packaging</h2>
     <p>The customer login app keeps crashing and restarting every couple of hours. An AI assistant has looked at it and written a diagnosis. You will see the <strong>exact same diagnosis</strong> presented three different ways. For each one, rate how much you trust it and say what you would do.</p>
-    <p style="font-size:0.84rem; color:#94a3b8;">The diagnosis does not change. Only the packaging does.</p>
+    <p style="font-size:0.84rem; color:#525b8c;">The diagnosis does not change. Only the packaging does.</p>
     <div class="btn-group">
       <button class="btn btn-primary" onclick="startAct3()">See the Three Versions</button>
     </div>
@@ -808,7 +865,7 @@ body.lecture .shift-strip .ss-val { font-size: 1.1rem; }
       <div class="shift-strip">
         <div class="ss-item"><span class="ss-label">Time</span><span class="ss-val" id="act4-clock">03:07</span></div>
         <div class="ss-item"><span class="ss-label">Awake</span><span class="ss-val exhausted">20h</span><div class="fatigue-meter"><div style="width:92%"></div></div></div>
-        <div class="ss-item"><span class="ss-label">Agent</span><span class="ss-val" style="color:#86efac;" id="act4-agent-status">active</span></div>
+        <div class="ss-item"><span class="ss-label">Agent</span><span class="ss-val" style="color:#7fd8a8;" id="act4-agent-status">active</span></div>
       </div>
       <div class="panel-title" style="margin-bottom:0.4rem;">Agent Activity Feed</div>
       <div class="event-feed" id="act4-feed"></div>
@@ -968,8 +1025,8 @@ body.lecture .shift-strip .ss-val { font-size: 1.1rem; }
   </div>
   <div class="panel" style="margin-top:1.25rem; text-align:center;">
     <p style="font-size:0.88rem;">Everything you just experienced has a design answer. The companion booklet covers the interaction patterns, the psychology, and the safeguards in depth:<br>
-    <a href="https://publications.barcik.training/llm-human-interaction-patterns/" style="font-weight:600; color:#1e3a5f;">LLM-Human Interaction Design Patterns for Operations &rarr;</a><br>
-    <span style="font-size:0.8rem; color:#94a3b8;">More simulations from other sectors: <a href="https://demos.barcik.training/" style="color:#64748b;">The Human-in-the-Loop Lab</a></span></p>
+    <a href="https://publications.barcik.training/llm-human-interaction-patterns/" style="font-weight:600; color:#1d2a6b;">LLM-Human Interaction Design Patterns for Operations &rarr;</a><br>
+    <span style="font-size:0.8rem; color:#525b8c;">More simulations from other sectors: <a href="https://demos.barcik.training/" style="color:#525b8c;">The Human-in-the-Loop Lab</a></span></p>
   </div>
 </div>
 
@@ -1056,13 +1113,13 @@ const ACT1_CLOCK = ['02:07', '02:11', '02:14', '02:19', '02:23', '02:26', '02:31
 const ACT1_AWAKE = ['19h', '19h', '19h', '19h', '19h', '19.5h', '19.5h', '19.5h'];
 // Interruptions: which incident, how many seconds in, who, what.
 const ACT1_PINGS = [
-  { at: 2, delay: 4, from: 'Dana (your boss)', initials: 'D', color: '#7c3aed', msg: 'Is the shop down?? Customer support has 3 people on the phone. Call me when you know.' },
-  { at: 4, delay: 3, from: 'Marketing group', initials: 'M', color: '#db2777', msg: '@duty the newsletter did not go out tonight, can you check when you have a sec? It is the big sale one.' },
-  { at: 4, delay: 9, from: 'Sam', initials: 'S', color: '#0891b2', msg: 'are you coming to bed or should I stop waiting' },
-  { at: 5, delay: 2, from: 'Dana (your boss)', initials: 'D', color: '#7c3aed', msg: 'Also the CEO asked for a one-line status by 8. Anything I should know?' },
-  { at: 6, delay: 5, from: 'Monitoring bot', initials: '!', color: '#dc2626', msg: 'Reminder: 6 incidents still open. Average age 23 min. Escalation to Level 3 in 10 min.' },
-  { at: 7, delay: 3, from: 'Sam', initials: 'S', color: '#0891b2', msg: 'ok. night.' },
-  { at: 7, delay: 7, from: 'Dana (your boss)', initials: 'D', color: '#7c3aed', msg: 'Just approve whatever the AI says for the small stuff, we can review in the morning. Need you on the checkout thing.' }
+  { at: 2, delay: 4, from: 'Dana (your boss)', initials: 'D', color: '#7a4fd0', msg: 'Is the shop down?? Customer support has 3 people on the phone. Call me when you know.' },
+  { at: 4, delay: 3, from: 'Marketing group', initials: 'M', color: '#e0368a', msg: '@duty the newsletter did not go out tonight, can you check when you have a sec? It is the big sale one.' },
+  { at: 4, delay: 9, from: 'Sam', initials: 'S', color: '#0f8fa3', msg: 'are you coming to bed or should I stop waiting' },
+  { at: 5, delay: 2, from: 'Dana (your boss)', initials: 'D', color: '#7a4fd0', msg: 'Also the CEO asked for a one-line status by 8. Anything I should know?' },
+  { at: 6, delay: 5, from: 'Monitoring bot', initials: '!', color: '#d5312a', msg: 'Reminder: 6 incidents still open. Average age 23 min. Escalation to Level 3 in 10 min.' },
+  { at: 7, delay: 3, from: 'Sam', initials: 'S', color: '#0f8fa3', msg: 'ok. night.' },
+  { at: 7, delay: 7, from: 'Dana (your boss)', initials: 'D', color: '#7a4fd0', msg: 'Just approve whatever the AI says for the small stuff, we can review in the morning. Need you on the checkout thing.' }
 ];
 
 // ========================================
@@ -1128,7 +1185,7 @@ const ACT3_PRESENTATIONS = [
     content: `<div class="confidence-card">
       <h4>AI Diagnosis</h4>
       <span class="confidence-badge cb-high">HIGH CONFIDENCE</span>
-      <p style="font-size:0.78rem; color:#94a3b8; margin-bottom:0.5rem;">When this assistant says HIGH on memory-related problems it has been right 82% of the time, based on 47 similar cases in your company.</p>
+      <p style="font-size:0.78rem; color:#525b8c; margin-bottom:0.5rem;">When this assistant says HIGH on memory-related problems it has been right 82% of the time, based on 47 similar cases in your company.</p>
       <p>${ACT3_DIAGNOSIS}</p>
     </div>`
   },
@@ -1173,8 +1230,8 @@ const ACT4_TIMELINE = [
 ];
 
 const ACT4_PINGS = [
-  { time: 24000, from: 'Dana (your boss)', initials: 'D', color: '#7c3aed', msg: 'Are we OK?? The agent is handling it, right? I am going back to sleep unless you say otherwise.' },
-  { time: 64000, from: 'Finance on-call', initials: 'F', color: '#0891b2', msg: 'Hey, the payment numbers on my dashboard just went blank. Is that you?' }
+  { time: 24000, from: 'Dana (your boss)', initials: 'D', color: '#7a4fd0', msg: 'Are we OK?? The agent is handling it, right? I am going back to sleep unless you say otherwise.' },
+  { time: 64000, from: 'Finance on-call', initials: 'F', color: '#0f8fa3', msg: 'Hey, the payment numbers on my dashboard just went blank. Is that you?' }
 ];
 
 // ========================================
@@ -1462,15 +1519,15 @@ function finishAct1() {
   const used = arr => Math.round(arr.reduce((s, x) => s + x.timeSpent / x.budget, 0) / arr.length * 100);
   const a1 = acc(first), a2 = acc(second);
   document.getElementById('act1-pressure').innerHTML = `
-    <div style="background:#0f172a; color:#e2e8f0; border-radius:10px; padding:1rem 1.2rem; margin-bottom:1rem;">
-      <div style="font-size:0.66rem; text-transform:uppercase; letter-spacing:0.1em; color:#fbbf24; font-weight:700; margin-bottom:0.5rem;">What the pressure did</div>
+    <div style="background:#1d2a6b; color:#f3efe4; border:2px solid #1d2a6b; border-radius:0; box-shadow:4px 4px 0 #ff5fa2; padding:1rem 1.2rem; margin-bottom:1.25rem;">
+      <div style="font-size:0.85rem; color:#ffe14d; font-weight:700; margin-bottom:0.5rem;">What the pressure did</div>
       <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:0.6rem; font-size:0.84rem;">
-        <div><div style="color:#94a3b8; font-size:0.72rem;">Incidents 1 to 4 (30 to 21 s, quiet)</div><div style="font-size:1.3rem; font-weight:800; color:#fff;">${a1}% right</div></div>
-        <div><div style="color:#94a3b8; font-size:0.72rem;">Incidents 5 to 8 (18 to 12 s, pings)</div><div style="font-size:1.3rem; font-weight:800; color:${a2 < a1 ? '#f87171' : '#86efac'};">${a2}% right</div></div>
-        <div><div style="color:#94a3b8; font-size:0.72rem;">Share of the timer you used</div><div style="font-size:1.3rem; font-weight:800; color:#fff;">${used(first)}% &rarr; ${used(second)}%</div></div>
-        <div><div style="color:#94a3b8; font-size:0.72rem;">Messages: shown / dismissed unread</div><div style="font-size:1.3rem; font-weight:800; color:#fff;">${STATE.act1.pingsShown} / ${STATE.act1.pingsDismissed}</div></div>
+        <div><div style="color:#c3c8e3; font-size:0.78rem;">Incidents 1 to 4 (30 to 21 s, quiet)</div><div style="font-size:1.6rem; font-weight:800; font-stretch:78%; color:#f3efe4;">${a1}% right</div></div>
+        <div><div style="color:#c3c8e3; font-size:0.78rem;">Incidents 5 to 8 (18 to 12 s, pings)</div><div style="font-size:1.6rem; font-weight:800; font-stretch:78%; color:${a2 < a1 ? '#ff8f87' : '#7fd8a8'};">${a2}% right</div></div>
+        <div><div style="color:#c3c8e3; font-size:0.78rem;">Share of the timer you used</div><div style="font-size:1.6rem; font-weight:800; font-stretch:78%; color:#f3efe4;">${used(first)}% &rarr; ${used(second)}%</div></div>
+        <div><div style="color:#c3c8e3; font-size:0.78rem;">Messages: shown / dismissed unread</div><div style="font-size:1.6rem; font-weight:800; font-stretch:78%; color:#f3efe4;">${STATE.act1.pingsShown} / ${STATE.act1.pingsDismissed}</div></div>
       </div>
-      <p style="font-size:0.8rem; color:#cbd5e0; margin-top:0.7rem; margin-bottom:0;">${a2 < a1
+      <p style="font-size:0.86rem; color:#d9dcec; margin-top:0.7rem; margin-bottom:0;">${a2 < a1
         ? 'Your accuracy dropped in the second half. Same kind of incidents, same kind of clues in the text. Less time, more noise, more fatigue. That gap is the design problem, not you.'
         : a2 === a1 ? 'Your accuracy held up in the second half. Notice how much more of the timer you needed to do it, and how the messages felt.'
         : 'Your accuracy went up in the second half, which usually means you learned the trick: the clue is always in the text. Most people do not get that far before the shift ends.'}</p>
@@ -1483,10 +1540,10 @@ function finishAct1() {
     const badge = dec.wasCorrectDecision ? '<span class="badge badge-correct">Correct decision</span>'
       : (inc.correct ? '<span class="badge badge-missed">Missed: should have approved</span>'
       : '<span class="badge badge-incorrect">Wrong: should have rejected or investigated</span>');
-    breakdown += `<div style="display:flex; gap:0.75rem; align-items:flex-start; margin-bottom:0.6rem; padding:0.5rem; background:#f8fafc; border-radius:6px; font-size:0.84rem;">
-      <div style="min-width:20px; font-weight:700; color:#94a3b8;">${i+1}</div>
+    breakdown += `<div style="display:flex; gap:0.75rem; align-items:flex-start; margin-bottom:0.6rem; padding:0.5rem; background:#f3efe4; border:1px solid #e2dccb; border-radius:0; font-size:0.88rem;">
+      <div style="min-width:20px; font-weight:700; color:#525b8c;">${i+1}</div>
       <div style="flex:1;"><strong>${inc.title}</strong> &middot; <em>${dec.decision.replace('-',' ')}</em> (${dec.timeSpent}s of ${dec.budget}s) ${badge}
-        ${!dec.wasCorrectDecision ? '<div style="color:#dc2626; margin-top:0.2rem; font-size:0.8rem;">' + inc.explanation + '</div>' : ''}
+        ${!dec.wasCorrectDecision ? '<div style="color:#d5312a; margin-top:0.2rem; font-size:0.84rem;">' + inc.explanation + '</div>' : ''}
       </div>
     </div>`;
   });
@@ -1494,7 +1551,7 @@ function finishAct1() {
 
   const rate = Math.round((rubberStamps / 8) * 100);
   document.getElementById('act1-comparison').innerHTML = `
-    <div class="panel" style="background:#eff6ff; border-left:3px solid #3b82f6; margin-bottom:0;">
+    <div class="panel" style="background:#e6eafb; border-left:4px solid #2a4bd7; margin-bottom:0;">
       <h3>How does this compare?</h3>
       <p style="font-size:0.86rem;">Your approval rate: <strong>${rate}%</strong></p>
       <p style="font-size:0.86rem;">In Mosier, Skitka, Heers and Burdick's 1998 cockpit study, every pilot followed a false automated alert at least once: <strong>100%</strong>. In an earlier checklist study, automated advice pushed the error rate from 25% to 75%. A second crew member watching did not lower the error rate. The automation's advice was treated as the truth.</p>
@@ -1511,17 +1568,17 @@ function finishAct1() {
       <div class="ic-header"><span class="ic-severity sev-${wrongInc.severity}">${wrongInc.severity}</span></div>
       <div class="ic-title">${wrongInc.title}</div>
       <div class="ic-details">${wrongInc.details}</div>
-      <div style="margin-top:0.75rem; padding:0.7rem; background:#fefce8; border-left:3px solid #ca8a04; border-radius:0 6px 6px 0; font-size:0.84rem;">
-        <strong style="display:block; font-size:0.72rem; text-transform:uppercase; color:#ca8a04; margin-bottom:0.2rem;">Step 1: your reading first</strong>
+      <div style="margin-top:0.75rem; padding:0.7rem; background:#ffefc2; border-left:4px solid #e8890c; border-radius:0; font-size:0.88rem;">
+        <strong style="display:block; font-size:0.84rem; color:#b85f00; margin-bottom:0.2rem;">Step 1: your reading first</strong>
         What do you think is going on? What would you do?
-        <em style="display:block; color:#94a3b8; margin-top:0.3rem;">(Only after answering does the AI's proposal appear)</em>
+        <em style="display:block; color:#525b8c; margin-top:0.3rem;">(Only after answering does the AI's proposal appear)</em>
       </div>
       <div class="ic-recommendation" style="margin-top:0.5rem; opacity:0.5;">
         <strong>Step 2: AI recommendation (revealed after your answer)</strong>
         ${wrongInc.recommendation}
       </div>
-      <div style="margin-top:0.5rem; padding:0.7rem; background:#f0fdf4; border-left:3px solid #16a34a; border-radius:0 6px 6px 0; font-size:0.84rem;">
-        <strong style="display:block; font-size:0.72rem; text-transform:uppercase; color:#16a34a; margin-bottom:0.2rem;">Step 3: final decision</strong>
+      <div style="margin-top:0.5rem; padding:0.7rem; background:#dcf1e4; border-left:4px solid #178a5e; border-radius:0; font-size:0.88rem;">
+        <strong style="display:block; font-size:0.84rem; color:#178a5e; margin-bottom:0.2rem;">Step 3: final decision</strong>
         Now that you have both your reading and the AI's, decide.
       </div>
     </div>
@@ -1566,7 +1623,7 @@ function showAct2Phase1() {
     panel.innerHTML = `
       <div class="panel-title">What the systems reported &middot; Online shop</div>
       <h3>Customers cannot finish their purchases</h3>
-      <p style="font-size:0.84rem; color:#94a3b8;">Read the timeline and form your own view before going on.</p>
+      <p style="font-size:0.84rem; color:#525b8c;">Read the timeline and form your own view before going on.</p>
       <div class="data-panel">${renderTimeline()}</div>
       <div class="btn-group"><button class="btn btn-primary" onclick="showAct2Assessment()">I have read the timeline</button></div>
     `;
@@ -1580,7 +1637,7 @@ function showAct2Assessment() {
     <div class="panel-title">Your Assessment</div>
     <h3>How bad is it? (1 to 5)</h3>
     <div class="severity-scale">
-      ${[1,2,3,4,5].map(n => `<div class="sev-btn" onclick="selectSeverity(this,${n})">${n}<div style="font-size:0.65rem;color:#94a3b8;margin-top:0.1rem;">${['Low','Moderate','Significant','High','Critical'][n-1]}</div></div>`).join('')}
+      ${[1,2,3,4,5].map(n => `<div class="sev-btn" onclick="selectSeverity(this,${n})">${n}<div style="font-size:0.75rem;color:#525b8c;margin-top:0.1rem;">${['Low','Moderate','Significant','High','Critical'][n-1]}</div></div>`).join('')}
     </div>
     <h3 style="margin-top:1rem;">What is the most likely cause?</h3>
     <div class="root-cause-options">
@@ -1614,9 +1671,9 @@ function submitAct2Assessment() {
     panel2.innerHTML = `
       <div class="panel-title">Now see what the systems reported</div>
       <h3>The Timeline</h3>
-      <p style="font-size:0.84rem; color:#94a3b8;">Look at the evidence. Does it change your view?</p>
+      <p style="font-size:0.84rem; color:#525b8c;">Look at the evidence. Does it change your view?</p>
       <div class="data-panel">${renderTimeline()}</div>
-      <p style="font-size:0.84rem; color:#94a3b8; margin-top:0.5rem;">Anything the AI might have missed? Look at which system appears most often, and when it started complaining.</p>
+      <p style="font-size:0.84rem; color:#525b8c; margin-top:0.5rem;">Anything the AI might have missed? Look at which system appears most often, and when it started complaining.</p>
       <div class="btn-group"><button class="btn btn-primary" onclick="showAct2Reveal()">See the Reveal</button></div>
     `;
   } else {
@@ -1624,7 +1681,7 @@ function submitAct2Assessment() {
       <div class="panel-title">Now see the AI's assessment</div>
       <h3>Diagnosis: ${ACT2_AI_ASSESSMENT.diagnosis}</h3>
       ${renderAiAssessment()}
-      <p style="font-size:0.84rem; color:#94a3b8; margin-top:0.5rem;">Does this match your view? Or did you see something the AI missed?</p>
+      <p style="font-size:0.84rem; color:#525b8c; margin-top:0.5rem;">Does this match your view? Or did you see something the AI missed?</p>
       <div class="btn-group"><button class="btn btn-primary" onclick="showAct2Reveal()">See the Reveal</button></div>
     `;
   }
@@ -1639,11 +1696,11 @@ function showAct2Reveal() {
   panel.innerHTML = `
     <div class="panel-title">The Reveal</div>
     <h2>The Actual Cause</h2>
-    <p style="font-size:0.94rem; font-weight:600; color:#1e3a5f;">The discount-code checker was slow, and every checkout had to wait for it.</p>
+    <p style="font-size:0.94rem; font-weight:600; color:#1d2a6b;">The discount-code checker was slow, and every checkout had to wait for it.</p>
     <p style="font-size:0.86rem;">Each purchase asks the discount-code checker "is this code valid?" and waits for the answer. When the checker slowed down, purchases piled up behind it, and while they waited they kept their database connections open. The database "running out of connections" was a <strong>symptom</strong>. The AI described the symptom correctly and missed the cause entirely. Raising the connection limit would have bought a few minutes and changed nothing.</p>
-    <div style="margin:1rem 0; padding:0.8rem; background:${gotItRight ? '#f0fdf4' : '#fef2f2'}; border-radius:8px; border-left:3px solid ${gotItRight ? '#16a34a' : '#dc2626'};">
+    <div style="margin:1rem 0; padding:0.8rem; background:${gotItRight ? '#dcf1e4' : '#fbe1dc'}; border-radius:0; border-left:4px solid ${gotItRight ? '#178a5e' : '#d5312a'};">
       <p style="font-size:0.86rem; font-weight:600;">Your answer: ${ACT2_ROOT_CAUSES.find(r => r.id === STATE.act2.rootCause)?.label || 'None selected'}</p>
-      <p style="font-size:0.84rem; color:${gotItRight ? '#16a34a' : '#dc2626'};">${gotItRight ? 'You found the real cause.' : (STATE.act2.group === 'A' ? 'The AI\'s verdict came first, and your reading followed it.' : 'Not the real cause this time. Look at how often the discount-code checker appears in the timeline, and how early.')}</p>
+      <p style="font-size:0.84rem; color:${gotItRight ? '#178a5e' : '#d5312a'};">${gotItRight ? 'You found the real cause.' : (STATE.act2.group === 'A' ? 'The AI\'s verdict came first, and your reading followed it.' : 'Not the real cause this time. Look at how often the discount-code checker appears in the timeline, and how early.')}</p>
     </div>
     <p style="font-size:0.86rem;"><strong>You were in group ${STATE.act2.group}</strong>: you saw the ${STATE.act2.group === 'A' ? 'AI\'s verdict first, then the timeline' : 'timeline first, then the AI\'s verdict'}.</p>
     <p style="font-size:0.86rem;">${STATE.act2.group === 'A'
@@ -1680,7 +1737,7 @@ function showAct3Presentation(idx) {
   container.innerHTML = `
     <div class="panel">
       <div class="panel-title">Version ${idx + 1} of 3 &middot; ${pres.title}</div>
-      <p style="font-size:0.84rem; color:#4a5568; margin-bottom:0.75rem;"><strong>${ACT3_INCIDENT.title}.</strong> ${ACT3_INCIDENT.details}</p>
+      <p style="font-size:0.84rem; color:#1d2a6b; margin-bottom:0.75rem;"><strong>${ACT3_INCIDENT.title}.</strong> ${ACT3_INCIDENT.details}</p>
       ${pres.content}
       <div class="trust-slider-group">
         <label>How much do you trust this diagnosis? (1 = not at all, 10 = completely)</label>
@@ -1691,7 +1748,7 @@ function showAct3Presentation(idx) {
         <div class="trust-labels"><span>Not at all</span><span>Completely</span></div>
       </div>
       <div style="margin-top:0.5rem;">
-        <label style="font-size:0.84rem; font-weight:600; color:#4a5568; display:block; margin-bottom:0.3rem;">What would you do?</label>
+        <label style="font-size:0.84rem; font-weight:600; color:#1d2a6b; display:block; margin-bottom:0.3rem;">What would you do?</label>
         <div class="btn-group">
           <button class="btn btn-outline act3-action" onclick="act3SelectAction(event,'${pres.id}','act')" style="font-size:0.78rem;">Act on it now</button>
           <button class="btn btn-outline act3-action" onclick="act3SelectAction(event,'${pres.id}','investigate')" style="font-size:0.78rem;">Look closer first</button>
@@ -1766,8 +1823,8 @@ function showAct3Reveal() {
       <div class="stat-card"><div class="stat-number">${ratings.none ?? '–'}</div><div class="stat-label">Nothing</div></div>
     </div>
     <p style="font-size:0.86rem;">Your trust moved by <strong>${variance} points</strong> across the three versions of the exact same text.</p>
-    <div style="margin:1rem 0; padding:0.8rem; background:#eff6ff; border-radius:8px; border-left:3px solid #3b82f6;">
-      <h4 style="font-size:0.9rem; color:#1e3a5f; margin-bottom:0.3rem;">The Twist</h4>
+    <div style="margin:1rem 0; padding:0.8rem; background:#e6eafb; border-radius:0; border-left:4px solid #2a4bd7;">
+      <h4 style="font-size:0.9rem; color:#1d2a6b; margin-bottom:0.3rem;">The Twist</h4>
       <p style="font-size:0.86rem;">${ACT3_ACTUAL}</p>
       <p style="font-size:0.86rem; margin-top:0.5rem;"><strong>The "memory leak" diagnosis was plausible and wrong.</strong> The packaging made it easier or harder to question, but none of the three versions changed whether it was true.</p>
     </div>
@@ -1865,14 +1922,14 @@ function act4KillSwitch() {
   document.getElementById('act4-killswitch').className = 'kill-switch disabled';
   document.getElementById('act4-killswitch').textContent = 'Agent Stopped';
   const st = document.getElementById('act4-agent-status');
-  st.textContent = 'stopped'; st.style.color = '#f87171';
+  st.textContent = 'stopped'; st.style.color = '#ff8f87';
   const feed = document.getElementById('act4-feed');
   const item = document.createElement('div');
   item.className = 'event-item';
   item.innerHTML = `
     <div class="ev-time">NOW</div>
-    <div><span class="ev-badge" style="background:#1e3a5f;color:#fff;">KILL SWITCH</span></div>
-    <div class="ev-text" style="font-weight:700; color:#1e3a5f;">AI agent stopped by the operator. All automatic actions halted. Manual mode.</div>
+    <div><span class="ev-badge" style="background:#1d2a6b;color:#f3efe4;">KILL SWITCH</span></div>
+    <div class="ev-text" style="font-weight:700; color:#1d2a6b;">AI agent stopped by the operator. All automatic actions halted. Manual mode.</div>
   `;
   feed.appendChild(item);
   feed.scrollTop = feed.scrollHeight;
@@ -1916,14 +1973,14 @@ function finishAct4() {
     <p style="font-size:0.86rem;">For the first 50 seconds the agent did sensible things: more servers, clean-ups, a reasonable proposal, a real escalation, waking a colleague. It earned your trust. Then it drifted:</p>
     <div style="font-size:0.84rem; margin:0.75rem 0;">
       ${ACT4_TIMELINE.filter(e => e.erratic).map(e => `
-        <div style="padding:0.5rem 0.75rem; background:#fef2f2; border-left:3px solid #dc2626; border-radius:0 6px 6px 0; margin-bottom:0.5rem;">
+        <div style="padding:0.5rem 0.75rem; background:#fbe1dc; border-left:4px solid #d5312a; border-radius:0; margin-bottom:0.5rem;">
           <strong>T+${(e.time/1000).toFixed(0)}s:</strong> ${e.msg}
-          <div style="color:#dc2626; font-size:0.8rem; margin-top:0.2rem;">${e.erraticNote}</div>
+          <div style="color:#d5312a; font-size:0.84rem; margin-top:0.2rem;">${e.erraticNote}</div>
         </div>
       `).join('')}
     </div>
-    <div style="margin-top:1rem; padding:0.8rem; background:#eff6ff; border-radius:8px; border-left:3px solid #3b82f6;">
-      <h4 style="font-size:0.9rem; color:#1e3a5f;">The Lesson</h4>
+    <div style="margin-top:1rem; padding:0.8rem; background:#e6eafb; border-radius:0; border-left:4px solid #2a4bd7;">
+      <h4 style="font-size:0.9rem; color:#1d2a6b;">The Lesson</h4>
       <p style="font-size:0.86rem;">This is <strong>complacency drift</strong>: a run of good decisions lowers your guard for the next one. The bad moves escalated slowly, from a plausible-but-wrong proposal, to acting without asking, to silencing the alarms, to destroying the payment records. Your boss's message ("the agent is handling it, right?") is the same drift, one level up.</p>
       <p style="font-size:0.86rem;">Knight Capital, 2012: 97 automated error emails ignored, $460 million gone in 45 minutes, no kill switch, no procedure.</p>
       <p style="font-size:0.86rem;"><strong>Design rules:</strong> the stop button is one action, always visible, and outside the AI's reach. An agent that steps outside its allowed level gets pulled down a level automatically. And no agent may ever switch off its own alarms.</p>
@@ -1961,12 +2018,12 @@ function updatePreview() {
   STATE.act5.designChoices = { autonomy, context, confidence, timePressure, killSwitch, forcing };
 
   const preview = document.getElementById('act5-preview');
-  const severityColor = autonomy >= 4 ? '#16a34a' : autonomy >= 3 ? '#ca8a04' : '#dc2626';
+  const severityColor = autonomy >= 4 ? '#178a5e' : autonomy >= 3 ? '#b85f00' : '#d5312a';
   const severityLabel = autonomy >= 4 ? 'AI decides' : autonomy >= 3 ? 'AI proposes' : 'Human decides';
   const verdict = autonomy >= 4 ? 'Approved automatically. The update will run at 02:00.' : 'Approve, on one condition: run the extended tests before the update.';
   let sections = '';
   if (forcing === 'before' && autonomy < 5) {
-    sections += `<div class="ux-section"><div class="ux-label">Step 1: your view</div><div style="color:#fbbf24;">What do you make of this change request? (Required before the AI's analysis is shown)</div></div>`;
+    sections += `<div class="ux-section"><div class="ux-label">Step 1: your view</div><div style="color:#ffe14d;">What do you make of this change request? (Required before the AI's analysis is shown)</div></div>`;
   }
   if (context === 'sbar') {
     sections += `
@@ -1978,7 +2035,7 @@ function updatePreview() {
   } else if (context === 'data-first') {
     sections += `
       <div class="ux-section"><div class="ux-label">The facts</div>Change 2847: payment system update, tonight 02:00 to 04:00. 3 other changes in the same window. Tests cover 67%. Last update 5 days ago, went fine.</div>
-      <div class="ux-section" style="border-top:1px dashed rgba(255,255,255,0.1); padding-top:0.8rem;"><div class="ux-label">AI recommendation (shown after you have read the facts)</div>${verdict}</div>
+      <div class="ux-section" style="border-top:1px dashed rgba(243,239,228,0.3); padding-top:0.8rem;"><div class="ux-label">AI recommendation (shown after you have read the facts)</div>${verdict}</div>
     `;
   } else {
     sections += `
@@ -1989,35 +2046,35 @@ function updatePreview() {
   if (confidence === 'raw') {
     sections += `<div class="ux-section"><div class="ux-label">Confidence</div>Risk assessment confidence: 0.78</div>`;
   } else if (confidence === 'categorical') {
-    sections += `<div class="ux-section"><div class="ux-label">Confidence</div><span style="color:#fbbf24;">MEDIUM</span>: when this assistant says MEDIUM on change risk, it has been right 76% of the time.</div>`;
+    sections += `<div class="ux-section"><div class="ux-label">Confidence</div><span style="color:#ffe14d;">MEDIUM</span>: when this assistant says MEDIUM on change risk, it has been right 76% of the time.</div>`;
   } else if (confidence === 'dashboard') {
     sections += `<div class="ux-section"><div class="ux-label">Track record</div>This assistant has assessed 834 change requests. Right 91.2% of the time overall. On payment system changes: 87.3% (8 of 47 needed a human correction).</div>`;
   }
   let killHtml = '';
   if (killSwitch === 'visible') {
-    killHtml = `<div style="text-align:center; margin-top:0.8rem; padding-top:0.6rem; border-top:1px solid rgba(255,255,255,0.1);"><button style="background:#dc2626; color:#fff; border:none; padding:0.4rem 1rem; border-radius:6px; font-size:0.72rem; font-weight:700; cursor:pointer;">STOP THE AI ASSISTANT</button></div>`;
+    killHtml = `<div style="text-align:center; margin-top:0.8rem; padding-top:0.6rem; border-top:1px solid rgba(243,239,228,0.25);"><button style="background:#d5312a; color:#fbf8f0; border:2px solid #f3efe4; padding:0.4rem 1rem; border-radius:0; font-size:0.8rem; font-weight:800; cursor:pointer;">STOP THE AI ASSISTANT</button></div>`;
   }
   let actionHtml = '';
   if (autonomy < 4) {
     actionHtml = `<div style="display:flex; gap:0.5rem; margin-top:0.8rem; flex-wrap:wrap;">
-      <button style="background:#16a34a; color:#fff; border:none; padding:0.4rem 0.8rem; border-radius:6px; font-size:0.78rem; font-weight:600; cursor:pointer;">Approve</button>
-      <button style="background:#dc2626; color:#fff; border:none; padding:0.4rem 0.8rem; border-radius:6px; font-size:0.78rem; font-weight:600; cursor:pointer;">Reject</button>
-      <button style="background:#d97706; color:#fff; border:none; padding:0.4rem 0.8rem; border-radius:6px; font-size:0.78rem; font-weight:600; cursor:pointer;">Ask for more</button>
+      <button style="background:#178a5e; color:#fbf8f0; border:2px solid #f3efe4; padding:0.4rem 0.8rem; border-radius:0; font-size:0.84rem; font-weight:700; cursor:pointer;">Approve</button>
+      <button style="background:#d5312a; color:#fbf8f0; border:2px solid #f3efe4; padding:0.4rem 0.8rem; border-radius:0; font-size:0.84rem; font-weight:700; cursor:pointer;">Reject</button>
+      <button style="background:#e8890c; color:#1d2a6b; border:2px solid #f3efe4; padding:0.4rem 0.8rem; border-radius:0; font-size:0.84rem; font-weight:700; cursor:pointer;">Ask for more</button>
     </div>`;
   } else if (autonomy === 4) {
-    actionHtml = `<div style="font-size:0.78rem; color:#94a3b8; margin-top:0.5rem; font-style:italic;">Decision logged. You can undo it within 5 minutes.</div>`;
+    actionHtml = `<div style="font-size:0.84rem; color:#c3c8e3; margin-top:0.5rem; font-style:italic;">Decision logged. You can undo it within 5 minutes.</div>`;
   } else {
-    actionHtml = `<div style="font-size:0.78rem; color:#94a3b8; margin-top:0.5rem; font-style:italic;">Fully automatic. Nothing for you to do.</div>`;
+    actionHtml = `<div style="font-size:0.84rem; color:#c3c8e3; margin-top:0.5rem; font-style:italic;">Fully automatic. Nothing for you to do.</div>`;
   }
   if (timePressure === 'graduated') {
-    sections += `<div class="ux-section" style="border:1px dashed rgba(251,191,36,0.4);"><div class="ux-label" style="color:#fbbf24;">During an incident</div>The assistant is allowed one level more freedom than usual.</div>`;
+    sections += `<div class="ux-section" style="border:1px dashed rgba(255,225,77,0.55);"><div class="ux-label" style="color:#ffe14d;">During an incident</div>The assistant is allowed one level more freedom than usual.</div>`;
   } else if (timePressure === 'simplified') {
-    sections += `<div class="ux-section" style="border:1px dashed rgba(255,255,255,0.2);"><div class="ux-label">During an incident</div>Same decisions, shorter screen: facts in three lines, one button per choice.</div>`;
+    sections += `<div class="ux-section" style="border:1px dashed rgba(243,239,228,0.35);"><div class="ux-label">During an incident</div>Same decisions, shorter screen: facts in three lines, one button per choice.</div>`;
   }
   preview.innerHTML = `
     <div class="ux-header">
       <h4>Change request 2847</h4>
-      <span class="ux-badge" style="background:${severityColor}; color:#fff;">${severityLabel}</span>
+      <span class="ux-badge" style="background:${severityColor}; color:#fbf8f0;">${severityLabel}</span>
     </div>
     ${sections}
     ${actionHtml}
@@ -2138,7 +2195,7 @@ function generateDebrief() {
   if (STATE.act4.simulationStart && !a4Killed) insightsList.push('You never stopped the agent, even as it acted without asking, silenced the alarms and started deleting payment records. That is complacency drift: a good first minute bought it a free hand for the rest.');
   if (a4Killed && parseInt(a4ReactionTime) < 15) insightsList.push('You caught the agent\'s drift quickly and stopped it. That is the ideal response: staying alert even while the system is performing well.');
   if (insightsList.length === 0) insightsList.push('Play the acts to get personal takeaways here.');
-  insights.innerHTML = insightsList.map(i => `<p style="font-size:0.86rem; margin-bottom:0.75rem; padding-left:0.75rem; border-left:3px solid #3b82f6;">${i}</p>`).join('');
+  insights.innerHTML = insightsList.map(i => `<p style="font-size:0.86rem; margin-bottom:0.75rem; padding-left:0.75rem; border-left:4px solid #2a4bd7;">${i}</p>`).join('');
 }
 
 function copyDebrief() {
